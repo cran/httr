@@ -1,0 +1,44 @@
+\name{add_headers}
+\alias{accept_json}
+\alias{accept_xml}
+\alias{add_headers}
+\title{Add additional headers to a request.}
+\usage{
+  add_headers(..., .headers = character())
+
+  accept_json()
+
+  accept_xml()
+}
+\arguments{
+  \item{...}{named header values.  To stop an existing
+  header from being set, pass an empty string: \code{""}.}
+
+  \item{.headers}{a named character vector}
+}
+\description{
+  \code{accept_json} and \code{accept_xml} are useful
+  shortcuts to request json or xml responses if the server
+  supports content negotiation. json and xml are both easy
+  to work with in R. See \code{\link{parsed_content}} for
+  how to access the results as R objects.
+}
+\examples{
+add_headers(a = 1, b = 2)
+add_headers(.headers = c(a = "1", b = "2"))
+
+# Override default headers with empty strings
+GET("http://had.co.nz", verbose())
+GET("http://had.co.nz", c(verbose(), add_headers(Accept = "")))
+
+GET("http://httpbin.org/headers")
+GET("http://httpbin.org/headers",
+ add_headers(version = version$version.string))
+}
+\seealso{
+  Other config: \code{\link{authenticate}},
+  \code{\link{config}}, \code{\link{set_cookies}},
+  \code{\link{timeout}}, \code{\link{use_proxy}},
+  \code{\link{user_agent}}, \code{\link{verbose}}
+}
+

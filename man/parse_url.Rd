@@ -1,0 +1,31 @@
+\name{parse_url}
+\alias{build_url}
+\alias{parse_url}
+\title{Parse and build urls according to RFC1808.}
+\usage{
+  parse_url(url)
+
+  build_url(url)
+}
+\arguments{
+  \item{url}{a character vector (of length 1) to parse into
+  components, or for \code{build_url} a url to turn back
+  into a string.}
+}
+\value{
+  a list containing: \itemize{ \item scheme \item hostname
+  \item port \item path \item params \item query \item
+  username \item password }
+}
+\description{
+  See \url{http://tools.ietf.org/html/rfc1808.html} for
+  details of parsing algorithm.
+}
+\examples{
+parse_url("http://google.com/")
+parse_url("http://google.com:80/")
+parse_url("http://google.com:80/?a=1&b=2")
+
+build_url(parse_url("http://google.com/"))
+}
+
