@@ -27,7 +27,7 @@
 config <- function(...) {
   options <- list(...)
 
-  known <- c(listCurlOptions(), "signature")
+  known <- c(listCurlOptions(), "token")
   unknown <- setdiff(names(options), known)
   if (length(unknown) > 0) {
     stop("Unknown RCurl options: ", str_c(unknown, collapse = ", "))
@@ -54,25 +54,46 @@ is.config <- function(x) inherits(x, "config")
 # Of these, only CURLOPT_HTTPHEADER is likely ever to be used, so we'll
 # deal with it specially.  It's possible you might also want to do that
 # with cookies, but that would require a bigger rewrite.
-#' @S3method c config
+#' @export
 c.config <- function(...) {
   all <- NextMethod()
   is_header <- names(all) == "httpheader"
   headers <- unlist(unname(all[is_header]), recursive = FALSE)
-  all <- c(all[!is_header], list(httpheader = headers))
+  all <- c(all[!is_header], add_headers(.headers = headers))
 
   structure(all, class = "config")
 }
 
-#' @S3method print config
+#' @export
 print.config <- function(x, ...) {
   cat("Config: \n")
   str(unclass(x), give.head = FALSE)
 }
 
+# A version of modifyList that works with config files, and merges
+# http header
+modify_config <- function(x, val) {
+  overwrite <- setdiff(names(val), "httpheader")
+  x[overwrite] <- val[overwrite]
+
+  headers <- c(x$httpheader, val$httpheader)
+  x$httpheader <- add_headers(.headers = headers)$httpheader
+
+  x
+}
+
+make_config <- function(x, ...) {
+  if (is.list(x)) {
+    class(x) <- "config"
+  }
+
+  configs <- c(list(x), unnamed(list(...)))
+  do.call("c", configs)
+}
 
 default_config <- function() {
-  cert <- system.file("CurlSSL/cacert.pem", package = "RCurl")
+  # Downloaded from http://curl.haxx.se/docs/caextract.html 2014-02-26
+  cert <- system.file("cacert.pem", package = "httr")
 
   c(config(
       followlocation = 1L,
@@ -80,8 +101,18 @@ default_config <- function() {
       encoding = "gzip",
       cainfo = cert
     ),
+    add_headers("user-agent" = default_ua()),
     getOption("httr_config")
   )
+}
+
+default_ua <- function() {
+  versions <- c(
+    curl = curlVersion()$version,
+    Rcurl = as.character(packageVersion("RCurl")),
+    httr = as.character(packageVersion("httr"))
+  )
+  paste0(names(versions), "/", versions, collapse = " ")
 }
 
 #' Set (and reset) global httr configuration.

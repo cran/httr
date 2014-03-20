@@ -2,8 +2,7 @@ library(httr)
 
 # 1. Find OAuth settings for github:
 #    http://developer.github.com/v3/oauth/
-github <- oauth_endpoint(NULL, "authorize", "access_token",
-  base_url = "https://github.com/login/oauth")
+oauth_endpoints("github")
 
 # 2. Register an application at https://github.com/settings/applications
 #    Insert your values below - if secret is omitted, it will look it up in
@@ -13,8 +12,9 @@ github <- oauth_endpoint(NULL, "authorize", "access_token",
 myapp <- oauth_app("github", "56b637a5baffac62cad9")
 
 # 3. Get OAuth credentials
-github_token <- oauth2.0_token(github, myapp)
-github_sig <- sign_oauth2.0(github_token$access_token)
+github_token <- oauth2.0_token(oauth_endpoints("github"), myapp)
 
-# Use access token to get user specific data
-GET("https://api.github.com/user/followers", github_sig)
+# 4. Use API
+req <- GET("https://api.github.com/rate_limit", config(token = github_token))
+stop_for_status(req)
+content(req)

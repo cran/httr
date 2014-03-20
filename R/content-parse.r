@@ -34,35 +34,46 @@ parse_auto <- function(content, type = NULL, encoding = NULL, ...) {
 parsers <- new.env(parent = emptyenv())
 
 # http://www.ietf.org/rfc/rfc4627.txt - section 3. (encoding)
-parsers$`application/json` <- function(x, ...) {
-  require("rjson")
-  fromJSON(parse_text(x, encoding = "UTF-8"), ...)
+parsers$`application/json` <- function(x, simplifyVector = FALSE,
+                                       simplifyMatrix = FALSE,
+                                       simplifyDataFrame = FALSE, ...) {
+  need_package("jsonlite")
+  jsonlite::fromJSON(parse_text(x, encoding = "UTF-8"),
+    simplifyVector = simplifyVector, simplifyMatrix = simplifyMatrix,
+    simplifyDataFrame = simplifyDataFrame, ...)
 }
+
 parsers$`application/x-www-form-urlencoded` <- function(x) {
   parse_query(parse_text(x, encoding = "UTF-8"))
 }
 
 parsers$`image/jpeg` <- function(x) {
-  require("jpeg")
-  readJPEG(x)
+  need_package("jpeg")
+  jpeg::readJPEG(x)
 }
 parsers$`image/png` <- function(x) {
-  require("png")
-  readPNG(x)
+  need_package("png")
+  png::readPNG(x)
 }
 
 parsers$`text/plain` <- function(x) x
 parsers$`text/html` <- function(x, ...) {
-  require("XML")
-  htmlTreeParse(x, ...)
+  need_package("XML")
+  XML::htmlParse(x, ...)
 }
 parsers$`text/xml` <- function(x, ...) {
-  require("XML")
-  xmlParse(x, ...)
+  need_package("XML")
+  XML::xmlParse(x, ...)
+}
+parsers$`text/csv` <- function(x, ...) {
+  read.csv(text = x, stringsAsFactors = FALSE, ...)
+}
+parsers$`text/tab-separated-values` <- function(x, ...) {
+  read.delim(text = x, stringsAsFactors = FALSE, ...)
 }
 
 parseability <- function(type) {
-  if (is.null(type)) return("raw")
+  if (is.null(type) || type == "") return("raw")
   mt <- parse_media(type)
 
   if (exists(mt$complete, parsers)) {

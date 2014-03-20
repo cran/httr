@@ -14,7 +14,8 @@
 #'  \item port
 #'  \item path
 #'  \item params
-#'  \item query
+#'  \item fragment
+#'  \item query, a list
 #'  \item username
 #'  \item password
 #' }
@@ -55,7 +56,11 @@ parse_url <- function(url) {
     } else {
       user_pass <- str_split(pieces[[1]], ":")[[1]]
       username <- user_pass[1]
-      password <- user_pass[2]
+      if (length(user_pass) == 1) {
+        password <- NULL
+      } else {
+        password <- user_pass[2]
+      }
 
       host <- pieces[2]
     }
@@ -74,8 +79,9 @@ parse_url <- function(url) {
   params <- pull_off(";(.*)$")
 
   structure(list(
-    scheme = scheme, hostname = hostname, port = port, path = url,
-    query = query, params = params, username = username, password = password),
+      scheme = scheme, hostname = hostname, port = port, path = url,
+      query = query, params = params, fragment = fragment,
+      username = username, password = password),
     class = "url")
 }
 
@@ -110,8 +116,10 @@ build_url <- function(url) {
   }
 
   if (is.list(url$query)) {
-    escaped <- curlEscape(url$query)
-    query <- str_c(names(url$query), "=", escaped, collapse = "&")
+    names <- curlEscape(names(url$query))
+    values <- curlEscape(url$query)
+
+    query <- str_c(names, "=", values, collapse = "&")
   } else {
     query <- url$query
   }
@@ -120,13 +128,15 @@ build_url <- function(url) {
     query <- str_c("?", query)
   }
 
-  if (!is.null(url$username)) {
-    login <- str_c(url$username, ":", url$password, "@")
-  } else {
-    login <- NULL
+  if (is.null(url$username) && !is.null(url$password)) {
+    stop("Cannot set password without username")
   }
 
-  str_c(scheme, "://", login, hostname, port, "/", path, params, query)
+  str_c(scheme, "://",
+        url$username, if (!is.null(url$password)) ":", url$password,
+        if (!is.null(url$username)) "@",
+        hostname, port, "/", path, params, query,
+        if (!is.null(url$fragment)) "#", url$fragment)
 }
 
 #' Modify a url.
@@ -136,14 +146,17 @@ build_url <- function(url) {
 #'
 #' @export
 #' @param url the url to modify
-#' @param scheme,hostname,port,path,query,params,username,password
+#' @param scheme,hostname,port,path,query,params,fragment,username,password
 #'   components of the url to change
-modify_url <- function(url, scheme = NULL, hostname = NULL, port = NULL, path = NULL, query = NULL, params = NULL, username = NULL, password = NULL) {
+modify_url <- function(url, scheme = NULL, hostname = NULL, port = NULL,
+                       path = NULL, query = NULL, params = NULL, fragment = NULL,
+                       username = NULL, password = NULL) {
 
   old <- parse_url(url)
   new <- compact(list(
     scheme = scheme, hostname = hostname, port = port, path = path,
-    query = query, params = params, username = username, password = password))
+    query = query, params = params, fragment = fragment,
+    username = username, password = password))
 
   build_url(modifyList(old, new))
 }

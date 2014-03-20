@@ -1,74 +1,44 @@
-# @param action function with (at least) arguments \code{handle}, \code{url},
-#   \code{opts}, which should return binary content from the specified
-#   request. \code{make_request} will take care of resetting the handle's
-#   config after the request is made.
-make_request <- function(method, handle, url, ..., config = list()) {
+make_request <- function(method, handle, url, config = NULL, body = NULL,
+                         refresh = TRUE) {
+  if (is.null(config)) config <- config()
+  stopifnot(is.config(config))
   stopifnot(is.handle(handle))
   stopifnot(is.character(url), length(url) == 1)
 
   # Sign request, if needed
-  if (!is.null(config$signature)) {
-    signed <- config$signature(method, url)
-    url <- signed$url
-    config <- c(config, signed$config)
+  signature <- sign(config$token, method, url, config)
 
-    config$signature <- NULL
-  }
-
-  # Figure out curl options --------------------------------------------------
-  opts <- default_config()
+  # Combine options
+  opts <- modify_config(default_config(), signature$config)
   opts$customrequest <- toupper(method)
-  opts$url <- url
+  opts$url <- signature$url
 
-  # Action config override defaults
-  config_f <- match.fun(str_c(tolower(method), "_config"))
-  action_config <- config_f(...)
-  opts <- modifyList(opts, action_config)
+  # Perform request and capture output
+  req <- perform(handle, opts, body)
 
-  # Config argument overrides everything
-  opts <- modifyList(opts, config)
+  needs_refresh <- refresh && req$status == 401L &&
+    !is.null(config$token) && config$token$can_refresh()
+  if (needs_refresh) {
+    message("Auto-refreshing stale OAuth token.")
+    config$token$refresh()
 
-  # But we always override headerfunction and writefunction
-  hg <- basicHeaderGatherer()
-  opts$headerfunction <- hg$update
-  buffer <- binaryBuffer()
-  opts$writefunction <-
-    getNativeSymbolInfo("R_curl_write_binary_data")$address
-  opts$writedata <- buffer@ref
-
-  # Must always reset the handle config, even if something goes wrong
-  on.exit(reset_handle_config(handle, opts))
-
-  # Perform request and capture output ---------------------------------------
-  curl_opts <- curlSetOpt(curl = NULL, .opts = opts)
-
-  is_post <- isTRUE(attr(action_config, "post"))
-  if (is_post) {
-    body <- attr(action_config, "body")
-    style <- attr(action_config, "style")
-    .postForm(handle$handle, curl_opts, body, style)
-    curlSetOpt(httppost = NULL, post = NULL, postfields = NULL,
-      curl = handle$handle)
+    make_request(method, handle, url, config = config, body = body,
+      refresh = FALSE)
   } else {
-    curlPerform(curl = handle$handle, .opts = curl_opts$values)
+    req
   }
+}
 
-  content <- as(buffer, "raw")
-  info <- last_request(handle)
-  times <- request_times(handle)
-  headers <- insensitive(as.list(hg$value()))
-  status <- as.numeric(str_extract(headers$status, "[0-9]+"))
+sign <- function(token, method, url, config) {
+  if (is.null(token)) {
+    list(url = url, config = config)
+  } else {
+    config$token <- NULL
 
-  response(
-    url = info$effective.url,
-    handle = handle,
-    status_code = status,
-    headers = headers,
-    cookies = parse_cookies(info$cookielist),
-    content = content,
-    times = times,
-    config = config
-  )
+    signed <- token$sign(method, url)
+    signed$config <- modify_config(config, signed$config)
+    signed
+  }
 }
 
 last_request <- function(x) {

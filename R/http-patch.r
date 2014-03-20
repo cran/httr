@@ -1,11 +1,12 @@
 #' Send PATCH request to a server.
 #'
+#' @inheritParams GET
 #' @inheritParams POST
 #' @export
-PATCH <- function(url = NULL, config = list(), body = NULL, multipart = TRUE, ..., handle = NULL) {
+PATCH <- function(url = NULL, config = list(), ..., body = NULL,
+                  multipart = TRUE, handle = NULL) {
   hu <- handle_url(handle, url, ...)
-  make_request("patch", hu$handle, hu$url, body = body,
-    multipart = multipart, config = config)
-}
+  config <- make_config(config, ...)
 
-patch_config <- post_config
+  make_request("patch", hu$handle, hu$url, config, body_config(body, multipart))
+}

@@ -12,46 +12,55 @@
 #' @export
 #' @keywords internal
 oauth_listener <- function(request_url) {
-  if (!require("Rook")) {
-    stop("Rook package required to capture OAuth credentials")
+  if (!is_installed("httpuv")) {
+    stop("httpuv package required to capture OAuth credentials.")
+  }
+
+  if (!interactive()) {
+    stop("oauth_listener() needs an interactive environment.", call. = FALSE)
   }
 
   info <- NULL
   listen <- function(env) {
-    req <- Request$new(env)
-    info <<- req$params()
+    if (!identical(env$PATH_INFO, "/")) {
+      return(list(
+        status = 404L,
+        headers = list("Content-type" = "text/plain"),
+        body = "Not found")
+      )
+    }
 
-    res <- Response$new()
-    res$header("Content-type", "text/plain")
-    res$write("Authentication complete - you can now close this page and ")
-    res$write("return to R.")
-    res$finish()
+    query <- env$QUERY_STRING
+    if (!is.character(query) || identical(query, "")) {
+      info <<- NA
+    } else {
+      info <<- parse_query(gsub("^\\?", "", query))
+    }
+
+    list(
+      status = 200L,
+      headers = list("Content-type" = "text/plain"),
+      body = "Authentication complete. Please close this page and return to R."
+    )
   }
 
-  server <- Rhttpd$new()
-  port <- tools:::httpdPort
-  server_on <- port != 0
-
-  server <- Rhttpd$new()
-  server$add(listen, name = "OAuth")
-  if (!server_on) {
-    port <- 1410
-    server$start(port = port, quiet = TRUE)
-  }
+  server <- httpuv::startServer("127.0.0.1", 1410, list(call = listen))
+  on.exit(httpuv::stopServer(server))
 
   message("Waiting for authentication in browser...")
-  Sys.sleep(1)
+  message("Press Esc/Ctrl + C to abort")
   BROWSE(request_url)
-
-  # wait until we get a response
   while(is.null(info)) {
-    Sys.sleep(1)
+    httpuv::service()
+    Sys.sleep(0.001)
   }
+  httpuv::service() # to send text back to browser
+
+  if (identical(info, NA)) {
+    stop("Authentication failed.", call. = FALSE)
+  }
+
   message("Authentication complete.")
-
-  server$remove("OAuth")
-  server$stop()
-
   info
 }
 
@@ -63,7 +72,5 @@ oauth_listener <- function(request_url) {
 #' @keywords internal
 #' @export
 oauth_callback <- function() {
-  port <- tools:::httpdPort
-  if (port == 0) port <- 1410
-  str_c("http://localhost:", port, "/custom/OAuth/cred")
+  "http://localhost:1410/"
 }

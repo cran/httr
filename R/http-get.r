@@ -46,7 +46,7 @@
 #' GET("http://google.com/", path = "search")
 #' GET("http://google.com/", path = "search", query = c(q = "ham"))
 #'
-#' # See what GET is doing with requestb.in
+#' # See what GET is doing with request.bin
 #' b <- new_bin()
 #' GET(b)
 #' GET(b, add_headers(a = 1, b = 2))
@@ -61,9 +61,7 @@
 #' GET(handle = google, path = "search")
 GET <- function(url = NULL, config = list(), ..., handle = NULL) {
   hu <- handle_url(handle, url, ...)
-  make_request("get", hu$handle, hu$url, config = config)
-}
+  config <- make_config(config, ...)
 
-get_config <- function() {
-  config()
+  make_request("get", hu$handle, hu$url, config)
 }

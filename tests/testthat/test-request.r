@@ -15,10 +15,10 @@ test_that("status converted to errors", {
   s404 <- GET("http://httpbin.org/status/404")
   s500 <- GET("http://httpbin.org/status/500")
 
-  expect_equal(stop_for_status(s200), NULL)
-  expect_error(stop_for_status(s300), c("300", "redirect"))
-  expect_error(stop_for_status(s404), c("404", "client"))
-  expect_error(stop_for_status(s500), c("500", "server"))
+  expect_equal(stop_for_status(s200), TRUE)
+  expect_error(stop_for_status(s300), c("redirection.*\\(300\\)"))
+  expect_error(stop_for_status(s404), c("client.*\\(404\\)"))
+  expect_error(stop_for_status(s500), c("server.*\\(500\\)"))
 })
 
 test_that("headers returned as expected", {
@@ -33,6 +33,3 @@ test_that("headers returned as expected", {
   expect_equal(round_trip(a = "a + b")$a, "a + b")
 
 })
-
-
-
