@@ -28,22 +28,48 @@ is.response <- function(x) {
 }
 
 #' @export
-print.response <- function(x, ..., max.lines = 10) {
+print.response <- function(x, ..., max.lines = 10, width = getOption("width")) {
+  content_type <- x$headers$`content-type`
+
   cat("Response [", x$url, "]\n", sep = "")
   cat("  Status: ", x$status, "\n", sep = "")
-  cat("  Content-type: ", x$headers$`content-type`, "\n", sep = "")
+  cat("  Content-type: ", content_type %||% "<unknown>", "\n", sep = "")
 
-  text <- content(x, "text")
-  if (length(text) == 0) return()
-  breaks <- str_locate_all(text, "\n")[[1]]
-
-  lines <- nrow(breaks)
-  if (lines > max.lines) {
-    last_line <-  breaks[max.lines, 1] - 1
-    cat(str_sub(text, 1, last_line), "...\n")
-  } else {
-    cat(text, "\n")
+  size <- length(x$content)
+  if (size == 0) {
+    cat("<EMPTY BODY>\n")
+    return()
   }
+
+  cat("  Size: ", bytes(size), "\n", sep = "")
+  if (!is_text(content_type)) {
+    cat("<BINARY BODY>\n")
+    return()
+  }
+
+  # Content is text, so print up to `max.lines` lines, truncating each line to
+  # at most `width` characters wide
+  text <- content(x, "text")
+
+  breaks <- gregexpr("\n", text, fixed = TRUE)[[1]]
+  last_line <- breaks[min(length(breaks), max.lines)]
+  lines <- strsplit(substr(text, 1, last_line), "\n")[[1]]
+
+  too_wide <- nchar(lines) > width
+  lines[too_wide] <- paste0(substr(lines[too_wide], 1, width - 3), "...")
+
+  cat(lines, sep = "\n")
+  if (max.lines < length(breaks)) cat("...\n")
+}
+
+is_text <- function(type) {
+  if (is.null(type)) return(FALSE)
+
+  media <- parse_media(type)
+  if (media$type == "text") return(TRUE)
+  if (media$type == "application" && media$subtype == "json") return(TRUE)
+
+  FALSE
 }
 
 #' @export

@@ -6,12 +6,15 @@
 #' @param app An OAuth consumer application, created by
 #'    \code{\link{oauth_app}}
 #' @param permission optional, a string of permissions to ask for.
+#' @param is_interactive Is the current environment interactive?
 #' @export
 #' @keywords internal
-init_oauth1.0 <- function(endpoint, app, permission = NULL) {
+init_oauth1.0 <- function(endpoint, app, permission = NULL,
+                          is_interactive = interactive()) {
 
   oauth_sig <- function(url, method, token = NULL, token_secret = NULL, ...) {
-    oauth_header(oauth_signature(url, method, app, token, token_secret, ...))
+    oauth_header(oauth_signature(url, method, app, token, token_secret, ...,
+      callback = oauth_callback()))
   }
 
   # 1. Get an unauthorized request token
@@ -25,11 +28,13 @@ init_oauth1.0 <- function(endpoint, app, permission = NULL) {
   authorize_url <- modify_url(endpoint$authorize, query = list(
     oauth_token = token,
     permission = "read"))
-  verifier <- oauth_listener(authorize_url)$oauth_verifier
+  verifier <- oauth_listener(authorize_url, is_interactive)$oauth_verifier
 
   # 3. Request access token
   response <- POST(endpoint$access,
-    oauth_sig(endpoint$access, "POST", token, secret, verifier = verifier))
+    oauth_sig(endpoint$access, "POST", token, secret, verifier = verifier),
+    body = ""
+  )
   stop_for_status(response)
   content(response, type = "application/x-www-form-urlencoded")
 }
@@ -47,7 +52,8 @@ init_oauth1.0 <- function(endpoint, app, permission = NULL) {
 #' @export
 #' @keywords internal
 init_oauth2.0 <- function(endpoint, app, scope = NULL, type = NULL,
-                          use_oob = getOption("httr_oob_default")) {
+                          use_oob = getOption("httr_oob_default"),
+                          is_interactive = interactive()) {
   if (isTRUE(use_oob)) {
     stopifnot(interactive())
     authorizer <- oauth_exchanger
@@ -67,10 +73,10 @@ init_oauth2.0 <- function(endpoint, app, scope = NULL, type = NULL,
     redirect_uri = redirect_uri,
     response_type = "code",
     state = state)))
-  code <- authorizer(authorize_url)$code
+  code <- authorizer(authorize_url, is_interactive)$code
 
   # Use authorisation code to get (temporary) access token
-  req <- POST(endpoint$access,  multipart = FALSE,
+  req <- POST(endpoint$access, encode = "form",
     body = list(
       client_id = app$key,
       client_secret = app$secret,

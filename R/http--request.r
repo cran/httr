@@ -5,13 +5,21 @@ make_request <- function(method, handle, url, config = NULL, body = NULL,
   stopifnot(is.handle(handle))
   stopifnot(is.character(url), length(url) == 1)
 
-  # Sign request, if needed
-  signature <- sign(config$token, method, url, config)
-
-  # Combine options
-  opts <- modify_config(default_config(), signature$config)
+  # Combine with default config
+  opts <- modify_config(default_config(), config)
   opts$customrequest <- toupper(method)
-  opts$url <- signature$url
+
+  # Sign request, if needed
+  token <- opts$token
+  if (!is.null(token)) {
+    signature <- token$sign(method, url)
+
+    opts <- modify_config(opts, signature$config)
+    opts$token <- NULL
+    opts$url <- signature$url
+  } else {
+    opts$url <- url
+  }
 
   # Perform request and capture output
   req <- perform(handle, opts, body)
@@ -29,21 +37,9 @@ make_request <- function(method, handle, url, config = NULL, body = NULL,
   }
 }
 
-sign <- function(token, method, url, config) {
-  if (is.null(token)) {
-    list(url = url, config = config)
-  } else {
-    config$token <- NULL
-
-    signed <- token$sign(method, url)
-    signed$config <- modify_config(config, signed$config)
-    signed
-  }
-}
-
 last_request <- function(x) {
   stopifnot(is.handle(x))
-  getCurlInfo(x[[1]])
+  RCurl::getCurlInfo(x[[1]])
 }
 
 request_times <- function(x) {
@@ -56,11 +52,4 @@ request_times <- function(x) {
     starttransfer = req$starttransfer.time,
     total = req$total.time)
 
-}
-
-parse_cookies <- function(x) {
-  if (length(x) == 0) return(list())
-
-  pieces <- str_split_fixed(x, fixed("\t"), n = 7)
-  setNames(as.list(pieces[, 7]), pieces[, 6])
 }

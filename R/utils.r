@@ -2,8 +2,8 @@
   if (!is.null(a)) a else b
 }
 
-timestamp <- function() {
-  format(Sys.time(), "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")
+timestamp <- function(x = Sys.time()) {
+  format(x, "%Y-%m-%dT%H:%M:%SZ", tz = "UTC")
 }
 
 sort_names <- function(x)  x[order(names(x))]
@@ -42,4 +42,11 @@ need_package <- function(pkg) {
   if (is_installed(pkg)) return(invisible())
 
   stop("Please install ", pkg, " package", call. = FALSE)
+}
+
+last <- function(x) x[[length(x)]]
+
+compact <- function(x) {
+  null <- vapply(x, is.null, logical(1))
+  x[!null]
 }

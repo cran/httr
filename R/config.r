@@ -3,17 +3,10 @@
 #' Generally you should only need to use this function to set CURL options
 #' directly if there isn't already a helpful wrapper function, like
 #' \code{\link{set_cookies}}, \code{\link{add_headers}} or
-#' \code{\link{authenticate}}.
-#'
-#' To use this function effectively requires some knowledge of CURL, and
-#' CURL options. A complete set of options can be found at
-#' \url{http://linux.die.net/man/3/curl_easy_setopt}.
-#'
-#' Within R, the options have slightly different names: the initial
-#' \code{CURLOPT_} is removed, all underscores are converted to periods and
-#' the option is given in lower case.  Thus "CURLOPT_SSLENGINE_DEFAULT"
-#' becomes "sslengine.default".  See \code{\link[RCurl]{listCurlOptions}} for
-#' a complete list of the R name equivalents.
+#' \code{\link{authenticate}}. To use this function effectively requires
+#' some knowledge of CURL, and CURL options. Use \code{\link{httr_options}} to
+#' see a complete list of available options. To see the libcurl documentation
+#' for a given option, use \code{\link{curl_docs}}.
 #'
 #' Unlike Curl (and RCurl), all configuration options are per request, not
 #' per handle.
@@ -27,10 +20,10 @@
 config <- function(...) {
   options <- list(...)
 
-  known <- c(listCurlOptions(), "token")
+  known <- c(RCurl::listCurlOptions(), "token")
   unknown <- setdiff(names(options), known)
   if (length(unknown) > 0) {
-    stop("Unknown RCurl options: ", str_c(unknown, collapse = ", "))
+    stop("Unknown RCurl options: ", paste0(unknown, collapse = ", "))
   }
 
   structure(options, class = "config")
@@ -38,6 +31,72 @@ config <- function(...) {
 
 is.config <- function(x) inherits(x, "config")
 
+#' List available options.
+#'
+#' This function lists all available options for \code{\link{config}()}.
+#' It provides both the short R name which you use with httr, and the longer
+#' Curl name, which is useful when searching the documentation. \code{curl_doc}
+#' opens a link to the libcurl documentation for an option in your browser.
+#'
+#' RCurl and httr use slightly different names to libcurl: the initial
+#' \code{CURLOPT_} is removed, all underscores are converted to periods and
+#' the option is given in lower case.  Thus "CURLOPT_SSLENGINE_DEFAULT"
+#' becomes "sslengine.default".
+#'
+#' @param x An option name (either short or full).
+#' @return A data frame with three columns:
+#' \item{httr}{The short name used in httr}
+#' \item{libcurl}{The full name used by libcurl}
+#' \item{type}{The type of R object that the option accepts}
+#' @export
+#' @examples
+#' httr_options()
+#'
+#' # Use curl_docs to read the curl documentation for each option.
+#' # You can use either the httr or curl option name.
+#' curl_docs("userpwd")
+#' curl_docs("CURLOPT_USERPWD")
+httr_options <- function() {
+
+  constants <- RCurl::getCurlOptionsConstants()
+  constants <- constants[order(names(constants))]
+
+  rcurl <- names(constants)
+  curl  <- translate_curl(rcurl)
+
+  data.frame(
+    httr = rcurl,
+    libcurl = translate_curl(rcurl),
+    type = unname(RCurl::getCurlOptionTypes(constants)),
+    stringsAsFactors = FALSE
+  )
+}
+
+#' @export
+print.opts_list <- function(x, ...) {
+  cat(paste0(format(names(x)), ": ", x, collapse = "\n"), "\n", sep = "")
+}
+
+translate_curl <- function(x) {
+  paste0("CURLOPT_", gsub(".", "_", toupper(x), fixed = TRUE))
+}
+
+#' @export
+#' @rdname httr_options
+curl_docs <- function(x) {
+  stopifnot(is.character(x), length(x) == 1)
+
+  opts <- httr_options()
+  if (x %in% opts$httr) {
+    x <- opts$libcurl[match(x, opts$httr)]
+  }
+  if (!(x %in% opts$libcurl)) {
+    stop(x, " is not a known curl option", call. = FALSE)
+  }
+
+  url <- paste0("http://curl.haxx.se/libcurl/c/", x, ".html")
+  BROWSE(url)
+}
 
 # Grepping http://curl.haxx.se/libcurl/c/curl_easy_setopt.html for
 # "linked list", finds the follow options:
@@ -101,14 +160,14 @@ default_config <- function() {
       encoding = "gzip",
       cainfo = cert
     ),
-    add_headers("user-agent" = default_ua()),
+    user_agent(default_ua()),
     getOption("httr_config")
   )
 }
 
 default_ua <- function() {
   versions <- c(
-    curl = curlVersion()$version,
+    curl = RCurl::curlVersion()$version,
     Rcurl = as.character(packageVersion("RCurl")),
     httr = as.character(packageVersion("httr"))
   )
@@ -154,10 +213,20 @@ reset_config <- function() set_config(config(), TRUE)
 #'   GET("http://had.co.nz")
 #'   GET("http://google.com")
 #' })
+#'
+#' # Or even easier:
+#' with_verbose(GET("http://google.com"))
 with_config <- function(config = config(), expr, override = FALSE) {
   stopifnot(is.config(config))
 
   old <- set_config(config, override)
   on.exit(set_config(old, override = TRUE))
   force(expr)
+}
+
+#' @export
+#' @param ... Other arguments passed on to \code{\link{verbose}}
+#' @rdname with_config
+with_verbose <- function(expr, ...) {
+  with_config(verbose(...), expr)
 }
