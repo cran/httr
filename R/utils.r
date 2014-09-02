@@ -1,5 +1,5 @@
 "%||%" <- function(a, b) {
-  if (!is.null(a)) a else b
+  if (length(a) > 0) a else b
 }
 
 timestamp <- function(x = Sys.time()) {
@@ -44,7 +44,10 @@ need_package <- function(pkg) {
   stop("Please install ", pkg, " package", call. = FALSE)
 }
 
-last <- function(x) x[[length(x)]]
+last <- function(x) {
+  if (length(x) < 1) return(x)
+  x[[length(x)]]
+}
 
 compact <- function(x) {
   null <- vapply(x, is.null, logical(1))

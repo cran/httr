@@ -1,18 +1,24 @@
 # Abstract over the differences in RCurl API depending on whether or not
 # you send a body.
-perform <- function(handle, opts, body) {
-  # Must always override headerfunction and writefunction
-  # FIXME: throw error if these are set already
+perform <- function(handle, writer, method, opts, body) {
+  # Cache exact request so it can easily be replayed.
+  request <- list(
+    handle = handle,
+    writer = writer,
+    method = toupper(method),
+    opts = opts,
+    body = body
+  )
+
   headers <- character()
   add_header <- function(text) {
     headers <<- c(headers, text)
     nchar(text, "bytes")
   }
   opts$headerfunction <- add_header
-  buffer <- RCurl::binaryBuffer()
-  opts$writefunction <-
-    getNativeSymbolInfo("R_curl_write_binary_data")$address
-  opts$writedata <- buffer@ref
+
+  writer <- write_init(writer)
+  opts <- modifyList(opts, write_opts(writer))
 
   opts <- modify_config(opts, body$config)
   # Ensure config always gets reset
@@ -29,18 +35,24 @@ perform <- function(handle, opts, body) {
   }
 
   headers <- parse_headers(headers)
-  content <- methods::as(buffer, "raw")
+  content <- write_term(writer)
+
+  if (!is.null(headers$date)) {
+    date <- parse_http_date(headers$Date)
+  } else {
+    date <- Sys.time()
+  }
 
   response(
     url = last_request(handle)$effective.url,
-    handle = handle,
     status_code = last(headers)$status,
     headers = last(headers)$headers,
     all_headers = headers,
     cookies = cookies(handle),
     content = content,
+    date = date,
     times = request_times(handle),
-    config = config
+    request = request
   )
 }
 

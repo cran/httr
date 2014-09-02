@@ -36,6 +36,7 @@
 #' POST(b2, body = NULL, verbose())
 #' POST(b2, body = FALSE, verbose())
 #' POST(b2, body = "", verbose())
+#'
 POST <- function(url = NULL, config = list(), ..., body = NULL,
                  encode = c("multipart", "form", "json"),
                  multipart = TRUE, handle = NULL) {

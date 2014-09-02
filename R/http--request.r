@@ -1,5 +1,6 @@
 make_request <- function(method, handle, url, config = NULL, body = NULL,
                          refresh = TRUE) {
+  method <- toupper(method)
   if (is.null(config)) config <- config()
   stopifnot(is.config(config))
   stopifnot(is.handle(handle))
@@ -7,7 +8,9 @@ make_request <- function(method, handle, url, config = NULL, body = NULL,
 
   # Combine with default config
   opts <- modify_config(default_config(), config)
-  opts$customrequest <- toupper(method)
+  if (method != "POST") {
+    opts$customrequest <- method
+  }
 
   # Sign request, if needed
   token <- opts$token
@@ -21,8 +24,12 @@ make_request <- function(method, handle, url, config = NULL, body = NULL,
     opts$url <- url
   }
 
+  # Extract writer object
+  writer <- opts$writer
+  opts$writer <- NULL
+
   # Perform request and capture output
-  req <- perform(handle, opts, body)
+  req <- perform(handle, writer, method, opts, body)
 
   needs_refresh <- refresh && req$status == 401L &&
     !is.null(config$token) && config$token$can_refresh()

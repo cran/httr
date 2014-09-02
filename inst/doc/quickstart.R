@@ -38,7 +38,7 @@ content(r, "raw")
 
 ## ----, eval = FALSE------------------------------------------------------
 #  bin <- content(r, "raw")
-#  writeBin("myfile.txt", bin)
+#  writeBin(bin, "myfile.txt")
 
 ## ------------------------------------------------------------------------
 # JSON automatically parsed into named list

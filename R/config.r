@@ -15,12 +15,35 @@
 #'  \code{\link{with_config}} to temporarily run code with set options.
 #' @family config
 #' @family ways to set configuration
+#' @seealso All known available options are listed in \code{\link{httr_options}}
 #' @param ... named Curl options.
 #' @export
+#' @examples
+#' # There are a number of ways to modify the configuration of a request
+#' # * you can add directly to a request
+#' HEAD("https://www.google.com", verbose())
+#'
+#' # * you can wrap with with_config()
+#' with_config(verbose(), HEAD("https://www.google.com"))
+#'
+#' # * you can set global with set_config()
+#' old <- set_config(verbose())
+#' HEAD("https://www.google.com")
+#' # and re-establish the previous settings with
+#' set_config(old, override = TRUE)
+#' HEAD("https://www.google.com")
+#' # or
+#' reset_config()
+#' HEAD("https://www.google.com")
+#'
+#' # If available, you should use a friendly httr wrapper over RCurl
+#' # options. But you can pass Curl options (as listed in httr_options())
+#' # in config
+#' HEAD("https://www.google.com/", config(verbose = TRUE))
 config <- function(...) {
   options <- list(...)
 
-  known <- c(RCurl::listCurlOptions(), "token")
+  known <- c(RCurl::listCurlOptions(), "token", "writer")
   unknown <- setdiff(names(options), known)
   if (length(unknown) > 0) {
     stop("Unknown RCurl options: ", paste0(unknown, collapse = ", "))
@@ -44,6 +67,8 @@ is.config <- function(x) inherits(x, "config")
 #' becomes "sslengine.default".
 #'
 #' @param x An option name (either short or full).
+#' @param matches If not missing, this restricts the output so that either
+#'   the httr or curl option matches this regular expression.
 #' @return A data frame with three columns:
 #' \item{httr}{The short name used in httr}
 #' \item{libcurl}{The full name used by libcurl}
@@ -51,12 +76,13 @@ is.config <- function(x) inherits(x, "config")
 #' @export
 #' @examples
 #' httr_options()
+#' httr_options("post")
 #'
 #' # Use curl_docs to read the curl documentation for each option.
 #' # You can use either the httr or curl option name.
 #' curl_docs("userpwd")
 #' curl_docs("CURLOPT_USERPWD")
-httr_options <- function() {
+httr_options <- function(matches) {
 
   constants <- RCurl::getCurlOptionsConstants()
   constants <- constants[order(names(constants))]
@@ -64,12 +90,21 @@ httr_options <- function() {
   rcurl <- names(constants)
   curl  <- translate_curl(rcurl)
 
-  data.frame(
+
+  opts <- data.frame(
     httr = rcurl,
     libcurl = translate_curl(rcurl),
     type = unname(RCurl::getCurlOptionTypes(constants)),
     stringsAsFactors = FALSE
   )
+
+  if (!missing(matches)) {
+    sel <- grepl(matches, opts$httr, ignore.case = TRUE) |
+      grepl(matches, opts$libcurl, ignore.case = TRUE)
+    opts <- opts[sel, , drop = FALSE]
+  }
+
+  opts
 }
 
 #' @export
@@ -155,12 +190,14 @@ default_config <- function() {
   cert <- system.file("cacert.pem", package = "httr")
 
   c(config(
-      followlocation = 1L,
+      followlocation = TRUE,
       maxredirs = 10L,
       encoding = "gzip",
       cainfo = cert
     ),
     user_agent(default_ua()),
+    add_headers(accept = "application/json, text/xml, */*"),
+    write_memory(),
     getOption("httr_config")
   )
 }

@@ -1,9 +1,11 @@
 Package: httr
 Type: Package
 Title: Tools for working with URLs and HTTP
-Version: 0.4
-Author: Hadley Wickham <h.wickham@gmail.com>
-Maintainer: Hadley Wickham <h.wickham@gmail.com>
+Version: 0.5
+Authors@R: c(
+    person("Hadley", "Wickham", email = "hadley@rstudio.com",
+    role = c("cre", "aut", "cph")),
+    person("RStudio", role = "cph"))
 Description: Provides useful tools for working with HTTP. The API is based
     around http verbs (GET(), POST(), etc) with pluggable components to control
     the request (authenticate(), add_headers() and so on).
@@ -13,7 +15,10 @@ Imports: RCurl (>= 1.95-0), stringr (>= 0.6.1), digest, tools, methods,
 Suggests: XML, testthat (>= 0.8.0), png, jpeg, httpuv, knitr
 VignetteBuilder: knitr
 License: MIT + file LICENSE
-Packaged: 2014-07-28 14:47:33 UTC; hadley
-NeedsCompilation: no
+Packaged: 2014-09-02 15:28:39 UTC; hadley
+Author: Hadley Wickham [cre, aut, cph],
+  RStudio [cph]
+Maintainer: Hadley Wickham <hadley@rstudio.com>
+NeedsCompilation: yes
 Repository: CRAN
-Date/Publication: 2014-07-28 18:14:27
+Date/Publication: 2014-09-02 18:15:25

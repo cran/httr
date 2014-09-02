@@ -5,6 +5,18 @@
 
 <title>httr quickstart guide</title>
 
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
+  }
+};
+</script>
+
 <!-- Styles for R syntax highlighter -->
 <style type="text/css">
    pre .operator,
@@ -45,9 +57,6 @@ var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/<
 hljs.initHighlightingOnLoad();
 </script>
 
-<!-- MathJax scripts -->
-<script type="text/javascript" src="https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
 
 
 <style type="text/css">
@@ -99,7 +108,9 @@ a:visited {
 pre, img {
   max-width: 100%;
 }
-
+pre {
+  overflow-x: auto;
+}
 pre code {
    display: block; padding: 0.5em;
 }
@@ -215,18 +226,19 @@ r &lt;- GET(&quot;http://httpbin.org/get&quot;)
 
 <pre><code class="r">r
 #&gt; Response [http://httpbin.org/get]
+#&gt;   Date: 2014-09-02 10:28
 #&gt;   Status: 200
 #&gt;   Content-type: application/json
-#&gt;   Size: 331 B
+#&gt;   Size: 359 B
 #&gt; {
 #&gt;   &quot;args&quot;: {}, 
 #&gt;   &quot;headers&quot;: {
-#&gt;     &quot;Accept&quot;: &quot;*/*&quot;, 
+#&gt;     &quot;Accept&quot;: &quot;application/json, text/xml, */*&quot;, 
 #&gt;     &quot;Accept-Encoding&quot;: &quot;gzip&quot;, 
 #&gt;     &quot;Connection&quot;: &quot;close&quot;, 
 #&gt;     &quot;Host&quot;: &quot;httpbin.org&quot;, 
-#&gt;     &quot;User-Agent&quot;: &quot;curl/7.30.0 Rcurl/1.95.4.1 httr/0.4&quot;, 
-#&gt;     &quot;X-Request-Id&quot;: &quot;f50beeef-7499-4f82-b356-0431adb2245a&quot;
+#&gt;     &quot;User-Agent&quot;: &quot;curl/7.30.0 Rcurl/1.95.4.3 httr/0.5&quot;, 
+#&gt;     &quot;X-Request-Id&quot;: &quot;cfafa11e-bcd3-4871-a7c8-c53e1e6dd78e&quot;
 #&gt;   }, 
 #&gt; ...
 </code></pre>
@@ -246,13 +258,13 @@ headers(r)
 #&gt; [1] &quot;application/json&quot;
 #&gt; 
 #&gt; $date
-#&gt; [1] &quot;Mon, 28 Jul 2014 14:47:30 GMT&quot;
+#&gt; [1] &quot;Tue, 02 Sep 2014 15:28:37 GMT&quot;
 #&gt; 
 #&gt; $server
 #&gt; [1] &quot;gunicorn/18.0&quot;
 #&gt; 
 #&gt; $`content-length`
-#&gt; [1] &quot;331&quot;
+#&gt; [1] &quot;359&quot;
 #&gt; 
 #&gt; $connection
 #&gt; [1] &quot;keep-alive&quot;
@@ -263,12 +275,12 @@ str(content(r))
 #&gt; List of 4
 #&gt;  $ args   : Named list()
 #&gt;  $ headers:List of 6
-#&gt;   ..$ Accept         : chr &quot;*/*&quot;
+#&gt;   ..$ Accept         : chr &quot;application/json, text/xml, */*&quot;
 #&gt;   ..$ Accept-Encoding: chr &quot;gzip&quot;
 #&gt;   ..$ Connection     : chr &quot;close&quot;
 #&gt;   ..$ Host           : chr &quot;httpbin.org&quot;
-#&gt;   ..$ User-Agent     : chr &quot;curl/7.30.0 Rcurl/1.95.4.1 httr/0.4&quot;
-#&gt;   ..$ X-Request-Id   : chr &quot;f50beeef-7499-4f82-b356-0431adb2245a&quot;
+#&gt;   ..$ User-Agent     : chr &quot;curl/7.30.0 Rcurl/1.95.4.3 httr/0.5&quot;
+#&gt;   ..$ X-Request-Id   : chr &quot;cfafa11e-bcd3-4871-a7c8-c53e1e6dd78e&quot;
 #&gt;  $ origin : chr &quot;73.183.151.193&quot;
 #&gt;  $ url    : chr &quot;http://httpbin.org/get&quot;
 </code></pre>
@@ -318,7 +330,7 @@ stop_for_status(r)
 
 <pre><code class="r">r &lt;- GET(&quot;http://httpbin.org/get&quot;)
 content(r, &quot;text&quot;)
-#&gt; [1] &quot;{\n  \&quot;args\&quot;: {}, \n  \&quot;headers\&quot;: {\n    \&quot;Accept\&quot;: \&quot;*/*\&quot;, \n    \&quot;Accept-Encoding\&quot;: \&quot;gzip\&quot;, \n    \&quot;Connection\&quot;: \&quot;close\&quot;, \n    \&quot;Host\&quot;: \&quot;httpbin.org\&quot;, \n    \&quot;User-Agent\&quot;: \&quot;curl/7.30.0 Rcurl/1.95.4.1 httr/0.4\&quot;, \n    \&quot;X-Request-Id\&quot;: \&quot;e693fd23-118f-43b7-bda7-ada61cbece33\&quot;\n  }, \n  \&quot;origin\&quot;: \&quot;73.183.151.193\&quot;, \n  \&quot;url\&quot;: \&quot;http://httpbin.org/get\&quot;\n}&quot;
+#&gt; [1] &quot;{\n  \&quot;args\&quot;: {}, \n  \&quot;headers\&quot;: {\n    \&quot;Accept\&quot;: \&quot;application/json, text/xml, */*\&quot;, \n    \&quot;Accept-Encoding\&quot;: \&quot;gzip\&quot;, \n    \&quot;Connection\&quot;: \&quot;close\&quot;, \n    \&quot;Host\&quot;: \&quot;httpbin.org\&quot;, \n    \&quot;User-Agent\&quot;: \&quot;curl/7.30.0 Rcurl/1.95.4.3 httr/0.5\&quot;, \n    \&quot;X-Request-Id\&quot;: \&quot;c257f3f2-c71a-4df7-9cb7-a090540f6a75\&quot;\n  }, \n  \&quot;origin\&quot;: \&quot;73.183.151.193\&quot;, \n  \&quot;url\&quot;: \&quot;http://httpbin.org/get\&quot;\n}&quot;
 </code></pre>
 
 <p>httr will automatically decode content from the server using the encoding 
@@ -336,26 +348,27 @@ raw vector:</p>
 <pre><code class="r">content(r, &quot;raw&quot;)
 #&gt;   [1] 7b 0a 20 20 22 61 72 67 73 22 3a 20 7b 7d 2c 20 0a 20 20 22 68 65 61
 #&gt;  [24] 64 65 72 73 22 3a 20 7b 0a 20 20 20 20 22 41 63 63 65 70 74 22 3a 20
-#&gt;  [47] 22 2a 2f 2a 22 2c 20 0a 20 20 20 20 22 41 63 63 65 70 74 2d 45 6e 63
-#&gt;  [70] 6f 64 69 6e 67 22 3a 20 22 67 7a 69 70 22 2c 20 0a 20 20 20 20 22 43
-#&gt;  [93] 6f 6e 6e 65 63 74 69 6f 6e 22 3a 20 22 63 6c 6f 73 65 22 2c 20 0a 20
-#&gt; [116] 20 20 20 22 48 6f 73 74 22 3a 20 22 68 74 74 70 62 69 6e 2e 6f 72 67
-#&gt; [139] 22 2c 20 0a 20 20 20 20 22 55 73 65 72 2d 41 67 65 6e 74 22 3a 20 22
-#&gt; [162] 63 75 72 6c 2f 37 2e 33 30 2e 30 20 52 63 75 72 6c 2f 31 2e 39 35 2e
-#&gt; [185] 34 2e 31 20 68 74 74 72 2f 30 2e 34 22 2c 20 0a 20 20 20 20 22 58 2d
-#&gt; [208] 52 65 71 75 65 73 74 2d 49 64 22 3a 20 22 65 36 39 33 66 64 32 33 2d
-#&gt; [231] 31 31 38 66 2d 34 33 62 37 2d 62 64 61 37 2d 61 64 61 36 31 63 62 65
-#&gt; [254] 63 65 33 33 22 0a 20 20 7d 2c 20 0a 20 20 22 6f 72 69 67 69 6e 22 3a
-#&gt; [277] 20 22 37 33 2e 31 38 33 2e 31 35 31 2e 31 39 33 22 2c 20 0a 20 20 22
-#&gt; [300] 75 72 6c 22 3a 20 22 68 74 74 70 3a 2f 2f 68 74 74 70 62 69 6e 2e 6f
-#&gt; [323] 72 67 2f 67 65 74 22 0a 7d
+#&gt;  [47] 22 61 70 70 6c 69 63 61 74 69 6f 6e 2f 6a 73 6f 6e 2c 20 74 65 78 74
+#&gt;  [70] 2f 78 6d 6c 2c 20 2a 2f 2a 22 2c 20 0a 20 20 20 20 22 41 63 63 65 70
+#&gt;  [93] 74 2d 45 6e 63 6f 64 69 6e 67 22 3a 20 22 67 7a 69 70 22 2c 20 0a 20
+#&gt; [116] 20 20 20 22 43 6f 6e 6e 65 63 74 69 6f 6e 22 3a 20 22 63 6c 6f 73 65
+#&gt; [139] 22 2c 20 0a 20 20 20 20 22 48 6f 73 74 22 3a 20 22 68 74 74 70 62 69
+#&gt; [162] 6e 2e 6f 72 67 22 2c 20 0a 20 20 20 20 22 55 73 65 72 2d 41 67 65 6e
+#&gt; [185] 74 22 3a 20 22 63 75 72 6c 2f 37 2e 33 30 2e 30 20 52 63 75 72 6c 2f
+#&gt; [208] 31 2e 39 35 2e 34 2e 33 20 68 74 74 72 2f 30 2e 35 22 2c 20 0a 20 20
+#&gt; [231] 20 20 22 58 2d 52 65 71 75 65 73 74 2d 49 64 22 3a 20 22 63 32 35 37
+#&gt; [254] 66 33 66 32 2d 63 37 31 61 2d 34 64 66 37 2d 39 63 62 37 2d 61 30 39
+#&gt; [277] 30 35 34 30 66 36 61 37 35 22 0a 20 20 7d 2c 20 0a 20 20 22 6f 72 69
+#&gt; [300] 67 69 6e 22 3a 20 22 37 33 2e 31 38 33 2e 31 35 31 2e 31 39 33 22 2c
+#&gt; [323] 20 0a 20 20 22 75 72 6c 22 3a 20 22 68 74 74 70 3a 2f 2f 68 74 74 70
+#&gt; [346] 62 69 6e 2e 6f 72 67 2f 67 65 74 22 0a 7d
 </code></pre>
 
 <p>This is exactly the sequence of bytes that the web server sent, so this is
 the highest fidelity way of saving files to disk:</p>
 
 <pre><code class="r">bin &lt;- content(r, &quot;raw&quot;)
-writeBin(&quot;myfile.txt&quot;, bin)
+writeBin(bin, &quot;myfile.txt&quot;)
 </code></pre></li>
 <li><p>httr provides a number of default parsers for common file types:</p>
 
@@ -364,12 +377,12 @@ str(content(r, &quot;parsed&quot;))
 #&gt; List of 4
 #&gt;  $ args   : Named list()
 #&gt;  $ headers:List of 6
-#&gt;   ..$ Accept         : chr &quot;*/*&quot;
+#&gt;   ..$ Accept         : chr &quot;application/json, text/xml, */*&quot;
 #&gt;   ..$ Accept-Encoding: chr &quot;gzip&quot;
 #&gt;   ..$ Connection     : chr &quot;close&quot;
 #&gt;   ..$ Host           : chr &quot;httpbin.org&quot;
-#&gt;   ..$ User-Agent     : chr &quot;curl/7.30.0 Rcurl/1.95.4.1 httr/0.4&quot;
-#&gt;   ..$ X-Request-Id   : chr &quot;e693fd23-118f-43b7-bda7-ada61cbece33&quot;
+#&gt;   ..$ User-Agent     : chr &quot;curl/7.30.0 Rcurl/1.95.4.3 httr/0.5&quot;
+#&gt;   ..$ X-Request-Id   : chr &quot;c257f3f2-c71a-4df7-9cb7-a090540f6a75&quot;
 #&gt;  $ origin : chr &quot;73.183.151.193&quot;
 #&gt;  $ url    : chr &quot;http://httpbin.org/get&quot;
 </code></pre>
@@ -396,13 +409,13 @@ is as you expect. See the API wrappers vignette for more details.</p></li>
 #&gt; [1] &quot;application/json&quot;
 #&gt; 
 #&gt; $date
-#&gt; [1] &quot;Mon, 28 Jul 2014 14:47:31 GMT&quot;
+#&gt; [1] &quot;Tue, 02 Sep 2014 15:28:37 GMT&quot;
 #&gt; 
 #&gt; $server
 #&gt; [1] &quot;gunicorn/18.0&quot;
 #&gt; 
 #&gt; $`content-length`
-#&gt; [1] &quot;331&quot;
+#&gt; [1] &quot;359&quot;
 #&gt; 
 #&gt; $connection
 #&gt; [1] &quot;keep-alive&quot;
@@ -414,9 +427,9 @@ is as you expect. See the API wrappers vignette for more details.</p></li>
 <p>This is basically a named list, but because http headers are case insensitive, indexing this object ignores case:</p>
 
 <pre><code class="r">headers(r)$date
-#&gt; [1] &quot;Mon, 28 Jul 2014 14:47:31 GMT&quot;
+#&gt; [1] &quot;Tue, 02 Sep 2014 15:28:37 GMT&quot;
 headers(r)$DATE
-#&gt; [1] &quot;Mon, 28 Jul 2014 14:47:31 GMT&quot;
+#&gt; [1] &quot;Tue, 02 Sep 2014 15:28:37 GMT&quot;
 </code></pre>
 
 <h3>Cookies</h3>
@@ -478,14 +491,14 @@ content(r)$args
 <pre><code class="r">r &lt;- GET(&quot;http://httpbin.org/get&quot;, add_headers(Name = &quot;Hadley&quot;))
 str(content(r)$headers)
 #&gt; List of 8
-#&gt;  $ Accept         : chr &quot;*/*&quot;
+#&gt;  $ Accept         : chr &quot;application/json, text/xml, */*&quot;
 #&gt;  $ Accept-Encoding: chr &quot;gzip&quot;
 #&gt;  $ Connection     : chr &quot;close&quot;
 #&gt;  $ Cookie         : chr &quot;a=1; b=1&quot;
 #&gt;  $ Host           : chr &quot;httpbin.org&quot;
 #&gt;  $ Name           : chr &quot;Hadley&quot;
-#&gt;  $ User-Agent     : chr &quot;curl/7.30.0 Rcurl/1.95.4.1 httr/0.4&quot;
-#&gt;  $ X-Request-Id   : chr &quot;64d4c85f-10a2-4f32-aa21-775405bed039&quot;
+#&gt;  $ User-Agent     : chr &quot;curl/7.30.0 Rcurl/1.95.4.3 httr/0.5&quot;
+#&gt;  $ X-Request-Id   : chr &quot;9e854d99-5b2f-44dd-9537-37832cb0e0a7&quot;
 </code></pre>
 
 <p>(Note that <code>content(r)$header</code> retrieves the headers that httpbin received. <code>headers(r)</code> gives the headers that it sent back in its response.)</p>
@@ -496,8 +509,8 @@ str(content(r)$headers)
 
 <pre><code class="r">r &lt;- GET(&quot;http://httpbin.org/cookies&quot;, set_cookies(&quot;MeWant&quot; = &quot;cookies&quot;))
 content(r)$cookies
-#&gt; $MeWantcookies
-#&gt; [1] &quot;&quot;
+#&gt; $MeWant
+#&gt; [1] &quot;cookies&quot;
 #&gt; 
 #&gt; $a
 #&gt; [1] &quot;1&quot;
@@ -562,11 +575,11 @@ POST(url, body = list(x = upload_file(&quot;mypath.txt&quot;)))
 #&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     
 #&gt; 
 #&gt; other attached packages:
-#&gt; [1] httr_0.4
+#&gt; [1] httr_0.5
 #&gt; 
 #&gt; loaded via a namespace (and not attached):
-#&gt; [1] RCurl_1.95-4.1 evaluate_0.5.3 formatR_0.10   jsonlite_0.9.6
-#&gt; [5] knitr_1.6      markdown_0.7   stringr_0.6.2  tools_3.1.0
+#&gt; [1] RCurl_1.95-4.3  evaluate_0.5.5  formatR_1.0     jsonlite_0.9.10
+#&gt; [5] knitr_1.6       markdown_0.7.4  stringr_0.6.2   tools_3.1.0
 </code></pre>
 
 </body>
