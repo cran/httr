@@ -20,7 +20,7 @@ perform <- function(handle, writer, method, opts, body) {
   writer <- write_init(writer)
   opts <- modifyList(opts, write_opts(writer))
 
-  opts <- modify_config(opts, body$config)
+  opts <- modify_config(body$config, opts)
   # Ensure config always gets reset
   on.exit(reset_handle_config(handle, opts), add = TRUE)
   curl_opts <- RCurl::curlSetOpt(curl = NULL, .opts = opts)
@@ -72,14 +72,11 @@ parse_headers <- function(lines) {
 }
 
 parse_single_header <- function(lines) {
-  # Parse initial status line
-  status <- as.list(strsplit(lines[1], "\\s+")[[1]])
-  names(status) <- c("version", "status", "message")
-  status$status <- as.integer(status$status)
+  status <- parse_http_status(lines[[1]])
 
   # Parse headers into name-value pairs
   header_lines <- lines[lines != ""][-1]
-  pos <- regexec("^(.*?): (.*?)$", header_lines)
+  pos <- regexec("^(.*?):\\s*(.*?)$", header_lines)
   pieces <- regmatches(header_lines, pos)
 
   n <- vapply(pieces, length, integer(1))
@@ -95,4 +92,13 @@ parse_single_header <- function(lines) {
   headers <- insensitive(setNames(values, names))
 
   list(status = status$status, version = status$version, headers = headers)
+}
+
+parse_http_status <- function(x) {
+  status <- as.list(strsplit(x, "\\s+")[[1]])
+  names(status) <- c("version", "status", "message")[seq_along(status)]
+  status$status <- as.integer(status$status)
+
+
+  status
 }

@@ -214,7 +214,7 @@ hr {
 
 <h2>Key info</h2>
 
-<p>When writing an API, it&#39;s best to start with some helper functions that capture the common conventions of the API in one place. These fuctions capture information like:</p>
+<p>When writing an API, it&#39;s best to start with some helper functions that capture the common conventions of the API in one place. These functions capture information like:</p>
 
 <ul>
 <li>the base URL for all API requests.</li>
@@ -290,17 +290,17 @@ if (has_pat()) {
 #&gt; List of 2
 #&gt;  $ resources:List of 2
 #&gt;   ..$ core  :List of 3
-#&gt;   .. ..$ limit    : num 5000
-#&gt;   .. ..$ remaining: num 4994
-#&gt;   .. ..$ reset    : num 1.41e+09
+#&gt;   .. ..$ limit    : int 5000
+#&gt;   .. ..$ remaining: int 5000
+#&gt;   .. ..$ reset    : int 1418484931
 #&gt;   ..$ search:List of 3
-#&gt;   .. ..$ limit    : num 30
-#&gt;   .. ..$ remaining: num 30
-#&gt;   .. ..$ reset    : num 1.41e+09
+#&gt;   .. ..$ limit    : int 30
+#&gt;   .. ..$ remaining: int 30
+#&gt;   .. ..$ reset    : int 1418481391
 #&gt;  $ rate     :List of 3
-#&gt;   ..$ limit    : num 5000
-#&gt;   ..$ remaining: num 4994
-#&gt;   ..$ reset    : num 1.41e+09
+#&gt;   ..$ limit    : int 5000
+#&gt;   ..$ remaining: int 5000
+#&gt;   ..$ reset    : int 1418484931
 </code></pre>
 
 <p>After getting the first version getting working, you&#39;ll often want to polish the output to be more user friendly. For this example, we can parse the unix timestamps into more useful date types.</p>
@@ -317,7 +317,7 @@ if (has_pat()) {
 if (has_pat()) {
   rate_limit()
 }
-#&gt; 4994 / 5000 (Reset 10:33:06)
+#&gt; 5000 / 5000 (Reset 09:35:31)
 </code></pre>
 
 <p>Depending on the complexity of the API, you might want to keep separate the functions that return a request object and the functions that parse it into a useful R object.</p>
@@ -335,7 +335,7 @@ if (has_pat()) {
 }
 </code></pre>
 
-<p>Many APIs use <a href="http://en.wikipedia.org/wiki/Content_negotiation">content negotiation</a> to determine whats sort of data to send back. If the API you&#39;re wrapping does this, then you might find <code>accepts_json()</code> and <code>accepts_xml()</code> to be useful.</p>
+<p>Many APIs use <a href="http://en.wikipedia.org/wiki/Content_negotiation">content negotiation</a> to determine whats sort of data to send back. If the API you&#39;re wrapping does this, then you might find <code>accept_json()</code> and <code>accept_xml()</code> to be useful.</p>
 
 <h2>Responding to errors</h2>
 
@@ -388,7 +388,7 @@ to a prespecified value.</p>
 </code></pre></li>
 </ul>
 
-<p>You also need some way to preserve user credentials so that they don&#39;t need to be re-entered multiple times. If you use OAuth, httr will take care of this for. For other use cases, I recommend using environment variables. The following function retrieves your PAT from an environmental variable called <code>GITHUB_PAT</code>, telling you how it set it if not. The devtools package needs to access you github personal access token to install packages from private repos.</p>
+<p>You also need some way to preserve user credentials so that they don&#39;t need to be re-entered multiple times. If you use OAuth, httr will take care of this for. For other use cases, I recommend using environment variables. The following function retrieves your PAT from an environmental variable called <code>GITHUB_PAT</code>, telling you how it set it if not. The devtools package needs to access your github personal access token to install packages from private repos.</p>
 
 <pre><code class="r">github_pat &lt;- function(force = FALSE) {
   env &lt;- Sys.getenv(&#39;GITHUB_PAT&#39;)
@@ -414,7 +414,49 @@ to a prespecified value.</p>
 }
 </code></pre>
 
-<p>Encourage you users to store their important information once, rather than typing it into the console - it&#39;s easy to accidentally publish your <code>.Rhistory</code> and you don&#39;t want it to contain private data.</p>
+<p>Encourage your users to store their important information once (see below), rather than typing it into the console - it&#39;s easy to accidentally publish your <code>.Rhistory</code> and you don&#39;t want it to contain private data.</p>
+
+<h2>Appendix: API key best practices</h2>
+
+<p>If your package supports an authentication workflow based on an API key or token, encourage users to store it in an environment variable. We illustrate this using the <a href="https://github.com/cscheid/rgithub"><code>github</code> R package</a>, which wraps the Github v3 API. Tailor this template to your API + package and include in <code>README.md</code> or a vignette.</p>
+
+<ol>
+<li><p>Create a personal access token in the 
+<a href="https://github.com/settings/applications">Applications area</a> of your GitHub
+personal settings. Copy token to the clipboard.</p></li>
+<li><p>Identify your home directory. Not sure? Enter <code>normalizePath(&quot;~/&quot;)</code> in 
+the R console.</p></li>
+<li><p>Create a new text file. If in RStudio, do <em>File &gt; New File &gt; Text file.</em></p></li>
+<li><p>Create a line like this:</p>
+
+<pre><code class="bash">GITHUB_TOKEN=blahblahblahblahblahblah
+</code></pre>
+
+<p>where the name <code>GITHUB_TOKEN</code> reminds you which API this is for and 
+<code>blahblahblahblahblahblah</code> is your token, pasted from the clipboard.</p></li>
+<li><p>Make sure the last line in the file is empty (if it isn&#39;t R will 
+<strong>silently</strong> fail to load the file. If you&#39;re using an editor that shows 
+line numbers, there should be two lines, where the second one is empty.</p></li>
+<li><p>Save in your home directory with the filename <code>.Renviron</code>. If questioned, 
+YES you do want to use a filename that begins with a dot <code>.</code>.</p>
+
+<p>Note that by default <a href="http://linux.about.com/cs/linux101/g/dot_file.htm">dotfiles</a> 
+are usually hidden. But within RStudio, the file browser will make 
+<code>.Renviron</code> visible and therefore easy to edit in the future.</p></li>
+<li><p>Restart R. <code>.Renviron</code> is processed only 
+<a href="http://stat.ethz.ch/R-manual/R-patched/library/base/html/Startup.html">at the start of an R session</a>.</p></li>
+<li><p>Use <code>Sys.getenv()</code> to access your token. For example, here&#39;s how to use 
+your <code>GITHUB_TOKEN</code> with the <code>github</code> package:</p>
+
+<pre><code class="R">library(github)
+ctx &lt;- create.github.context(access_token = Sys.getenv(&quot;GITHUB_TOKEN&quot;))
+# ... proceed to use other package functions to open issues, etc.
+</code></pre></li>
+</ol>
+
+<p>FAQ: Why define this environment variable via <code>.Renviron</code> instead of in <code>.bash_profile</code> or <code>.bashrc</code>?</p>
+
+<p>Because there are many combinations of OS and ways of running R where the <code>.Renviron</code> approach &ldquo;just works&rdquo; and the bash stuff does not. When R is a child process of, say, Emacs or RStudio, you can&#39;t always count on environment variables being passed to R. Put them in an R-specific start-up file and save yourself some grief.</p>
 
 </body>
 

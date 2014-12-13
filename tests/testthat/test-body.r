@@ -1,6 +1,6 @@
 context("Body")
 
-round_trip <- function(method, ...) {
+round_trip <- function(...) {
   content(POST("http://httpbin.org/post", ...))
 }
 
@@ -25,6 +25,14 @@ test_that("string/raw in body gives same string in data element", {
   expect_equal(out$data, "test")
 })
 
+test_that("string/raw in body doesn't lose content type", {
+  body <- charToRaw("test")
+  content_type <- "application/awesome"
+  response <- content(POST("http://httpbin.org/post", body = body,
+                           add_headers("Content-Type" = content_type)))
+  expect_equal(response$headers$`Content-Type`, content_type)
+})
+
 test_that("named list matches form results (encode = 'form')", {
   out <- round_trip(body = list(a = 1, b = 2), encode = "form")
   expect_equal(out$form$a, "1")
@@ -43,7 +51,6 @@ test_that("named list matches form results (encode = 'json')", {
   expect_equal(out$json$b[[1]], 2)
 })
 
-
 test_that("file and form vals mixed give form and data elements", {
   out <- round_trip(body = list(y = data_path, a = 1))
   expect_equal(out$form$a, "1")
@@ -55,3 +62,13 @@ test_that("single file matches contents on disk", {
   expect_equal(strsplit(out$data, "\n")[[1]], data)
   expect_equal(out$headers$`Content-Type`, "text/plain")
 })
+
+test_that("explicit content type overrides defaults", {
+  out <- round_trip(
+    body = jsonlite::toJSON(list(a = 1, b = 2)),
+    content_type_json()
+  )
+
+  expect_equal(out$headers$`Content-Type`, "application/json")
+})
+

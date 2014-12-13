@@ -3,8 +3,7 @@
 #' These objects represent the complete set of data needed for OAuth access:
 #' an app, an endpoint, cached credentials and parameters. They should be
 #' created through their constructor functions \code{\link{oauth1.0_token}}
-#' and \code{\link{oauth2.0_token}}. If you create your own subclass
-#' (as in the linkedin demo), use \code{\link{new_token}} to initialise.
+#' and \code{\link{oauth2.0_token}}.
 #'
 #' @section Methods:
 #' \itemize{
@@ -33,70 +32,86 @@
 #' (because it contains private information), so httr will automatically add
 #' the appropriate entries to `.gitignore` and `.Rbuildignore` if needed.
 #'
+#' @docType class
 #' @keywords internal
-#' @aliases Token Token1.0 Token2.0
+#' @format An R6 class object.
 #' @export
-Token <- methods::setRefClass("Token",
-  fields = c("endpoint", "app", "credentials", "params", "cache_path"),
-  methods = list(
-    initialize = function(...) {
-      credentials <<- NULL
-      initFields(...)
-    },
-    init = function(force = FALSE) {
-      # Have already initialized?
-      if (!force && !is.null(credentials)) {
-        return(.self)
-      }
+#' @name Token-class
+Token <- R6::R6Class("Token", list(
+  endpoint = NULL,
+  app = NULL,
+  credentials = NULL,
+  params = NULL,
+  cache_path = FALSE,
 
-      # Have we computed in the past?
-      if (!force && load_from_cache()) {
-        return(.self)
-      }
+  initialize = function(app, endpoint, params = list(), credentials = NULL,
+                        cache_path = getOption("httr_oauth_cache")) {
+    stopifnot(
+      is.oauth_endpoint(endpoint) || !is.null(credentials),
+      is.oauth_app(app),
+      is.list(params)
+    )
 
-      # Otherwise use initialise from endpoint - need to use .self to
-      # force use of subclass methods
-      .self$init_credentials()
-      cache()
-    },
-    show = function() {
-      cat("<Token>\n", sep = "")
-      print(endpoint)
-      print(app)
-      cat("<credentials> ", paste0(names(credentials), collapse = ", "), "\n",
-        sep = "")
-      cat("---\n")
-    },
-    cache = function(path = cache_path) {
-      cache_token(.self, path)
-      .self
-    },
-    load_from_cache = function() {
-      if (is.null(cache_path)) return(FALSE)
+    self$app <- app
+    self$endpoint <- endpoint
+    self$params <- params
+    self$cache_path <- use_cache(cache_path)
 
-      cached <- fetch_cached_token(hash(), cache_path)
-      if (is.null(cached)) return(FALSE)
-
-      endpoint <<- cached$endpoint
-      app <<- cached$app
-      credentials <<- cached$credentials
-      params <<- cached$params
-      TRUE
-    },
-    hash = function() {
-      # endpoint = which site
-      # app = client identification
-      # params = scope
-      digest::digest(list(endpoint, app, params$scope))
-    },
-    sign = function() {
-      stop("Must be implemented by subclass", call. = FALSE)
-    },
-    refresh = function() {
-      stop("Must be implemented by subclass", call. = FALSE)
+    if (!is.null(credentials)) {
+      # Use credentials created elsewhere - usually for tests
+      self$credentials <- credentials
+      return(self)
     }
-  )
-)
+
+    # Are credentials cache already?
+    if (self$load_from_cache()) {
+      self
+    } else {
+      self$init_credentials()
+      self$cache()
+    }
+  },
+
+  print = function(...) {
+    cat("<Token>\n", sep = "")
+    print(self$endpoint)
+    print(self$app)
+    cat("<credentials> ", paste0(names(self$credentials), collapse = ", "), "\n",
+      sep = "")
+    cat("---\n")
+  },
+  cache = function(path = self$cache_path) {
+    cache_token(self, path)
+    self
+  },
+  load_from_cache = function() {
+    if (is.null(self$cache_path)) return(FALSE)
+
+    cached <- fetch_cached_token(self$hash(), self$cache_path)
+    if (is.null(cached)) return(FALSE)
+
+    self$endpoint <- cached$endpoint
+    self$app <- cached$app
+    self$credentials <- cached$credentials
+    self$params <- cached$params
+    TRUE
+  },
+  hash = function() {
+    # endpoint = which site
+    # app = client identification
+    # params = scope
+    digest::digest(list(self$endpoint, self$app, self$params$scope))
+  },
+  sign = function() {
+    stop("Must be implemented by subclass", call. = FALSE)
+  },
+  refresh = function() {
+    stop("Must be implemented by subclass", call. = FALSE)
+  },
+  init_credentials = function() {
+    stop("Must be implemented by subclass", call. = FALSE)
+  }
+))
 
 #' Generate an oauth1.0 token.
 #'
@@ -107,6 +122,8 @@ Token <- methods::setRefClass("Token",
 #' caching policies used to store credentials across sessions.
 #'
 #' @inheritParams init_oauth1.0
+#' @param as_header If \code{TRUE}, the default, sends oauth in header.
+#'   If \code{FALSE}, adds as parameter to url.
 #' @param cache A logical value or a string. \code{TRUE} means to cache
 #'   using the default cache file \code{.oauth-httr}, \code{FALSE} means
 #'   don't cache, and \code{NA} means to guess using some sensible heuristics.
@@ -115,16 +132,20 @@ Token <- methods::setRefClass("Token",
 #' @family OAuth
 #' @export
 oauth1.0_token <- function(endpoint, app, permission = NULL,
+                           as_header = TRUE,
                            cache = getOption("httr_oauth_cache")) {
-  params <- list(permission = permission)
-  new_token(Token1.0, endpoint, app, params, cache = cache)
+  params <- list(permission = permission, as_header = as_header)
+
+  Token1.0$new(app = app, endpoint = endpoint, params = params,
+    cache_path = cache)
 }
 
 #' @export
 #' @rdname Token-class
-Token1.0 <- setRefClass("Token1.0", contains = "Token", methods = list(
+Token1.0 <- R6::R6Class("Token1.0", inherit = Token, list(
   init_credentials = function(force = FALSE) {
-    credentials <<- init_oauth1.0(endpoint, app, permission = params$permission)
+    self$credentials <- init_oauth1.0(self$endpoint, self$app,
+      permission = self$params$permission)
   },
   can_refresh = function() {
     FALSE
@@ -133,9 +154,15 @@ Token1.0 <- setRefClass("Token1.0", contains = "Token", methods = list(
     stop("Not implemented")
   },
   sign = function(method, url) {
-    oauth <- oauth_signature(url, method, app, credentials$oauth_token,
-      credentials$oauth_token_secret)
-    list(url = url, config = oauth_header(oauth))
+    oauth <- oauth_signature(url, method, self$app, self$credentials$oauth_token,
+      self$credentials$oauth_token_secret)
+    if (isTRUE(self$params$as_header)) {
+      list(url = url, config = oauth_header(oauth))
+    } else {
+      url <- parse_url(url)
+      url$query <- c(url$query, oauth)
+      list(url = build_url(url), config = config())
+    }
   }
 ))
 
@@ -143,7 +170,7 @@ Token1.0 <- setRefClass("Token1.0", contains = "Token", methods = list(
 #'
 #' This is the final object in the OAuth dance - it encapsulates the app,
 #' the endpoint, other parameters and the received credentials. It is a
-#' reference class so that it can be seemlessly updated (e.g. using
+#' reference class so that it can be seamlessly updated (e.g. using
 #' \code{$refresh()}) when access expires.
 #'
 #' See \code{\link{Token}} for full details about the token object, and the
@@ -162,63 +189,101 @@ oauth2.0_token <- function(endpoint, app, scope = NULL, type = NULL,
                            cache = getOption("httr_oauth_cache")) {
   params <- list(scope = scope, type = type, use_oob = use_oob,
     as_header = as_header)
-  new_token(Token2.0, endpoint, app, params, cache = cache)
-}
-
-#' Generate and initialise new token.
-#'
-#' This is useful if you've created your own Token subclass - it initialises
-#' the token object in a standard way.
-#'
-#' @param params list of params
-#' @export
-#' @keywords internal
-#' @inheritParams init_oauth2.0
-#' @inheritParams oauth1.0_token
-new_token <- function(token, endpoint, app, params = list(),
-                      cache = getOption("httr_oauth_cache")) {
-  stopifnot(
-    is(token, "refClass"),
-    is.oauth_endpoint(endpoint),
-    is.oauth_app(app),
-    is.list(params))
-
-  cache_path <- use_cache(cache)
-
-  token(app = app, endpoint = endpoint, params = params,
-    cache_path = cache_path)$init()
+  Token2.0$new(app = app, endpoint = endpoint, params = params,
+    cache_path = cache)
 }
 
 #' @export
 #' @rdname Token-class
-Token2.0 <- setRefClass("Token2.0", contains = "Token", methods = list(
+Token2.0 <- R6::R6Class("Token2.0", inherit = Token, list(
   init_credentials = function() {
-    credentials <<- init_oauth2.0(endpoint, app, scope = params$scope,
-      type = params$type, use_oob = params$use_oob)
+    self$credentials <- init_oauth2.0(self$endpoint, self$app,
+      scope = self$params$scope, type = self$params$type,
+      use_oob = self$params$use_oob)
   },
   can_refresh = function() {
-    !is.null(credentials$refresh_token)
+    !is.null(self$credentials$refresh_token)
   },
   refresh = function() {
-    credentials <<- refresh_oauth2.0(endpoint, app, credentials)
-    cache()
-    .self
+    self$credentials <- refresh_oauth2.0(self$endpoint, self$app, self$credentials)
+    self$cache()
+    self
   },
   sign = function(method, url) {
-    if (params$as_header) {
-      config <- add_headers(Authorization =
-          paste('Bearer', credentials$access_token))
+    if (self$params$as_header) {
+      config <- add_headers(
+        Authorization = paste('Bearer', self$credentials$access_token)
+      )
       list(url = url, config = config)
     } else {
       url <- parse_url(url)
-      url$query$access_token <- credentials$access_token
+      url$query$access_token <- self$credentials$access_token
       list(url = build_url(url), config = config())
     }
   },
   validate = function() {
-    validate_oauth2.0(endpoint, credentials)
+    validate_oauth2.0(self$endpoint, self$credentials)
   },
   revoke = function() {
-    revoke_oauth2.0(endpoint, credentials)
+    revoke_oauth2.0(self$endpoint, self$credentials)
   }
+))
+
+
+#' Generate OAuth token for service accounts.
+#'
+#' Service accounts provide a way of using OAuth2 without user intervention.
+#' They instead assume that the server has access to a private key used
+#' to sign requests. The OAuth app is not needed for service accounts:
+#' that information is embedded in the account itself.
+#'
+#' @inheritParams oauth2.0_token
+#' @param secrets Secrets loaded from JSON file, downloaded from console.
+#' @family OAuth
+#' @export
+#' @examples
+#' \dontrun{
+#' endpoint <- oauth_endpoints("google")
+#' secrets <- jsonlite::fromJSON("~/Desktop/httrtest-45693cbfac92.json")
+#' scope <- "https://www.googleapis.com/auth/bigquery.readonly"
+#'
+#' token <- oauth_service_token(endpoint, secrets, scope)
+#' }
+oauth_service_token <- function(endpoint, secrets, scope = NULL) {
+  TokenServiceAccount$new(
+    endpoint = endpoint,
+    secrets = secrets,
+    params = list(scope = scope)
+  )
+}
+
+#' @export
+#' @rdname Token-class
+TokenServiceAccount <- R6::R6Class("TokenServiceAccount", inherit = Token2.0, list(
+  secrets = NULL,
+  initialize = function(endpoint, secrets, params) {
+    self$endpoint <- endpoint
+    self$secrets <- secrets
+    self$params <- params
+
+    self$refresh()
+  },
+  can_refresh = function() {
+    TRUE
+  },
+  refresh = function() {
+    self$credentials <- init_oauth_service_account(self$endpoint, self$secrets,
+      self$params$scope)
+    self
+  },
+  sign = function(method, url) {
+    config <- add_headers(
+      Authorization = paste('Bearer', self$access_token)
+    )
+    list(url = url, config = config)
+  },
+
+  # Never cache
+  cache = function(path) self,
+  load_from_cache = function() self
 ))

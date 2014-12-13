@@ -36,7 +36,6 @@
 #' POST(b2, body = NULL, verbose())
 #' POST(b2, body = FALSE, verbose())
 #' POST(b2, body = "", verbose())
-#'
 POST <- function(url = NULL, config = list(), ..., body = NULL,
                  encode = c("multipart", "form", "json"),
                  multipart = TRUE, handle = NULL) {
@@ -51,5 +50,6 @@ POST <- function(url = NULL, config = list(), ..., body = NULL,
   hu <- handle_url(handle, url, ...)
   config <- make_config(config, ...)
 
-  make_request("post", hu$handle, hu$url, config, body_config(body, encode))
+  make_request("post", hu$handle, hu$url, config,
+               body_config(body, encode))
 }

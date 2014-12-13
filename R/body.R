@@ -1,4 +1,4 @@
-body_config <- function(body = NULL, encode = "form")  {
+body_config <- function(body = NULL, encode = "form", type = NULL)  {
   # Post without body
   if (is.null(body)) return(body_raw(raw()))
 
@@ -7,21 +7,22 @@ body_config <- function(body = NULL, encode = "form")  {
 
   # For character/raw, send raw bytes
   if (is.character(body) || is.raw(body)) {
-    return(body_raw(body))
+    return(body_raw(body, type = type))
   }
 
   # Send single file lazily
   if (inherits(body, "FileUploadInfo")) {
     con <- file(body$filename, "rb")
     # FIXME: also need to close when done
-    mime_type <- body$contentType %||% guess_media(body$filename)
+    mime_type <- body$contentType %||%
+      mime::guess_type(body$filename, empty = NULL)
     size <- file.info(body$filename)$size
 
     return(body_httr(
       post = TRUE,
       readfunction = function(nbytes, ...) readBin(con, "raw", nbytes),
       postfieldsize = size,
-      httpheader = c("Content-type" = mime_type)
+      type = mime_type
     ))
   }
 
@@ -62,9 +63,9 @@ body_rcurl <- function(body = NULL, style = NULL) {
   )
 }
 
-body_httr <- function(...) {
+body_httr <- function(..., type = NULL) {
   list(
-    config = config(...),
+    config = c(config(...), content_type(type)),
     curl_post = FALSE
   )
 }
@@ -78,7 +79,8 @@ body_raw <- function(body, type = NULL) {
     post = TRUE,
     postfieldsize = length(body),
     postfields = body,
-    httpheader = c("Content-type" = type %||% "")
+    type = type %||% "" # For raw bodies, override default POST content-type
   )
+
   base
 }
