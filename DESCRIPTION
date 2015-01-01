@@ -1,5 +1,5 @@
 Package: httr
-Version: 0.6.0
+Version: 0.6.1
 Title: Tools for Working with URLs and HTTP
 Description: Useful tools for working with HTTP organised by HTTP verbs
     (GET(), POST(), etc). Configuration functions make it easy to control
@@ -16,10 +16,10 @@ Suggests: base64enc, httpuv, jpeg, knitr, PKI (>= 0.1-2), png, testthat
 VignetteBuilder: knitr
 License: MIT + file LICENSE
 URL: https://github.com/hadley/httr
-Packaged: 2014-12-13 14:35:35 UTC; hadley
+Packaged: 2014-12-31 20:19:10 UTC; hadley
 Author: Hadley Wickham [cre, aut, cph],
   RStudio [cph]
 Maintainer: Hadley Wickham <hadley@rstudio.com>
 NeedsCompilation: yes
 Repository: CRAN
-Date/Publication: 2014-12-13 17:57:49
+Date/Publication: 2015-01-01 05:49:55

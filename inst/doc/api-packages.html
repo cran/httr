@@ -292,15 +292,15 @@ if (has_pat()) {
 #&gt;   ..$ core  :List of 3
 #&gt;   .. ..$ limit    : int 5000
 #&gt;   .. ..$ remaining: int 5000
-#&gt;   .. ..$ reset    : int 1418484931
+#&gt;   .. ..$ reset    : int 1420060747
 #&gt;   ..$ search:List of 3
 #&gt;   .. ..$ limit    : int 30
 #&gt;   .. ..$ remaining: int 30
-#&gt;   .. ..$ reset    : int 1418481391
+#&gt;   .. ..$ reset    : int 1420057207
 #&gt;  $ rate     :List of 3
 #&gt;   ..$ limit    : int 5000
 #&gt;   ..$ remaining: int 5000
-#&gt;   ..$ reset    : int 1418484931
+#&gt;   ..$ reset    : int 1420060747
 </code></pre>
 
 <p>After getting the first version getting working, you&#39;ll often want to polish the output to be more user friendly. For this example, we can parse the unix timestamps into more useful date types.</p>
@@ -317,7 +317,7 @@ if (has_pat()) {
 if (has_pat()) {
   rate_limit()
 }
-#&gt; 5000 / 5000 (Reset 09:35:31)
+#&gt; 5000 / 5000 (Reset 15:19:07)
 </code></pre>
 
 <p>Depending on the complexity of the API, you might want to keep separate the functions that return a request object and the functions that parse it into a useful R object.</p>

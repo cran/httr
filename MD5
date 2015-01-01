@@ -1,4 +1,4 @@
-e51b714f3ba1ef650ed7e7e2efa17710 *DESCRIPTION
+8bbc8801731d332fec7084990915c54a *DESCRIPTION
 d8d2f9bd4836cd6c839888295d3b1da5 *LICENSE
 d59d864863481d8288c5138a5804eaa4 *NAMESPACE
 32939d876d2b3d4515f160692634989a *R/authenticate.r
@@ -6,7 +6,7 @@ d59d864863481d8288c5138a5804eaa4 *NAMESPACE
 f92e0866bb646df6650fe28e57a5167d *R/cache.R
 883c37abdc97bde887abeda8a83b87a1 *R/config.r
 38bb5b2e7a2fab546c5a3eb9ecf990cc *R/content-parse.r
-44ae1e2b0c3f2acb030a2f79a50126b7 *R/content.r
+5a3cbc08d429704e5f7e324b6902bb38 *R/content.r
 2ade4f2e90599236612869e6b7c40a68 *R/cookies.r
 2ca8b65f19d27ae984ed4e1ad295112e *R/date.R
 a1d38aad98deafa4becdcc6c858a12ca *R/doctor.R
@@ -40,13 +40,13 @@ b3b994512e380bd09da1d20fbb4af116 *R/oauth-refresh.R
 2e92483d7fe81bf0516c8ee0170a6cb8 *R/oauth-signature.r
 92de85f0fff3463c39d5d3d27d46cb80 *R/oauth-token-utils.R
 38577b54b84bacaaa1677c2513c744dc *R/oauth-token.r
-81ff038252f88c3fe32ab9660db3d28d *R/perform.R
+c8fe30ac859ff4f41deaaf49400d1aa2 *R/perform.R
 5f0254f018b1239703b991c53d85a6b1 *R/progress.R
 3b1a3d26ad2665abebb621a0e9ff72ff *R/proxy.r
 686399ff914ea5c4a38712b91bc22ca1 *R/response-status.r
 ef9dffd88bf7152f1ae659adcd03c0d5 *R/response.r
 6319d202f74d23a110544170472549f0 *R/safe-callback.R
-530af87fc367cb36960380acfaf4bb84 *R/timeout.r
+f3317d3bdaf8950d5a2fb4411e5bed17 *R/timeout.r
 632cefefde45a7200b3c84a242f7d115 *R/upload-file.r
 5ecf1dd0ab82390bcbe54b801a89b13f *R/url-query.r
 7150eb313017f1f34a02379e409c1d0a *R/url.r
@@ -66,14 +66,14 @@ fc66ca80db42b950853d0b036128141b *demo/connection-sharing.r
 a18a0a6f70b3af4abc94f5c55cb41cd1 *demo/oauth2-facebook.r
 57896b012c686ab26e0790c6b2646733 *demo/oauth2-github.r
 526a143b8db48c686cd8cd6f7d008b4d *demo/oauth2-google.r
-40766c007e34ae10248727b8581c3d41 *demo/oauth2-linkedin.r
+5397d6a4d7fa89918a1863db83a44471 *demo/oauth2-linkedin.r
 f362813cd75967fa3096c00e5cf67914 *inst/cacert.pem
 150ce7d40e7b9a0260f5143c3234292e *inst/doc/api-packages.R
 56479ae887eb37634740ba539a3c1703 *inst/doc/api-packages.Rmd
-60a6ae4619e2bedc52a609051aca002a *inst/doc/api-packages.html
+d276668ab54f969de9aa18f5395137d3 *inst/doc/api-packages.html
 b732836c6502a97f740f94717ba2f7fa *inst/doc/quickstart.R
 62ad5df92184b95f31c33b45d02c2a0a *inst/doc/quickstart.Rmd
-681031eb17b544ce4fe3ab26e2226ee7 *inst/doc/quickstart.html
+a67d68ec2ff5aebc307fef0b194cd771 *inst/doc/quickstart.html
 100eac59ddbb099cde5561b4e462192e *man/BROWSE.Rd
 5702b17c7b67a7ebbedbabf9148ad411 *man/DELETE.Rd
 e133931930f3050600a9bdac3a5f0e56 *man/GET.Rd
@@ -128,7 +128,7 @@ deccfade970f041c518501ffbc20bbf4 *man/set_config.Rd
 6a637af61236952c249cc3887cdd3a2d *man/set_cookies.Rd
 b46c2e34d343893cdc1b3c792e5241dd *man/sign_oauth.Rd
 23b780084a304a6fd71ee728898e4363 *man/status_code.Rd
-9bd4508a021c397407d32eb913b4bc67 *man/timeout.Rd
+4cdf0183464c3dd16f080e1ff549d8ce *man/timeout.Rd
 7be68890e96a0f24a5ef60c2b7f85375 *man/upload_file.Rd
 5bbfa6d227dce32df13c5c6524017176 *man/url_ok.Rd
 10b37181513d64f056addcd065e847a4 *man/url_success.Rd
@@ -145,7 +145,7 @@ abb2cb8b2f1684cc2720495b355b8e27 *src/writer.c
 ed44c3ceaf0567575ce1e68664cb4680 *tests/testthat/test-body.r
 ed0d36979d764d268077846d80c17309 *tests/testthat/test-config.r
 58a58ba3b2983d2d0c8caa275ce5d1d1 *tests/testthat/test-content.R
-6a1e3b71164dcefaafcc911d9712277e *tests/testthat/test-header.r
+59cfbc24ccac6249409d9b0b842b43e8 *tests/testthat/test-header.r
 ea6398221aa38f6f4a9c377095f91cda *tests/testthat/test-oauth-cache.R
 7fa4a34484297c793143601f81d2f211 *tests/testthat/test-oauth-listener.R
 1bf1e458091b159d93d75518c9939bb7 *tests/testthat/test-oauth-server-side.R
