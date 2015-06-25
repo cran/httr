@@ -208,7 +208,7 @@ hr {
 
 <h1>Best practices for writing an API package</h1>
 
-<p>This document collects best practices for writing a package that connects to an web API. The goal is to help you produce a package that is safe, secure and keeps working in the long run.</p>
+<p>This document collects best practices for writing a package that connects to a web API. The goal is to help you produce a package that is safe, secure and keeps working in the long run.</p>
 
 <p>If you&#39;re new to working with web APIs, start by reading &ldquo;<a href="https://zapier.com/learn/apis">An introduction to APIs</a>&rdquo; by zapier.</p>
 
@@ -229,7 +229,7 @@ hr {
 
 <pre><code class="r">github_GET &lt;- function(path, ..., pat = github_pat()) {
   auth &lt;- github_auth(pat)
-  req &lt;- GET(&quot;https://api.github.com/&quot;, path = path, auth, ...)
+  req &lt;- GET(&quot;https://api.github.com&quot;, path = path, auth, ...)
   github_check(req)
 
   req
@@ -241,7 +241,7 @@ github_POST &lt;- function(path, body, ..., pat = github_pat()) {
   stopifnot(is.list(body))
   body_json &lt;- jsonlite::toJSON(body)
 
-  req &lt;- POST(&quot;https://api.github.com/&quot;, path = path, body = body_json,
+  req &lt;- POST(&quot;https://api.github.com&quot;, path = path, body = body_json,
     auth, post, ...)
   github_check(req)
 
@@ -264,7 +264,7 @@ github_check &lt;- function(req) {
 
 github_parse &lt;- function(req) {
   text &lt;- content(req, as = &quot;text&quot;)
-  if (identical(text, &quot;&quot;)) stop(&quot;Not output to parse&quot;, call. = FALSE)
+  if (identical(text, &quot;&quot;)) stop(&quot;No output to parse&quot;, call. = FALSE)
   jsonlite::fromJSON(text, simplifyVector = FALSE)
 }
 
@@ -291,16 +291,16 @@ if (has_pat()) {
 #&gt;  $ resources:List of 2
 #&gt;   ..$ core  :List of 3
 #&gt;   .. ..$ limit    : int 5000
-#&gt;   .. ..$ remaining: int 5000
-#&gt;   .. ..$ reset    : int 1420060747
+#&gt;   .. ..$ remaining: int 4994
+#&gt;   .. ..$ reset    : int 1435178417
 #&gt;   ..$ search:List of 3
 #&gt;   .. ..$ limit    : int 30
 #&gt;   .. ..$ remaining: int 30
-#&gt;   .. ..$ reset    : int 1420057207
+#&gt;   .. ..$ reset    : int 1435178206
 #&gt;  $ rate     :List of 3
 #&gt;   ..$ limit    : int 5000
-#&gt;   ..$ remaining: int 5000
-#&gt;   ..$ reset    : int 1420060747
+#&gt;   ..$ remaining: int 4994
+#&gt;   ..$ reset    : int 1435178417
 </code></pre>
 
 <p>After getting the first version getting working, you&#39;ll often want to polish the output to be more user friendly. For this example, we can parse the unix timestamps into more useful date types.</p>
@@ -317,7 +317,7 @@ if (has_pat()) {
 if (has_pat()) {
   rate_limit()
 }
-#&gt; 5000 / 5000 (Reset 15:19:07)
+#&gt; 4994 / 5000 (Reset 16:40:17)
 </code></pre>
 
 <p>Depending on the complexity of the API, you might want to keep separate the functions that return a request object and the functions that parse it into a useful R object.</p>
@@ -345,7 +345,7 @@ if (has_pat()) {
 
 <pre><code class="r">github_parse &lt;- function(req) {
   text &lt;- content(req, as = &quot;text&quot;)
-  if (identical(text, &quot;&quot;)) stop(&quot;Not output to parse&quot;, call. = FALSE)
+  if (identical(text, &quot;&quot;)) stop(&quot;No output to parse&quot;, call. = FALSE)
   jsonlite::fromJSON(text, simplifyVector = FALSE)
 }
 </code></pre>
@@ -367,11 +367,10 @@ access the data. See <code>oauth2.0_token()</code>. It&#39;s ok to publish api k
 since it requires the most information.</p>
 
 <pre><code class="r">authenticate(&quot;username&quot;, &quot;password&quot;)
-#&gt; Config: 
-#&gt; List of 2
-#&gt;  $ httpauth:1
-#&gt;   ..- attr(*, &quot;names&quot;)=&quot;basic&quot;
-#&gt;  $ userpwd :&quot;username:password&quot;
+#&gt; &lt;request&gt;
+#&gt; Options:
+#&gt; * httpauth: 1
+#&gt; * userpwd: username:password
 </code></pre></li>
 <li><p>HTTP basic auth with API key. An alternative provided by increasing number
 of APIs - instead of using a username and password intimately associated
@@ -380,15 +379,14 @@ can be independently deactivated. Often the password is left blank or set
 to a prespecified value.</p>
 
 <pre><code class="r">authenticate(&quot;ddfa3d40d5855d6ba76b7003fd4&quot;, &quot;&quot;)
-#&gt; Config: 
-#&gt; List of 2
-#&gt;  $ httpauth:1
-#&gt;   ..- attr(*, &quot;names&quot;)=&quot;basic&quot;
-#&gt;  $ userpwd :&quot;ddfa3d40d5855d6ba76b7003fd4:&quot;
+#&gt; &lt;request&gt;
+#&gt; Options:
+#&gt; * httpauth: 1
+#&gt; * userpwd: ddfa3d40d5855d6ba76b7003fd4:
 </code></pre></li>
 </ul>
 
-<p>You also need some way to preserve user credentials so that they don&#39;t need to be re-entered multiple times. If you use OAuth, httr will take care of this for. For other use cases, I recommend using environment variables. The following function retrieves your PAT from an environmental variable called <code>GITHUB_PAT</code>, telling you how it set it if not. The devtools package needs to access your github personal access token to install packages from private repos.</p>
+<p>You also need some way to preserve user credentials so that they don&#39;t need to be re-entered multiple times. If you use OAuth, httr will take care of this for. For other use cases, I recommend using environment variables. The following function retrieves your PAT from an environmental variable called <code>GITHUB_PAT</code>, telling you how to set it if not. The devtools package needs to access your github personal access token to install packages from private repos.</p>
 
 <pre><code class="r">github_pat &lt;- function(force = FALSE) {
   env &lt;- Sys.getenv(&#39;GITHUB_PAT&#39;)

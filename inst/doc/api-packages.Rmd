@@ -10,7 +10,7 @@ knitr::opts_chunk$set(comment = "#>", collapse = TRUE)
 
 # Best practices for writing an API package
 
-This document collects best practices for writing a package that connects to an web API. The goal is to help you produce a package that is safe, secure and keeps working in the long run.
+This document collects best practices for writing a package that connects to a web API. The goal is to help you produce a package that is safe, secure and keeps working in the long run.
 
 If you're new to working with web APIs, start by reading "[An introduction to APIs](https://zapier.com/learn/apis)" by zapier.
 
@@ -30,7 +30,7 @@ We start with functions to execute `GET` and `POST` requests:
 ```{r}
 github_GET <- function(path, ..., pat = github_pat()) {
   auth <- github_auth(pat)
-  req <- GET("https://api.github.com/", path = path, auth, ...)
+  req <- GET("https://api.github.com", path = path, auth, ...)
   github_check(req)
 
   req
@@ -42,7 +42,7 @@ github_POST <- function(path, body, ..., pat = github_pat()) {
   stopifnot(is.list(body))
   body_json <- jsonlite::toJSON(body)
 
-  req <- POST("https://api.github.com/", path = path, body = body_json,
+  req <- POST("https://api.github.com", path = path, body = body_json,
     auth, post, ...)
   github_check(req)
 
@@ -66,7 +66,7 @@ github_check <- function(req) {
 
 github_parse <- function(req) {
   text <- content(req, as = "text")
-  if (identical(text, "")) stop("Not output to parse", call. = FALSE)
+  if (identical(text, "")) stop("No output to parse", call. = FALSE)
   jsonlite::fromJSON(text, simplifyVector = FALSE)
 }
 
@@ -136,7 +136,7 @@ When you get an error, often the body of the request will contain some useful in
 ```{r}
 github_parse <- function(req) {
   text <- content(req, as = "text")
-  if (identical(text, "")) stop("Not output to parse", call. = FALSE)
+  if (identical(text, "")) stop("No output to parse", call. = FALSE)
   jsonlite::fromJSON(text, simplifyVector = FALSE)
 }
 ```
@@ -172,7 +172,7 @@ The most common forms of authentication are OAuth and http basic auth:
     authenticate("ddfa3d40d5855d6ba76b7003fd4", "")
     ```
 
-You also need some way to preserve user credentials so that they don't need to be re-entered multiple times. If you use OAuth, httr will take care of this for. For other use cases, I recommend using environment variables. The following function retrieves your PAT from an environmental variable called `GITHUB_PAT`, telling you how it set it if not. The devtools package needs to access your github personal access token to install packages from private repos.
+You also need some way to preserve user credentials so that they don't need to be re-entered multiple times. If you use OAuth, httr will take care of this for. For other use cases, I recommend using environment variables. The following function retrieves your PAT from an environmental variable called `GITHUB_PAT`, telling you how to set it if not. The devtools package needs to access your github personal access token to install packages from private repos.
 
 ```{r}
 github_pat <- function(force = FALSE) {

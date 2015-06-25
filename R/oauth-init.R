@@ -50,6 +50,7 @@ init_oauth1.0 <- function(endpoint, app, permission = NULL,
 #'     Otherwise, provide a URL to the user and prompt for a validation
 #'     code. Defaults to the of the \code{"httr_oob_default"} default,
 #'     or \code{TRUE} if \code{httpuv} is not installed.
+#' @param is_interactive Is the current environment interactive?
 #' @export
 #' @keywords internal
 init_oauth2.0 <- function(endpoint, app, scope = NULL, type = NULL,

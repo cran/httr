@@ -1,11 +1,11 @@
-## ----, echo = FALSE------------------------------------------------------
+## ---- echo = FALSE-------------------------------------------------------
 library(httr)
 knitr::opts_chunk$set(comment = "#>", collapse = TRUE)
 
 ## ------------------------------------------------------------------------
 github_GET <- function(path, ..., pat = github_pat()) {
   auth <- github_auth(pat)
-  req <- GET("https://api.github.com/", path = path, auth, ...)
+  req <- GET("https://api.github.com", path = path, auth, ...)
   github_check(req)
 
   req
@@ -17,7 +17,7 @@ github_POST <- function(path, body, ..., pat = github_pat()) {
   stopifnot(is.list(body))
   body_json <- jsonlite::toJSON(body)
 
-  req <- POST("https://api.github.com/", path = path, body = body_json,
+  req <- POST("https://api.github.com", path = path, body = body_json,
     auth, post, ...)
   github_check(req)
 
@@ -38,7 +38,7 @@ github_check <- function(req) {
 
 github_parse <- function(req) {
   text <- content(req, as = "text")
-  if (identical(text, "")) stop("Not output to parse", call. = FALSE)
+  if (identical(text, "")) stop("No output to parse", call. = FALSE)
   jsonlite::fromJSON(text, simplifyVector = FALSE)
 }
 
@@ -82,7 +82,7 @@ github_parse <- function(req) {
 ## ------------------------------------------------------------------------
 github_parse <- function(req) {
   text <- content(req, as = "text")
-  if (identical(text, "")) stop("Not output to parse", call. = FALSE)
+  if (identical(text, "")) stop("No output to parse", call. = FALSE)
   jsonlite::fromJSON(text, simplifyVector = FALSE)
 }
 

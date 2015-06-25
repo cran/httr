@@ -1,4 +1,4 @@
-## ----, echo = FALSE------------------------------------------------------
+## ---- echo = FALSE-------------------------------------------------------
 library(httr)
 knitr::opts_chunk$set(comment = "#>", collapse = TRUE)
 
@@ -30,13 +30,13 @@ stop_for_status(r)
 r <- GET("http://httpbin.org/get")
 content(r, "text")
 
-## ----, eval = FALSE------------------------------------------------------
+## ---- eval = FALSE-------------------------------------------------------
 #  content(r, "text", encoding = "ISO-8859-1")
 
 ## ------------------------------------------------------------------------
 content(r, "raw")
 
-## ----, eval = FALSE------------------------------------------------------
+## ---- eval = FALSE-------------------------------------------------------
 #  bin <- content(r, "raw")
 #  writeBin(bin, "myfile.txt")
 
@@ -92,12 +92,12 @@ r <- POST(url, body = body, encode = "multipart")
 # JSON encoded
 r <- POST(url, body = body, encode = "json")
 
-## ----, eval = FALSE------------------------------------------------------
+## ---- eval = FALSE-------------------------------------------------------
 #  POST(url, body = body, encode = "multipart", verbose()) # the default
 #  POST(url, body = body, encode = "form", verbose())
 #  POST(url, body = body, encode = "json", verbose())
 
-## ----, eval = FALSE------------------------------------------------------
+## ---- eval = FALSE-------------------------------------------------------
 #  POST(url, body = upload_file("mypath.txt"))
 #  POST(url, body = list(x = upload_file("mypath.txt")))
 

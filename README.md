@@ -1,6 +1,8 @@
 # httr
 
 [![Build Status](https://travis-ci.org/hadley/httr.png?branch=master)](https://travis-ci.org/hadley/httr)
+[![Coverage Status](https://img.shields.io/codecov/c/github/hadley/httr/master.svg)](https://codecov.io/github/hadley/httr?branch=master)
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/httr)](http://cran.r-project.org/web/packages/httr)
 
 The aim of httr is to provide a wrapper for RCurl customised to the demands of modern web APIs.
 
@@ -27,7 +29,7 @@ Key features:
   `verbose()`, `timeout()`, `content_type()`, `accept()`, `progress()`.
 
 * Support for OAuth 1.0 and 2.0 with `oauth1.0_token()` and `oauth2.0_token()`.
-  The demos directory has eight OAuth demos: four for 1.0 (twitter, vimeo,
+  The demo directory has eight OAuth demos: four for 1.0 (twitter, vimeo,
   withings and yahoo) and four for 2.0 (facebook, github, google, linkedin). 
   OAuth credentials are automatically cached within a project. 
 
@@ -53,7 +55,7 @@ devtools::install_github("hadley/httr")
 httr includes a recent [CA certificate bundle](http://curl.haxx.se/docs/caextract.html) from mozilla.org. Run this code to update the package:
 
 ```r
-GET("https://raw.githubusercontent.com/bagder/ca-bundle/e9175fec5d0c4d42de24ed6d84a06d504d5e5a09/ca-bundle.crt",
+GET("https://github.com/bagder/ca-bundle/raw/e9175fec5d0c4d42de24ed6d84a06d504d5e5a09/ca-bundle.crt",
   write_disk("inst/cacert.pem", overwrite = TRUE))
 ```
 
