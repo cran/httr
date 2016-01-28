@@ -44,8 +44,10 @@ Token <- R6::R6Class("Token", list(
   credentials = NULL,
   params = NULL,
   cache_path = FALSE,
+  private_key = NULL,
 
   initialize = function(app, endpoint, params = list(), credentials = NULL,
+                        private_key = NULL,
                         cache_path = getOption("httr_oauth_cache")) {
     stopifnot(
       is.oauth_endpoint(endpoint) || !is.null(credentials),
@@ -57,6 +59,7 @@ Token <- R6::R6Class("Token", list(
     self$endpoint <- endpoint
     self$params <- params
     self$cache_path <- use_cache(cache_path)
+    self$private_key <- private_key
 
     if (!is.null(credentials)) {
       # Use credentials created elsewhere - usually for tests
@@ -101,7 +104,10 @@ Token <- R6::R6Class("Token", list(
     # endpoint = which site
     # app = client identification
     # params = scope
-    digest::digest(list(self$endpoint, self$app, self$params$scope))
+    msg <- serialize(list(self$endpoint, self$app, self$params$scope), NULL)
+
+    # for compatibility with digest::digest()
+    paste(openssl::md5(msg[-(1:14)]), collapse = "")
   },
   sign = function() {
     stop("Must be implemented by subclass", call. = FALSE)
@@ -134,11 +140,12 @@ Token <- R6::R6Class("Token", list(
 #' @export
 oauth1.0_token <- function(endpoint, app, permission = NULL,
                            as_header = TRUE,
+                           private_key = NULL,
                            cache = getOption("httr_oauth_cache")) {
   params <- list(permission = permission, as_header = as_header)
 
   Token1.0$new(app = app, endpoint = endpoint, params = params,
-    cache_path = cache)
+    private_key = private_key, cache_path = cache)
 }
 
 #' @export
@@ -146,7 +153,7 @@ oauth1.0_token <- function(endpoint, app, permission = NULL,
 Token1.0 <- R6::R6Class("Token1.0", inherit = Token, list(
   init_credentials = function(force = FALSE) {
     self$credentials <- init_oauth1.0(self$endpoint, self$app,
-      permission = self$params$permission)
+      permission = self$params$permission, private_key = self$private_key)
   },
   can_refresh = function() {
     FALSE
@@ -156,7 +163,7 @@ Token1.0 <- R6::R6Class("Token1.0", inherit = Token, list(
   },
   sign = function(method, url) {
     oauth <- oauth_signature(url, method, self$app, self$credentials$oauth_token,
-      self$credentials$oauth_token_secret)
+      self$credentials$oauth_token_secret, self$private_key)
     if (isTRUE(self$params$as_header)) {
       c(request(url = url), oauth_header(oauth))
     } else {
@@ -178,18 +185,23 @@ Token1.0 <- R6::R6Class("Token1.0", inherit = Token, list(
 #' caching policies used to store credentials across sessions.
 #'
 #' @inheritParams init_oauth2.0
-#' @param as_header If \code{TRUE}, the default, sends oauth in bearer header.
-#'   If \code{FALSE}, adds as parameter to url.
+#' @param as_header If \code{TRUE}, the default, configures the token to add
+#'   itself to the bearer header of subsequent requests. If \code{FALSE},
+#'   configures the token to add itself as a url parameter of subsequent
+#'   requests.
 #' @inheritParams oauth1.0_token
 #' @return A \code{Token2.0} reference class (RC) object.
 #' @family OAuth
 #' @export
-oauth2.0_token <- function(endpoint, app, scope = NULL, type = NULL,
-                           use_oob = getOption("httr_oob_default"),
+oauth2.0_token <- function(endpoint, app, scope = NULL, user_params = NULL,
+                           type = NULL, use_oob = getOption("httr_oob_default"),
                            as_header = TRUE,
+                           use_basic_auth = FALSE,
                            cache = getOption("httr_oauth_cache")) {
-  params <- list(scope = scope, type = type, use_oob = use_oob,
-    as_header = as_header)
+  params <- list(scope = scope, user_params = user_params, type = type,
+      use_oob = use_oob, as_header = as_header,
+      use_basic_auth = use_basic_auth)
+
   Token2.0$new(app = app, endpoint = endpoint, params = params,
     cache_path = cache)
 }
@@ -199,15 +211,22 @@ oauth2.0_token <- function(endpoint, app, scope = NULL, type = NULL,
 Token2.0 <- R6::R6Class("Token2.0", inherit = Token, list(
   init_credentials = function() {
     self$credentials <- init_oauth2.0(self$endpoint, self$app,
-      scope = self$params$scope, type = self$params$type,
-      use_oob = self$params$use_oob)
+      scope = self$params$scope, user_params = self$params$user_params,
+      type = self$params$type, use_oob = self$params$use_oob,
+      use_basic_auth = self$params$use_basic_auth)
   },
   can_refresh = function() {
     !is.null(self$credentials$refresh_token)
   },
   refresh = function() {
-    self$credentials <- refresh_oauth2.0(self$endpoint, self$app, self$credentials)
-    self$cache()
+    cred <- refresh_oauth2.0(self$endpoint, self$app,
+        self$credentials, self$params$user_params)
+    if (is.null(cred)) {
+      remove_cached_token(self)
+    } else {
+      self$credentials <- cred
+      self$cache()
+    }
     self
   },
   sign = function(method, url) {
@@ -250,6 +269,13 @@ Token2.0 <- R6::R6Class("Token2.0", inherit = Token, list(
 #' token <- oauth_service_token(endpoint, secrets, scope)
 #' }
 oauth_service_token <- function(endpoint, secrets, scope = NULL) {
+  if (!is.oauth_endpoint(endpoint))
+    stop("`endpoint` must be an OAuth endpoint", call. = FALSE)
+  if (!is.list(secrets))
+    stop("`secrets` must be a list.", call. = FALSE)
+  if (!is.null(scope) && !(is.character(scope) && length(scope) == 1))
+    stop("`scope` must be a length 1 character vector.", call. = FALSE)
+
   TokenServiceAccount$new(
     endpoint = endpoint,
     secrets = secrets,
@@ -272,15 +298,14 @@ TokenServiceAccount <- R6::R6Class("TokenServiceAccount", inherit = Token2.0, li
     TRUE
   },
   refresh = function() {
-    self$credentials <- init_oauth_service_account(self$endpoint, self$secrets,
-      self$params$scope)
+    self$credentials <- init_oauth_service_account(self$secrets, self$params$scope)
     self
   },
   sign = function(method, url) {
     config <- add_headers(
       Authorization = paste('Bearer', self$credentials$access_token)
     )
-    list(url = url, config = config)
+    request_build(method = method, url = url, config)
   },
 
   # Never cache

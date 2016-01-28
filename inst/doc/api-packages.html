@@ -291,16 +291,16 @@ if (has_pat()) {
 #&gt;  $ resources:List of 2
 #&gt;   ..$ core  :List of 3
 #&gt;   .. ..$ limit    : int 5000
-#&gt;   .. ..$ remaining: int 4994
-#&gt;   .. ..$ reset    : int 1435178417
+#&gt;   .. ..$ remaining: int 4998
+#&gt;   .. ..$ reset    : int 1453912875
 #&gt;   ..$ search:List of 3
 #&gt;   .. ..$ limit    : int 30
 #&gt;   .. ..$ remaining: int 30
-#&gt;   .. ..$ reset    : int 1435178206
+#&gt;   .. ..$ reset    : int 1453909664
 #&gt;  $ rate     :List of 3
 #&gt;   ..$ limit    : int 5000
-#&gt;   ..$ remaining: int 4994
-#&gt;   ..$ reset    : int 1435178417
+#&gt;   ..$ remaining: int 4998
+#&gt;   ..$ reset    : int 1453912875
 </code></pre>
 
 <p>After getting the first version getting working, you&#39;ll often want to polish the output to be more user friendly. For this example, we can parse the unix timestamps into more useful date types.</p>
@@ -317,7 +317,7 @@ if (has_pat()) {
 if (has_pat()) {
   rate_limit()
 }
-#&gt; 4994 / 5000 (Reset 16:40:17)
+#&gt; 4998 / 5000 (Reset 08:41:15)
 </code></pre>
 
 <p>Depending on the complexity of the API, you might want to keep separate the functions that return a request object and the functions that parse it into a useful R object.</p>
@@ -414,24 +414,36 @@ to a prespecified value.</p>
 
 <p>Encourage your users to store their important information once (see below), rather than typing it into the console - it&#39;s easy to accidentally publish your <code>.Rhistory</code> and you don&#39;t want it to contain private data.</p>
 
+<h3>Vignettes</h3>
+
+<p>Including authentication requiring code in your vignettes is challenging, because you don&#39;t want to bundle your own credentials with the package! However, you can take advantage of the fact that the vignette is built locally, and only checked by CRAN with this idea from Jenny Bryan:</p>
+
+<p>In an setup chunk, do:</p>
+
+<pre><code class="r">NOT_CRAN &lt;- identical(tolower(Sys.getenv(&quot;NOT_CRAN&quot;)), &quot;true&quot;)
+knitr::opts_chunk$set(purl = NOT_CRAN)
+</code></pre>
+
+<p>And then use <code>eval = NOT_CRAN</code> as needed as a chunk option.</p>
+
 <h2>Appendix: API key best practices</h2>
 
 <p>If your package supports an authentication workflow based on an API key or token, encourage users to store it in an environment variable. We illustrate this using the <a href="https://github.com/cscheid/rgithub"><code>github</code> R package</a>, which wraps the Github v3 API. Tailor this template to your API + package and include in <code>README.md</code> or a vignette.</p>
 
 <ol>
 <li><p>Create a personal access token in the 
-<a href="https://github.com/settings/applications">Applications area</a> of your GitHub
-personal settings. Copy token to the clipboard.</p></li>
+<a href="https://github.com/settings/tokens">Personal access tokens area</a> of your
+GitHub personal settings. Copy token to the clipboard.</p></li>
 <li><p>Identify your home directory. Not sure? Enter <code>normalizePath(&quot;~/&quot;)</code> in 
 the R console.</p></li>
 <li><p>Create a new text file. If in RStudio, do <em>File &gt; New File &gt; Text file.</em></p></li>
 <li><p>Create a line like this:</p>
 
-<pre><code class="bash">GITHUB_TOKEN=blahblahblahblahblahblah
+<pre><code class="bash">GITHUB_PAT=blahblahblahblahblahblah
 </code></pre>
 
-<p>where the name <code>GITHUB_TOKEN</code> reminds you which API this is for and 
-<code>blahblahblahblahblahblah</code> is your token, pasted from the clipboard.</p></li>
+<p>where the name <code>GITHUB_PAT</code> reminds you which API this is for and 
+<code>blahblahblahblahblahblah</code> is your personal access token, pasted from the clipboard.</p></li>
 <li><p>Make sure the last line in the file is empty (if it isn&#39;t R will 
 <strong>silently</strong> fail to load the file. If you&#39;re using an editor that shows 
 line numbers, there should be two lines, where the second one is empty.</p></li>
@@ -444,10 +456,10 @@ are usually hidden. But within RStudio, the file browser will make
 <li><p>Restart R. <code>.Renviron</code> is processed only 
 <a href="http://stat.ethz.ch/R-manual/R-patched/library/base/html/Startup.html">at the start of an R session</a>.</p></li>
 <li><p>Use <code>Sys.getenv()</code> to access your token. For example, here&#39;s how to use 
-your <code>GITHUB_TOKEN</code> with the <code>github</code> package:</p>
+your <code>GITHUB_PAT</code> with the <code>github</code> package:</p>
 
 <pre><code class="R">library(github)
-ctx &lt;- create.github.context(access_token = Sys.getenv(&quot;GITHUB_TOKEN&quot;))
+ctx &lt;- create.github.context(access_token = Sys.getenv(&quot;GITHUB_PAT&quot;))
 # ... proceed to use other package functions to open issues, etc.
 </code></pre></li>
 </ol>

@@ -23,7 +23,7 @@ guess_cache <- function() {
   if (!interactive()) return(FALSE)
 
   cat("Use a local file to cache OAuth access credentials between R sessions?")
-  menu(c("Yes", "No")) == 1
+  utils::menu(c("Yes", "No")) == 1
 }
 
 protect_cache <- function() {
@@ -63,6 +63,14 @@ fetch_cached_token <- function(hash, cache_path) {
   if (is.null(cache_path)) return()
 
   load_cache(cache_path)[[hash]]
+}
+
+remove_cached_token <- function(token) {
+  if (is.null(token$cache_path)) return()
+
+  tokens <- load_cache(token$cache_path)
+  tokens[[token$hash()]] <- NULL
+  saveRDS(tokens, token$cache_path)
 }
 
 load_cache <- function(cache_path) {

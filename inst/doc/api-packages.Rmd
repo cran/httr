@@ -201,13 +201,26 @@ github_pat <- function(force = FALSE) {
 
 Encourage your users to store their important information once (see below), rather than typing it into the console - it's easy to accidentally publish your `.Rhistory` and you don't want it to contain private data.
 
+### Vignettes
+
+Including authentication requiring code in your vignettes is challenging, because you don't want to bundle your own credentials with the package! However, you can take advantage of the fact that the vignette is built locally, and only checked by CRAN with this idea from Jenny Bryan:
+
+In an setup chunk, do:
+
+```{r}
+NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")
+knitr::opts_chunk$set(purl = NOT_CRAN)
+```
+
+And then use `eval = NOT_CRAN` as needed as a chunk option.
+
 ## Appendix: API key best practices
 
 If your package supports an authentication workflow based on an API key or token, encourage users to store it in an environment variable. We illustrate this using the [`github` R package](https://github.com/cscheid/rgithub), which wraps the Github v3 API. Tailor this template to your API + package and include in `README.md` or a vignette.
 
 1.  Create a personal access token in the 
-    [Applications area](https://github.com/settings/applications) of your GitHub
-    personal settings. Copy token to the clipboard.
+    [Personal access tokens area](https://github.com/settings/tokens) of your
+    GitHub personal settings. Copy token to the clipboard.
 
 1.  Identify your home directory. Not sure? Enter `normalizePath("~/")` in 
     the R console.
@@ -217,11 +230,11 @@ If your package supports an authentication workflow based on an API key or token
 1.  Create a line like this:
 
     ```bash
-    GITHUB_TOKEN=blahblahblahblahblahblah
+    GITHUB_PAT=blahblahblahblahblahblah
     ```
         
-    where the name `GITHUB_TOKEN` reminds you which API this is for and 
-    `blahblahblahblahblahblah` is your token, pasted from the clipboard.
+    where the name `GITHUB_PAT` reminds you which API this is for and 
+    `blahblahblahblahblahblah` is your personal access token, pasted from the clipboard.
     
 1.  Make sure the last line in the file is empty (if it isn't R will 
     __silently__ fail to load the file. If you're using an editor that shows 
@@ -238,11 +251,11 @@ If your package supports an authentication workflow based on an API key or token
     [at the start of an R session](http://stat.ethz.ch/R-manual/R-patched/library/base/html/Startup.html).
   
 1.  Use `Sys.getenv()` to access your token. For example, here's how to use 
-    your `GITHUB_TOKEN` with the `github` package:
+    your `GITHUB_PAT` with the `github` package:
   
     ```R
     library(github)
-    ctx <- create.github.context(access_token = Sys.getenv("GITHUB_TOKEN"))
+    ctx <- create.github.context(access_token = Sys.getenv("GITHUB_PAT"))
     # ... proceed to use other package functions to open issues, etc.
     ```
     

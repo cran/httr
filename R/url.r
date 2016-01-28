@@ -45,7 +45,10 @@ parse_url <- function(url) {
   scheme <- pull_off("^([[:alpha:]+.-]+):")
   netloc <- pull_off("^//([^/?]*)/?")
 
-  if (!is.null(netloc)) {
+  if (identical(netloc, "")) { # corresponds to ///
+    url <- paste0("/", url)
+    port <- username <- password <- hostname <- NULL
+  } else if (!is.null(netloc)) {
 
     pieces <- strsplit(netloc, "@")[[1]]
     if (length(pieces) == 1) {
@@ -107,7 +110,7 @@ build_url <- function(url) {
     port <- NULL
   }
 
-  path <- url$path
+  path <- paste(url$path, collapse = "/")
 
   if (!is.null(url$params)) {
     params <- paste0(";", url$params)
@@ -116,11 +119,7 @@ build_url <- function(url) {
   }
 
   if (is.list(url$query)) {
-    url$query <- compact(url$query)
-    names <- curl::curl_escape(names(url$query))
-    values <- curl::curl_escape(as.character(url$query))
-
-    query <- paste0(names, "=", values, collapse = "&")
+    query <- compose_query(url$query)
   } else {
     query <- url$query
   }
@@ -159,7 +158,7 @@ modify_url <- function(url, scheme = NULL, hostname = NULL, port = NULL,
     query = query, params = params, fragment = fragment,
     username = username, password = password))
 
-  build_url(modifyList(old, new))
+  build_url(utils::modifyList(old, new))
 }
 
 

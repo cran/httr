@@ -226,19 +226,20 @@ r &lt;- GET(&quot;http://httpbin.org/get&quot;)
 
 <pre><code class="r">r
 #&gt; Response [http://httpbin.org/get]
-#&gt;   Date: 2015-06-24 20:35
+#&gt;   Date: 2016-01-27 15:46
 #&gt;   Status: 200
 #&gt;   Content-Type: application/json
-#&gt;   Size: 297 B
+#&gt;   Size: 298 B
+#&gt; No encoding supplied: defaulting to UTF-8.
 #&gt; {
 #&gt;   &quot;args&quot;: {}, 
 #&gt;   &quot;headers&quot;: {
 #&gt;     &quot;Accept&quot;: &quot;application/json, text/xml, application/xml, */*&quot;, 
 #&gt;     &quot;Accept-Encoding&quot;: &quot;gzip, deflate&quot;, 
 #&gt;     &quot;Host&quot;: &quot;httpbin.org&quot;, 
-#&gt;     &quot;User-Agent&quot;: &quot;libcurl/7.37.1 r-curl/0.9 httr/1.0.0&quot;
+#&gt;     &quot;User-Agent&quot;: &quot;libcurl/7.43.0 r-curl/0.9.4 httr/1.1.0&quot;
 #&gt;   }, 
-#&gt;   &quot;origin&quot;: &quot;208.54.35.180&quot;, 
+#&gt;   &quot;origin&quot;: &quot;64.196.190.2&quot;, 
 #&gt;   &quot;url&quot;: &quot;http://httpbin.org/get&quot;
 #&gt; ...
 </code></pre>
@@ -252,13 +253,13 @@ headers(r)
 #&gt; [1] &quot;nginx&quot;
 #&gt; 
 #&gt; $date
-#&gt; [1] &quot;Wed, 24 Jun 2015 20:35:47 GMT&quot;
+#&gt; [1] &quot;Wed, 27 Jan 2016 15:46:45 GMT&quot;
 #&gt; 
 #&gt; $`content-type`
 #&gt; [1] &quot;application/json&quot;
 #&gt; 
 #&gt; $`content-length`
-#&gt; [1] &quot;297&quot;
+#&gt; [1] &quot;298&quot;
 #&gt; 
 #&gt; $connection
 #&gt; [1] &quot;keep-alive&quot;
@@ -278,8 +279,8 @@ str(content(r))
 #&gt;   ..$ Accept         : chr &quot;application/json, text/xml, application/xml, */*&quot;
 #&gt;   ..$ Accept-Encoding: chr &quot;gzip, deflate&quot;
 #&gt;   ..$ Host           : chr &quot;httpbin.org&quot;
-#&gt;   ..$ User-Agent     : chr &quot;libcurl/7.37.1 r-curl/0.9 httr/1.0.0&quot;
-#&gt;  $ origin : chr &quot;208.54.35.180&quot;
+#&gt;   ..$ User-Agent     : chr &quot;libcurl/7.43.0 r-curl/0.9.4 httr/1.1.0&quot;
+#&gt;  $ origin : chr &quot;64.196.190.2&quot;
 #&gt;  $ url    : chr &quot;http://httpbin.org/get&quot;
 </code></pre>
 
@@ -299,10 +300,13 @@ str(content(r))
 # Get an informative description:
 http_status(r)
 #&gt; $category
-#&gt; [1] &quot;success&quot;
+#&gt; [1] &quot;Success&quot;
+#&gt; 
+#&gt; $reason
+#&gt; [1] &quot;OK&quot;
 #&gt; 
 #&gt; $message
-#&gt; [1] &quot;success: (200) OK&quot;
+#&gt; [1] &quot;Success: (200) OK&quot;
 
 # Or just access the raw code:
 r$status_code
@@ -328,7 +332,8 @@ stop_for_status(r)
 
 <pre><code class="r">r &lt;- GET(&quot;http://httpbin.org/get&quot;)
 content(r, &quot;text&quot;)
-#&gt; [1] &quot;{\n  \&quot;args\&quot;: {}, \n  \&quot;headers\&quot;: {\n    \&quot;Accept\&quot;: \&quot;application/json, text/xml, application/xml, */*\&quot;, \n    \&quot;Accept-Encoding\&quot;: \&quot;gzip, deflate\&quot;, \n    \&quot;Host\&quot;: \&quot;httpbin.org\&quot;, \n    \&quot;User-Agent\&quot;: \&quot;libcurl/7.37.1 r-curl/0.9 httr/1.0.0\&quot;\n  }, \n  \&quot;origin\&quot;: \&quot;208.54.35.180\&quot;, \n  \&quot;url\&quot;: \&quot;http://httpbin.org/get\&quot;\n}\n&quot;
+#&gt; No encoding supplied: defaulting to UTF-8.
+#&gt; [1] &quot;{\n  \&quot;args\&quot;: {}, \n  \&quot;headers\&quot;: {\n    \&quot;Accept\&quot;: \&quot;application/json, text/xml, application/xml, */*\&quot;, \n    \&quot;Accept-Encoding\&quot;: \&quot;gzip, deflate\&quot;, \n    \&quot;Host\&quot;: \&quot;httpbin.org\&quot;, \n    \&quot;User-Agent\&quot;: \&quot;libcurl/7.43.0 r-curl/0.9.4 httr/1.1.0\&quot;\n  }, \n  \&quot;origin\&quot;: \&quot;64.196.190.2\&quot;, \n  \&quot;url\&quot;: \&quot;http://httpbin.org/get\&quot;\n}\n&quot;
 </code></pre>
 
 <p>httr will automatically decode content from the server using the encoding 
@@ -352,11 +357,11 @@ raw vector:</p>
 #&gt; [116] 64 69 6e 67 22 3a 20 22 67 7a 69 70 2c 20 64 65 66 6c 61 74 65 22 2c
 #&gt; [139] 20 0a 20 20 20 20 22 48 6f 73 74 22 3a 20 22 68 74 74 70 62 69 6e 2e
 #&gt; [162] 6f 72 67 22 2c 20 0a 20 20 20 20 22 55 73 65 72 2d 41 67 65 6e 74 22
-#&gt; [185] 3a 20 22 6c 69 62 63 75 72 6c 2f 37 2e 33 37 2e 31 20 72 2d 63 75 72
-#&gt; [208] 6c 2f 30 2e 39 20 68 74 74 72 2f 31 2e 30 2e 30 22 0a 20 20 7d 2c 20
-#&gt; [231] 0a 20 20 22 6f 72 69 67 69 6e 22 3a 20 22 32 30 38 2e 35 34 2e 33 35
-#&gt; [254] 2e 31 38 30 22 2c 20 0a 20 20 22 75 72 6c 22 3a 20 22 68 74 74 70 3a
-#&gt; [277] 2f 2f 68 74 74 70 62 69 6e 2e 6f 72 67 2f 67 65 74 22 0a 7d 0a
+#&gt; [185] 3a 20 22 6c 69 62 63 75 72 6c 2f 37 2e 34 33 2e 30 20 72 2d 63 75 72
+#&gt; [208] 6c 2f 30 2e 39 2e 34 20 68 74 74 72 2f 31 2e 31 2e 30 22 0a 20 20 7d
+#&gt; [231] 2c 20 0a 20 20 22 6f 72 69 67 69 6e 22 3a 20 22 36 34 2e 31 39 36 2e
+#&gt; [254] 31 39 30 2e 32 22 2c 20 0a 20 20 22 75 72 6c 22 3a 20 22 68 74 74 70
+#&gt; [277] 3a 2f 2f 68 74 74 70 62 69 6e 2e 6f 72 67 2f 67 65 74 22 0a 7d 0a
 </code></pre>
 
 <p>This is exactly the sequence of bytes that the web server sent, so this is
@@ -375,8 +380,8 @@ str(content(r, &quot;parsed&quot;))
 #&gt;   ..$ Accept         : chr &quot;application/json, text/xml, application/xml, */*&quot;
 #&gt;   ..$ Accept-Encoding: chr &quot;gzip, deflate&quot;
 #&gt;   ..$ Host           : chr &quot;httpbin.org&quot;
-#&gt;   ..$ User-Agent     : chr &quot;libcurl/7.37.1 r-curl/0.9 httr/1.0.0&quot;
-#&gt;  $ origin : chr &quot;208.54.35.180&quot;
+#&gt;   ..$ User-Agent     : chr &quot;libcurl/7.43.0 r-curl/0.9.4 httr/1.1.0&quot;
+#&gt;  $ origin : chr &quot;64.196.190.2&quot;
 #&gt;  $ url    : chr &quot;http://httpbin.org/get&quot;
 </code></pre>
 
@@ -396,13 +401,13 @@ is as you expect. See the API wrappers vignette for more details.</p></li>
 #&gt; [1] &quot;nginx&quot;
 #&gt; 
 #&gt; $date
-#&gt; [1] &quot;Wed, 24 Jun 2015 20:35:47 GMT&quot;
+#&gt; [1] &quot;Wed, 27 Jan 2016 15:46:45 GMT&quot;
 #&gt; 
 #&gt; $`content-type`
 #&gt; [1] &quot;application/json&quot;
 #&gt; 
 #&gt; $`content-length`
-#&gt; [1] &quot;297&quot;
+#&gt; [1] &quot;298&quot;
 #&gt; 
 #&gt; $connection
 #&gt; [1] &quot;keep-alive&quot;
@@ -420,9 +425,9 @@ is as you expect. See the API wrappers vignette for more details.</p></li>
 <p>This is basically a named list, but because http headers are case insensitive, indexing this object ignores case:</p>
 
 <pre><code class="r">headers(r)$date
-#&gt; [1] &quot;Wed, 24 Jun 2015 20:35:47 GMT&quot;
+#&gt; [1] &quot;Wed, 27 Jan 2016 15:46:45 GMT&quot;
 headers(r)$DATE
-#&gt; [1] &quot;Wed, 24 Jun 2015 20:35:47 GMT&quot;
+#&gt; [1] &quot;Wed, 27 Jan 2016 15:46:45 GMT&quot;
 </code></pre>
 
 <h3>Cookies</h3>
@@ -487,7 +492,7 @@ str(content(r)$headers)
 #&gt;  $ Cookie         : chr &quot;a=1; b=1&quot;
 #&gt;  $ Host           : chr &quot;httpbin.org&quot;
 #&gt;  $ Name           : chr &quot;Hadley&quot;
-#&gt;  $ User-Agent     : chr &quot;libcurl/7.37.1 r-curl/0.9 httr/1.0.0&quot;
+#&gt;  $ User-Agent     : chr &quot;libcurl/7.43.0 r-curl/0.9.4 httr/1.1.0&quot;
 </code></pre>
 
 <p>(Note that <code>content(r)$header</code> retrieves the headers that httpbin received. <code>headers(r)</code> gives the headers that it sent back in its response.)</p>
@@ -554,9 +559,9 @@ POST(url, body = list(x = upload_file(&quot;mypath.txt&quot;)))
 <h5>Built with</h5>
 
 <pre><code class="r">sessionInfo()
-#&gt; R version 3.2.1 (2015-06-18)
+#&gt; R version 3.2.2 (2015-08-14)
 #&gt; Platform: x86_64-apple-darwin13.4.0 (64-bit)
-#&gt; Running under: OS X 10.10.3 (Yosemite)
+#&gt; Running under: OS X 10.11.2 (El Capitan)
 #&gt; 
 #&gt; locale:
 #&gt; [1] C/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
@@ -565,12 +570,13 @@ POST(url, body = list(x = upload_file(&quot;mypath.txt&quot;)))
 #&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     
 #&gt; 
 #&gt; other attached packages:
-#&gt; [1] httr_1.0.0
+#&gt; [1] httr_1.1.0
 #&gt; 
 #&gt; loaded via a namespace (and not attached):
-#&gt;  [1] R6_2.0.1         magrittr_1.5     formatR_1.2      markdown_0.7.7  
-#&gt;  [5] tools_3.2.1      rstudioapi_0.3.1 curl_0.9         stringi_0.5-2   
-#&gt;  [9] knitr_1.10.5     jsonlite_0.9.16  stringr_1.0.0    evaluate_0.7
+#&gt;  [1] R6_2.1.1           magrittr_1.5       formatR_1.2.1     
+#&gt;  [4] markdown_0.7.7     tools_3.2.2        curl_0.9.4        
+#&gt;  [7] stringi_1.0-1      knitr_1.12         jsonlite_0.9.19   
+#&gt; [10] stringr_1.0.0.9000 evaluate_0.8
 </code></pre>
 
 </body>

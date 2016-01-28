@@ -1,13 +1,27 @@
-parse_text <- function(content, type = NULL, encoding = NULL) {
-  charset <- if (!is.null(type)) parse_media(type)$params$charset
-  encoding <- toupper(encoding %||% charset %||% "ISO-8859-1")
+check_encoding <- function(x) {
+  if ((tolower(x) %in% tolower(iconvlist())))
+    return(x)
 
-  if (!(tolower(encoding) %in% tolower(iconvlist()))) {
-    message("Unknown encoding ", encoding, ". ",
-      "Defaulting to latin1 (ISO-8859-1).")
-    encoding <- "ISO-8859-1"
+  message("Invalid encoding ", x, ": defaulting to UTF-8.")
+  "UTF-8"
+}
+
+guess_encoding <- function(encoding = NULL, type = NULL) {
+  if (!is.null(encoding))
+    return(check_encoding(encoding))
+
+  charset <- if (!is.null(type)) parse_media(type)$params$charset
+
+  if (is.null(charset)) {
+    message("No encoding supplied: defaulting to UTF-8.")
+    return("UTF-8")
   }
 
+  check_encoding(charset)
+}
+
+parse_text <- function(content, type = NULL, encoding = NULL) {
+  encoding <- guess_encoding(encoding, type)
   iconv(readBin(content, character()), from = encoding, to = "UTF-8")
 }
 
@@ -49,18 +63,12 @@ parsers <- new.env(parent = emptyenv())
 # Binary formats ---------------------------------------------------------------
 
 # http://www.ietf.org/rfc/rfc4627.txt - section 3. (encoding)
-parsers$`application/json` <- function(x, type = NULL, encoding = NULL,
-                                       simplifyVector = FALSE, ...) {
+parsers$`application/json` <- function(x, type = NULL, simplifyVector = FALSE, ...) {
   jsonlite::fromJSON(parse_text(x, encoding = "UTF-8"),
     simplifyVector = simplifyVector, ...)
 }
-parsers$`application/x-www-form-urlencoded` <- function(x, type = NULL,
-                                                        encoding = NULL, ...) {
+parsers$`application/x-www-form-urlencoded` <- function(x, type = NULL, ...) {
   parse_query(parse_text(x, encoding = "UTF-8"))
-}
-parsers$`application/xml` <- function(x, type = NULL, encoding = NULL, ...) {
-  need_package("XML")
-  XML::xmlParse(parse_text(x, encoding = "UTF-8"), ...)
 }
 
 # Text formats -----------------------------------------------------------------
@@ -69,33 +77,47 @@ parsers$`image/jpeg` <- function(x, type = NULL, encoding = NULL, ...) {
   jpeg::readJPEG(x)
 }
 
-parsers$`image/png` <- function(x, type = NULL, encoding = NULL, ...) {
+parsers$`image/png` <- function(x, type = NULL, ...) {
   need_package("png")
   png::readPNG(x)
 }
 
 parsers$`text/plain` <- function(x, type = NULL, encoding = NULL, ...) {
+  encoding <- guess_encoding(encoding, type)
   parse_text(x, type = type, encoding = encoding)
 }
 
 parsers$`text/html` <- function(x, type = NULL, encoding = NULL, ...) {
-  need_package("XML")
-  text <- parse_text(x, type = type, encoding = encoding)
-  XML::htmlParse(text, ...)
+  need_package("xml2")
+
+  encoding <- guess_encoding(encoding, type)
+  xml2::read_html(x, encoding = encoding, ...)
+}
+
+parsers$`application/xml` <- function(x, type = NULL, encoding = NULL, ...) {
+  need_package("xml2")
+
+  encoding <- guess_encoding(encoding, type)
+  xml2::read_xml(x, encoding = encoding, ...)
 }
 
 parsers$`text/xml` <- function(x, type = NULL, encoding = NULL, ...) {
-  need_package("XML")
-  text <- parse_text(x, type = type, encoding = encoding)
-  XML::xmlParse(text, ...)
+  need_package("xml2")
+
+  encoding <- guess_encoding(encoding, type)
+  xml2::read_xml(x, encoding = encoding, ...)
 }
 
 parsers$`text/csv` <- function(x, type = NULL, encoding = NULL, ...) {
-  text <- parse_text(x, type = type, encoding = encoding)
-  read.csv(text = text, stringsAsFactors = FALSE, ...)
+  need_package("readr")
+
+  encoding <- guess_encoding(encoding, type)
+  readr::read_csv(x, readr::locale(encoding = encoding), ...)
 }
 
 parsers$`text/tab-separated-values` <- function(x, type = NULL, encoding = NULL, ...) {
-  text <- parse_text(x, type = type, encoding = encoding)
-  read.delim(text = text, stringsAsFactors = FALSE, ...)
+  need_package("readr")
+
+  encoding <- guess_encoding(encoding, type)
+  readr::read_tsv(x, readr::locale(encoding = encoding), ...)
 }
