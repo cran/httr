@@ -1,120 +1,197 @@
-## ---- echo = FALSE-------------------------------------------------------
+## ----setup, include = FALSE----------------------------------------------
 library(httr)
 knitr::opts_chunk$set(comment = "#>", collapse = TRUE)
 
 ## ------------------------------------------------------------------------
-github_GET <- function(path, ..., pat = github_pat()) {
-  auth <- github_auth(pat)
-  req <- GET("https://api.github.com", path = path, auth, ...)
-  github_check(req)
-
-  req
+library(httr)
+github_api <- function(path) {
+  url <- modify_url("https://api.github.com", path = path)
+  GET(url)
 }
 
-github_POST <- function(path, body, ..., pat = github_pat()) {
-  auth <- github_auth(pat)
+resp <- github_api("/repos/hadley/httr")
+resp
 
-  stopifnot(is.list(body))
-  body_json <- jsonlite::toJSON(body)
+## ------------------------------------------------------------------------
+GET("http://www.colourlovers.com/api/color/6B4106?format=xml")
+GET("http://www.colourlovers.com/api/color/6B4106?format=json")
 
-  req <- POST("https://api.github.com", path = path, body = body_json,
-    auth, post, ...)
-  github_check(req)
+## ------------------------------------------------------------------------
+http_type(resp)
 
-  req
+## ------------------------------------------------------------------------
+github_api <- function(path) {
+  url <- modify_url("https://api.github.com", path = path)
+  
+  resp <- GET(url)
+  if (http_type(resp) != "application/json") {
+    stop("API did not return json", call. = FALSE)
+  }
+  
+  resp
 }
 
 ## ------------------------------------------------------------------------
-github_auth <- function(pat = github_pat()) {
-  authenticate(pat, "x-oauth-basic", "basic")
+github_api <- function(path) {
+  url <- modify_url("https://api.github.com", path = path)
+  
+  resp <- GET(url)
+  if (http_type(resp) != "application/json") {
+    stop("API did not return json", call. = FALSE)
+  }
+  
+  jsonlite::fromJSON(content(resp, "text"), simplifyVector = FALSE)
 }
 
-github_check <- function(req) {
-  if (req$status_code < 400) return(invisible())
-
-  message <- github_parse(req)$message
-  stop("HTTP failure: ", req$status_code, "\n", message, call. = FALSE)
+## ------------------------------------------------------------------------
+github_api <- function(path) {
+  url <- modify_url("https://api.github.com", path = path)
+  
+  resp <- GET(url)
+  if (http_type(resp) != "application/json") {
+    stop("API did not return json", call. = FALSE)
+  }
+  
+  parsed <- jsonlite::fromJSON(content(resp, "text"), simplifyVector = FALSE)
+  
+  structure(
+    list(
+      content = parsed,
+      path = path,
+      response = resp
+    ),
+    class = "github_api"
+  )
 }
 
-github_parse <- function(req) {
-  text <- content(req, as = "text")
-  if (identical(text, "")) stop("No output to parse", call. = FALSE)
-  jsonlite::fromJSON(text, simplifyVector = FALSE)
+print.github_api <- function(x, ...) {
+  cat("<GitHub ", x$path, ">\n", sep = "")
+  str(x$content)
+  invisible(x)
 }
 
+github_api("/users/hadley")
+
+## ---- error = TRUE-------------------------------------------------------
+github_api <- function(path) {
+  url <- modify_url("https://api.github.com", path = path)
+  
+  resp <- GET(url)
+  if (http_type(resp) != "application/json") {
+    stop("API did not return json", call. = FALSE)
+  }
+  
+  parsed <- jsonlite::fromJSON(content(resp, "text"), simplifyVector = FALSE)
+  
+  if (http_error(resp)) {
+    stop(
+      sprintf(
+        "GitHub API request failed [%s]\n%s\n<%s>", 
+        status_code(resp),
+        parsed$message,
+        parsed$documentation_url
+      ),
+      call. = FALSE
+    )
+  }
+  
+  structure(
+    list(
+      content = parsed,
+      path = path,
+      response = resp
+    ),
+    class = "github_api"
+  )
+}
+github_api("/user/hadley")
+
+## ------------------------------------------------------------------------
+ua <- user_agent("http://github.com/hadley/httr")
+ua
+
+github_api <- function(path) {
+  url <- modify_url("https://api.github.com", path = path)
+  
+  resp <- GET(url, ua)
+  if (http_type(resp) != "application/json") {
+    stop("API did not return json", call. = FALSE)
+  }
+  
+  parsed <- jsonlite::fromJSON(content(resp, "text"), simplifyVector = FALSE)
+  
+  if (status_code(resp) != 200) {
+    stop(
+      sprintf(
+        "GitHub API request failed [%s]\n%s\n<%s>", 
+        status_code(resp),
+        parsed$message,
+        parsed$documentation_url
+      ),
+      call. = FALSE
+    )
+  }
+  
+  structure(
+    list(
+      content = parsed,
+      path = path,
+      response = resp
+    ),
+    class = "github_api"
+  )
+}
+
+## ---- eval = FALSE-------------------------------------------------------
+#  # modify_url
+#  POST(modify_url("https://httpbin.org", path = "/post"))
+#  
+#  # query arguments
+#  POST("http://httpbin.org/post", query = list(foo = "bar"))
+#  
+#  # headers
+#  POST("http://httpbin.org/post", add_headers(foo = "bar"))
+#  
+#  # body
+#  ## as form
+#  POST("http://httpbin.org/post", body = list(foo = "bar"), encode = "form")
+#  ## as json
+#  POST("http://httpbin.org/post", body = list(foo = "bar"), encode = "json")
+
+## ------------------------------------------------------------------------
+f <- function(x = c("apple", "banana", "orange")) {
+  match.arg(x)
+}
+f("a")
+
+## ------------------------------------------------------------------------
 github_pat <- function() {
-  Sys.getenv('GITHUB_PAT')
-}
-
-has_pat <- function() !identical(github_pat(), "")
-
-## ------------------------------------------------------------------------
-rate_limit <- function() {
-  req <- github_GET("rate_limit")
-  github_parse(req)
-}
-
-if (has_pat()) {
-  str(rate_limit())
-}
-
-## ------------------------------------------------------------------------
-rate_limit <- function() {
-  req <- github_GET("rate_limit")
-  core <- github_parse(req)$resources$core
-
-  reset <- as.POSIXct(core$reset, origin = "1970-01-01")
-  cat(core$remaining, " / ", core$limit,
-    " (Reset ", strftime(reset, "%H:%M:%S"), ")\n", sep = "")
-}
-
-if (has_pat()) {
-  rate_limit()
-}
-
-## ------------------------------------------------------------------------
-github_parse <- function(req) {
-  text <- content(req, as = "text")
-  if (identical(text, "")) stop("")
-  jsonlite::fromJSON(text, simplifyVector = FALSE)
-}
-
-## ------------------------------------------------------------------------
-github_parse <- function(req) {
-  text <- content(req, as = "text")
-  if (identical(text, "")) stop("No output to parse", call. = FALSE)
-  jsonlite::fromJSON(text, simplifyVector = FALSE)
-}
-
-## ------------------------------------------------------------------------
-authenticate("username", "password")
-
-## ------------------------------------------------------------------------
-authenticate("ddfa3d40d5855d6ba76b7003fd4", "")
-
-## ------------------------------------------------------------------------
-github_pat <- function(force = FALSE) {
-  env <- Sys.getenv('GITHUB_PAT')
-  if (!identical(env, "") && !force) return(env)
-
-  if (!interactive()) {
+  pat <- Sys.getenv('GITHUB_PAT')
+  if (identical(pat, "")) {
     stop("Please set env var GITHUB_PAT to your github personal access token",
       call. = FALSE)
   }
 
-  message("Couldn't find env var GITHUB_PAT. See ?github_pat for more details.")
-  message("Please enter your PAT and press enter:")
-  pat <- readline(": ")
-
-  if (identical(pat, "")) {
-    stop("Github personal access token entry failed", call. = FALSE)
-  }
-
-  message("Updating GITHUB_PAT env var to PAT")
-  Sys.setenv(GITHUB_PAT = pat)
-
   pat
 }
+
+## ------------------------------------------------------------------------
+rate_limit <- function() {
+  github_api("/rate_limit")
+}
+rate_limit()
+
+## ------------------------------------------------------------------------
+rate_limit <- function() {
+  req <- github_api("/rate_limit")
+  core <- req$content$resources$core
+
+  reset <- as.POSIXct(core$reset, origin = "1970-01-01")
+  cat(core$remaining, " / ", core$limit,
+    " (Resets at ", strftime(reset, "%H:%M:%S"), ")\n", sep = "")
+}
+
+rate_limit()
 
 ## ------------------------------------------------------------------------
 NOT_CRAN <- identical(tolower(Sys.getenv("NOT_CRAN")), "true")

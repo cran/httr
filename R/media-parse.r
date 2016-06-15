@@ -37,8 +37,15 @@ parse_media <- function(x) {
   type <- tolower(types[1])
   subtype <- tolower(types[2])
 
-  param_pieces <- str_split_fixed(pieces[-1], "=", 2)
-  params <- stats::setNames(as.list(param_pieces[, 2]), param_pieces[, 1])
+  if (length(pieces) > 1) {
+    param_pieces <- lapply(pieces[-1], str_split_fixed, "=", 2)
+    names <- vapply(param_pieces, "[", 1, FUN.VALUE = character(1))
+    values <- vapply(param_pieces, "[", 2, FUN.VALUE = character(1))
+
+    params <- stats::setNames(as.list(values), names)
+  } else {
+    params <- list()
+  }
 
   list(
     complete = paste(type, "/", subtype, sep = ""),

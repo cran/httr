@@ -91,6 +91,7 @@ parse_url <- function(url) {
 is.url <- function(x) inherits(x, "url")
 print.url <- function(x, ...) {
   cat("Url: ", build_url(x), "\n", sep = "")
+  invisible(x)
 }
 "[.url" <- function(x, ...) {
   structure(NextMethod(), class = "url")
@@ -110,7 +111,7 @@ build_url <- function(url) {
     port <- NULL
   }
 
-  path <- paste(url$path, collapse = "/")
+  path <- paste(gsub("^/", "", url$path), collapse = "/")
 
   if (!is.null(url$params)) {
     params <- paste0(";", url$params)
@@ -141,7 +142,7 @@ build_url <- function(url) {
 
 #' Modify a url.
 #'
-#' Modify a url by first parsing and it then replacing components with
+#' Modify a url by first parsing it and then replacing components with
 #' the non-NULL arguments of this function.
 #'
 #' @export
@@ -160,6 +161,5 @@ modify_url <- function(url, scheme = NULL, hostname = NULL, port = NULL,
 
   build_url(utils::modifyList(old, new))
 }
-
 
 compact <- function(x) Filter(Negate(is.null), x)

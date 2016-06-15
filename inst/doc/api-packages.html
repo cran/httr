@@ -1,473 +1,547 @@
 <!DOCTYPE html>
-<html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Hadley Wickham" />
+
+<meta name="date" content="2016-06-14" />
 
 <title>Best practices for writing an API package</title>
 
-<script type="text/javascript">
-window.onload = function() {
-  var imgs = document.getElementsByTagName('img'), i, img;
-  for (i = 0; i < imgs.length; i++) {
-    img = imgs[i];
-    // center an image if it is the only element of its parent
-    if (img.parentElement.childElementCount === 1)
-      img.parentElement.style.textAlign = 'center';
-  }
-};
-</script>
 
-<!-- Styles for R syntax highlighter -->
+
+<style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
-   pre .operator,
-   pre .paren {
-     color: rgb(104, 118, 135)
-   }
-
-   pre .literal {
-     color: #990073
-   }
-
-   pre .number {
-     color: #099;
-   }
-
-   pre .comment {
-     color: #998;
-     font-style: italic
-   }
-
-   pre .keyword {
-     color: #900;
-     font-weight: bold
-   }
-
-   pre .identifier {
-     color: rgb(0, 0, 0);
-   }
-
-   pre .string {
-     color: #d14;
-   }
-</style>
-
-<!-- R syntax highlighter -->
-<script type="text/javascript">
-var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
-hljs.initHighlightingOnLoad();
-</script>
-
-
-
-<style type="text/css">
-body, td {
-   font-family: sans-serif;
-   background-color: white;
-   font-size: 13px;
-}
-
-body {
-  max-width: 800px;
-  margin: auto;
-  padding: 1em;
-  line-height: 20px;
-}
-
-tt, code, pre {
-   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
-}
-
-h1 {
-   font-size:2.2em;
-}
-
-h2 {
-   font-size:1.8em;
-}
-
-h3 {
-   font-size:1.4em;
-}
-
-h4 {
-   font-size:1.0em;
-}
-
-h5 {
-   font-size:0.9em;
-}
-
-h6 {
-   font-size:0.8em;
-}
-
-a:visited {
-   color: rgb(50%, 0%, 50%);
-}
-
-pre, img {
-  max-width: 100%;
-}
-pre {
-  overflow-x: auto;
-}
-pre code {
-   display: block; padding: 0.5em;
-}
-
-code {
-  font-size: 92%;
-  border: 1px solid #ccc;
-}
-
-code[class] {
-  background-color: #F8F8F8;
-}
-
-table, td, th {
-  border: none;
-}
-
-blockquote {
-   color:#666666;
-   margin:0;
-   padding-left: 1em;
-   border-left: 0.5em #EEE solid;
-}
-
-hr {
-   height: 0px;
-   border-bottom: none;
-   border-top-width: thin;
-   border-top-style: dotted;
-   border-top-color: #999999;
-}
-
-@media print {
-   * {
-      background: transparent !important;
-      color: black !important;
-      filter:none !important;
-      -ms-filter: none !important;
-   }
-
-   body {
-      font-size:12pt;
-      max-width:100%;
-   }
-
-   a, a:visited {
-      text-decoration: underline;
-   }
-
-   hr {
-      visibility: hidden;
-      page-break-before: always;
-   }
-
-   pre, blockquote {
-      padding-right: 1em;
-      page-break-inside: avoid;
-   }
-
-   tr, img {
-      page-break-inside: avoid;
-   }
-
-   img {
-      max-width: 100% !important;
-   }
-
-   @page :left {
-      margin: 15mm 20mm 15mm 10mm;
-   }
-
-   @page :right {
-      margin: 15mm 10mm 15mm 20mm;
-   }
-
-   p, h2, h3 {
-      orphans: 3; widows: 3;
-   }
-
-   h2, h3 {
-      page-break-after: avoid;
-   }
-}
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 </style>
 
 
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
 
 </head>
 
 <body>
-<!--
-%\VignetteEngine{knitr::knitr}
-%\VignetteIndexEntry{Best practices for writing an API package}
--->
 
-<h1>Best practices for writing an API package</h1>
 
-<p>This document collects best practices for writing a package that connects to a web API. The goal is to help you produce a package that is safe, secure and keeps working in the long run.</p>
 
-<p>If you&#39;re new to working with web APIs, start by reading &ldquo;<a href="https://zapier.com/learn/apis">An introduction to APIs</a>&rdquo; by zapier.</p>
 
-<h2>Key info</h2>
+<h1 class="title toc-ignore">Best practices for writing an API package</h1>
+<h4 class="author"><em>Hadley Wickham</em></h4>
+<h4 class="date"><em>2016-06-14</em></h4>
 
-<p>When writing an API, it&#39;s best to start with some helper functions that capture the common conventions of the API in one place. These functions capture information like:</p>
 
+
+<p>So you want to write an R client for a web API? This document walks through the key issues involved in writing API wrappers in R. If you’re new to working with web APIs, you may want to start by reading “<a href="https://zapier.com/learn/apis">An introduction to APIs</a>” by zapier.</p>
+<div id="overall-design" class="section level2">
+<h2>Overall design</h2>
+<p>APIs vary widely. Before starting to code, it is important to understand how the API you are working with handles important issues so that you can implement a complete and coherent R client for the API.</p>
+<p>The key features of any API are the structure of the requests and the structure of the responses. An HTTP request consists of the following parts:</p>
+<ol style="list-style-type: decimal">
+<li>HTTP verb (<code>GET</code>, <code>POST</code>, <code>DELETE</code>, etc.)</li>
+<li>The base URL for the API</li>
+<li>The URL path or endpoint</li>
+<li>URL query arguments (e.g., <code>?foo=bar</code>)</li>
+<li>Optional headers</li>
+<li>An optional request body</li>
+</ol>
+<p>An API package needs to be able to generate these components in order to perform the desired API call, which will typically involve some sort of authentication.</p>
+<p>For example, to request that the GitHub API provides a list of all issues for the httr repo, we send an HTTP request that looks like:</p>
+<pre><code>-&gt; GET /repos/hadley/httr HTTP/1.1
+-&gt; Host: api.github.com
+-&gt; Accept: application/vnd.github.v3+json</code></pre>
+<p>Here we’re using a <code>GET</code> request to the host <code>api.github.com</code>. The url is <code>/repos/hadley/httr</code>, and we send an accept header that tells GitHub what sort of data we want.</p>
+<p>In response to this request, the API will return an HTTP response that includes:</p>
+<ol style="list-style-type: decimal">
+<li>An HTTP status code.</li>
+<li>Headers, key-value pairs.</li>
+<li>A body typically consisting of XML, JSON, plain text, HTML, or some kind of binary representation.</li>
+</ol>
+<p>An API client needs to parse these responses, turning API errors into R errors, and return a useful object to the end user. For the previous HTTP request, GitHub returns:</p>
+<pre><code>&lt;- HTTP/1.1 200 OK
+&lt;- Server: GitHub.com
+&lt;- Content-Type: application/json; charset=utf-8
+&lt;- X-RateLimit-Limit: 5000
+&lt;- X-RateLimit-Remaining: 4998
+&lt;- X-RateLimit-Reset: 1459554901
+&lt;- 
+&lt;- {
+&lt;-   &quot;id&quot;: 2756403,
+&lt;-   &quot;name&quot;: &quot;httr&quot;,
+&lt;-   &quot;full_name&quot;: &quot;hadley/httr&quot;,
+&lt;-   &quot;owner&quot;: {
+&lt;-     &quot;login&quot;: &quot;hadley&quot;,
+&lt;-     &quot;id&quot;: 4196,
+&lt;-     &quot;avatar_url&quot;: &quot;https://avatars.githubusercontent.com/u/4196?v=3&quot;,
+&lt;-     ...
+&lt;-   },
+&lt;-   &quot;private&quot;: false,
+&lt;-   &quot;html_url&quot;: &quot;https://github.com/hadley/httr&quot;,
+&lt;-   &quot;description&quot;: &quot;httr: a friendly http package for R&quot;,
+&lt;-   &quot;fork&quot;: false,
+&lt;-   &quot;url&quot;: &quot;https://api.github.com/repos/hadley/httr&quot;,
+&lt;-   ...
+&lt;-   &quot;network_count&quot;: 1368,
+&lt;-   &quot;subscribers_count&quot;: 64
+&lt;- }</code></pre>
+<p>Designing a good API client requires identifying how each of these API features is used to compose a request and what type of response is expected for each. It’s best practice to insulate the end user from <em>how</em> the API works so they only need to understand how to use an R function, not the details of how APIs work. It’s your job to suffer so that others don’t have to!</p>
+</div>
+<div id="first-steps" class="section level2">
+<h2>First steps</h2>
+<div id="send-a-simple-request" class="section level3">
+<h3>Send a simple request</h3>
+<p>First, find a simple API endpoint that doesn’t require authentication: this lets you get the basics working before tackling the complexities of authentication. For this example, we’ll use the list of httr issues which requires sending a GET request to <code>repos/hadley/httr</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(httr)
+github_api &lt;-<span class="st"> </span>function(path) {
+  url &lt;-<span class="st"> </span><span class="kw">modify_url</span>(<span class="st">&quot;https://api.github.com&quot;</span>, <span class="dt">path =</span> path)
+  <span class="kw">GET</span>(url)
+}
+
+resp &lt;-<span class="st"> </span><span class="kw">github_api</span>(<span class="st">&quot;/repos/hadley/httr&quot;</span>)
+resp
+<span class="co">#&gt; Response [https://api.github.com/repos/hadley/httr]</span>
+<span class="co">#&gt;   Date: 2016-06-14 22:20</span>
+<span class="co">#&gt;   Status: 200</span>
+<span class="co">#&gt;   Content-Type: application/json; charset=utf-8</span>
+<span class="co">#&gt;   Size: 4.73 kB</span>
+<span class="co">#&gt; {</span>
+<span class="co">#&gt;   &quot;id&quot;: 2756403,</span>
+<span class="co">#&gt;   &quot;name&quot;: &quot;httr&quot;,</span>
+<span class="co">#&gt;   &quot;full_name&quot;: &quot;hadley/httr&quot;,</span>
+<span class="co">#&gt;   &quot;owner&quot;: {</span>
+<span class="co">#&gt;     &quot;login&quot;: &quot;hadley&quot;,</span>
+<span class="co">#&gt;     &quot;id&quot;: 4196,</span>
+<span class="co">#&gt;     &quot;avatar_url&quot;: &quot;https://avatars.githubusercontent.com/u/4196?v=3&quot;,</span>
+<span class="co">#&gt;     &quot;gravatar_id&quot;: &quot;&quot;,</span>
+<span class="co">#&gt;     &quot;url&quot;: &quot;https://api.github.com/users/hadley&quot;,</span>
+<span class="co">#&gt; ...</span></code></pre></div>
+</div>
+<div id="parse-the-response" class="section level3">
+<h3>Parse the response</h3>
+<p>Next, you need to take the response returned by the API and turn it into a useful object. Any API will return an HTTP response that consists of headers and a body. While the response can come in a multiple a forms (see above), two of the most common structured formats are XML and JSON.</p>
+<p>Note that while most APIs will return only one or the other, some, like the colour lovers API, allow you to choose which one with a url parameter:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">GET</span>(<span class="st">&quot;http://www.colourlovers.com/api/color/6B4106?format=xml&quot;</span>)
+<span class="co">#&gt; Response [http://www.colourlovers.com/api/color/6B4106?format=xml]</span>
+<span class="co">#&gt;   Date: 2016-06-14 22:20</span>
+<span class="co">#&gt;   Status: 200</span>
+<span class="co">#&gt;   Content-Type: text/xml; charset=utf-8</span>
+<span class="co">#&gt;   Size: 970 B</span>
+<span class="co">#&gt; &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;yes&quot;?&gt;</span>
+<span class="co">#&gt; &lt;colors numResults=&quot;1&quot; totalResults=&quot;9525684&quot;&gt;</span>
+<span class="co">#&gt;  &lt;color&gt;</span>
+<span class="co">#&gt;      &lt;id&gt;903893&lt;/id&gt;</span>
+<span class="co">#&gt;      &lt;title&gt;&lt;![CDATA[wet dirt]]&gt;&lt;/title&gt;</span>
+<span class="co">#&gt;      &lt;userName&gt;&lt;![CDATA[jessicabrown]]&gt;&lt;/userName&gt;</span>
+<span class="co">#&gt;      &lt;numViews&gt;431&lt;/numViews&gt;</span>
+<span class="co">#&gt;      &lt;numVotes&gt;1&lt;/numVotes&gt;</span>
+<span class="co">#&gt;      &lt;numComments&gt;0&lt;/numComments&gt;</span>
+<span class="co">#&gt;      &lt;numHearts&gt;0&lt;/numHearts&gt;</span>
+<span class="co">#&gt; ...</span>
+<span class="kw">GET</span>(<span class="st">&quot;http://www.colourlovers.com/api/color/6B4106?format=json&quot;</span>)
+<span class="co">#&gt; Response [http://www.colourlovers.com/api/color/6B4106?format=json]</span>
+<span class="co">#&gt;   Date: 2016-06-14 22:20</span>
+<span class="co">#&gt;   Status: 200</span>
+<span class="co">#&gt;   Content-Type: application/json; charset=utf-8</span>
+<span class="co">#&gt;   Size: 569 B</span></code></pre></div>
+<p>Others use <a href="http://en.wikipedia.org/wiki/Content_negotiation">content negotiation</a> to determine whats sort of data to send back. If the API you’re wrapping does this, then you’ll need to include one of <code>accept_json()</code> and <code>accept_xml()</code> in your request.</p>
+<p>If you have a choice, choose json: it’s usually much easier to work with than xml.</p>
+<p>Most APIs will return most or all useful information in the response body, which can be accessed using <code>content()</code>. To determine what type of information is returned, you can use <code>http_type()</code></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">http_type</span>(resp)
+<span class="co">#&gt; [1] &quot;application/json&quot;</span></code></pre></div>
+<p>I recommend checking that the type is as you expect in your helper function. This will ensure that you get a clear error message if the API changes:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">github_api &lt;-<span class="st"> </span>function(path) {
+  url &lt;-<span class="st"> </span><span class="kw">modify_url</span>(<span class="st">&quot;https://api.github.com&quot;</span>, <span class="dt">path =</span> path)
+  
+  resp &lt;-<span class="st"> </span><span class="kw">GET</span>(url)
+  if (<span class="kw">http_type</span>(resp) !=<span class="st"> &quot;application/json&quot;</span>) {
+    <span class="kw">stop</span>(<span class="st">&quot;API did not return json&quot;</span>, <span class="dt">call. =</span> <span class="ot">FALSE</span>)
+  }
+  
+  resp
+}</code></pre></div>
+<p>NB: some poorly written APIs will say the content is type A, but it will actually be type B. In this case you should complain to the API authors, and until they fix the problem, simply drop the check for content type.</p>
+<p>Next we need to parse the output into an R object. httr provides some default parsers with <code>content(..., as = &quot;auto&quot;)</code> but I don’t recommend using them inside a package. Instead it’s better to explicitly parse it yourself:</p>
+<ol style="list-style-type: decimal">
+<li>To parse json, use <code>jsonlite</code> package.</li>
+<li>To parse xml, use the <code>xml2</code> package.</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">github_api &lt;-<span class="st"> </span>function(path) {
+  url &lt;-<span class="st"> </span><span class="kw">modify_url</span>(<span class="st">&quot;https://api.github.com&quot;</span>, <span class="dt">path =</span> path)
+  
+  resp &lt;-<span class="st"> </span><span class="kw">GET</span>(url)
+  if (<span class="kw">http_type</span>(resp) !=<span class="st"> &quot;application/json&quot;</span>) {
+    <span class="kw">stop</span>(<span class="st">&quot;API did not return json&quot;</span>, <span class="dt">call. =</span> <span class="ot">FALSE</span>)
+  }
+  
+  jsonlite::<span class="kw">fromJSON</span>(<span class="kw">content</span>(resp, <span class="st">&quot;text&quot;</span>), <span class="dt">simplifyVector =</span> <span class="ot">FALSE</span>)
+}</code></pre></div>
+</div>
+<div id="return-a-helpful-object" class="section level3">
+<h3>Return a helpful object</h3>
+<p>Rather than simply returning the response as a list, I think it’s a good practice to make a simple S3 object. That way you can return the response and parsed object, and provide a nice print method. This will make debugging later on much much much more pleasant.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">github_api &lt;-<span class="st"> </span>function(path) {
+  url &lt;-<span class="st"> </span><span class="kw">modify_url</span>(<span class="st">&quot;https://api.github.com&quot;</span>, <span class="dt">path =</span> path)
+  
+  resp &lt;-<span class="st"> </span><span class="kw">GET</span>(url)
+  if (<span class="kw">http_type</span>(resp) !=<span class="st"> &quot;application/json&quot;</span>) {
+    <span class="kw">stop</span>(<span class="st">&quot;API did not return json&quot;</span>, <span class="dt">call. =</span> <span class="ot">FALSE</span>)
+  }
+  
+  parsed &lt;-<span class="st"> </span>jsonlite::<span class="kw">fromJSON</span>(<span class="kw">content</span>(resp, <span class="st">&quot;text&quot;</span>), <span class="dt">simplifyVector =</span> <span class="ot">FALSE</span>)
+  
+  <span class="kw">structure</span>(
+    <span class="kw">list</span>(
+      <span class="dt">content =</span> parsed,
+      <span class="dt">path =</span> path,
+      <span class="dt">response =</span> resp
+    ),
+    <span class="dt">class =</span> <span class="st">&quot;github_api&quot;</span>
+  )
+}
+
+print.github_api &lt;-<span class="st"> </span>function(x, ...) {
+  <span class="kw">cat</span>(<span class="st">&quot;&lt;GitHub &quot;</span>, x$path, <span class="st">&quot;&gt;</span><span class="ch">\n</span><span class="st">&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>)
+  <span class="kw">str</span>(x$content)
+  <span class="kw">invisible</span>(x)
+}
+
+<span class="kw">github_api</span>(<span class="st">&quot;/users/hadley&quot;</span>)
+<span class="co">#&gt; &lt;GitHub /users/hadley&gt;</span>
+<span class="co">#&gt; List of 30</span>
+<span class="co">#&gt;  $ login              : chr &quot;hadley&quot;</span>
+<span class="co">#&gt;  $ id                 : int 4196</span>
+<span class="co">#&gt;  $ avatar_url         : chr &quot;https://avatars.githubusercontent.com/u/4196?v=3&quot;</span>
+<span class="co">#&gt;  $ gravatar_id        : chr &quot;&quot;</span>
+<span class="co">#&gt;  $ url                : chr &quot;https://api.github.com/users/hadley&quot;</span>
+<span class="co">#&gt;  $ html_url           : chr &quot;https://github.com/hadley&quot;</span>
+<span class="co">#&gt;  $ followers_url      : chr &quot;https://api.github.com/users/hadley/followers&quot;</span>
+<span class="co">#&gt;  $ following_url      : chr &quot;https://api.github.com/users/hadley/following{/other_user}&quot;</span>
+<span class="co">#&gt;  $ gists_url          : chr &quot;https://api.github.com/users/hadley/gists{/gist_id}&quot;</span>
+<span class="co">#&gt;  $ starred_url        : chr &quot;https://api.github.com/users/hadley/starred{/owner}{/repo}&quot;</span>
+<span class="co">#&gt;  $ subscriptions_url  : chr &quot;https://api.github.com/users/hadley/subscriptions&quot;</span>
+<span class="co">#&gt;  $ organizations_url  : chr &quot;https://api.github.com/users/hadley/orgs&quot;</span>
+<span class="co">#&gt;  $ repos_url          : chr &quot;https://api.github.com/users/hadley/repos&quot;</span>
+<span class="co">#&gt;  $ events_url         : chr &quot;https://api.github.com/users/hadley/events{/privacy}&quot;</span>
+<span class="co">#&gt;  $ received_events_url: chr &quot;https://api.github.com/users/hadley/received_events&quot;</span>
+<span class="co">#&gt;  $ type               : chr &quot;User&quot;</span>
+<span class="co">#&gt;  $ site_admin         : logi FALSE</span>
+<span class="co">#&gt;  $ name               : chr &quot;Hadley Wickham&quot;</span>
+<span class="co">#&gt;  $ company            : chr &quot;RStudio&quot;</span>
+<span class="co">#&gt;  $ blog               : chr &quot;http://had.co.nz&quot;</span>
+<span class="co">#&gt;  $ location           : chr &quot;Houston, TX&quot;</span>
+<span class="co">#&gt;  $ email              : chr &quot;h.wickham@gmail.com&quot;</span>
+<span class="co">#&gt;  $ hireable           : NULL</span>
+<span class="co">#&gt;  $ bio                : NULL</span>
+<span class="co">#&gt;  $ public_repos       : int 193</span>
+<span class="co">#&gt;  $ public_gists       : int 148</span>
+<span class="co">#&gt;  $ followers          : int 6438</span>
+<span class="co">#&gt;  $ following          : int 7</span>
+<span class="co">#&gt;  $ created_at         : chr &quot;2008-04-01T14:47:36Z&quot;</span>
+<span class="co">#&gt;  $ updated_at         : chr &quot;2016-06-03T20:45:26Z&quot;</span></code></pre></div>
+<p>The API might return invalid data, but this should be rare, so you can just rely on the parser to provide a useful error message.</p>
+</div>
+<div id="turn-api-errors-into-r-errors" class="section level3">
+<h3>Turn API errors into R errors</h3>
+<p>Next, you need to make sure that your API wrapper throws an error if the request failed. Using a web API introduces additional possible points of failure into R code aside from those occuring in R itself. These include:</p>
 <ul>
-<li>the base URL for all API requests.</li>
-<li>how authentication works</li>
-<li>how the API is versioned</li>
-<li>how results (including errors) are returned</li>
+<li>Client-side exceptions</li>
+<li>Network / communication exceptions</li>
+<li>Server-side exceptions</li>
 </ul>
-
-<p>The following example shows how you might write these functions for the github API. Note that I&#39;ve used lots of small function to avoid repeating code as much as possible. This is important when writing code that talks to APIs because APIs change all too frequently and you only want to have to change important facts in one place.</p>
-
-<p>We start with functions to execute <code>GET</code> and <code>POST</code> requests:</p>
-
-<pre><code class="r">github_GET &lt;- function(path, ..., pat = github_pat()) {
-  auth &lt;- github_auth(pat)
-  req &lt;- GET(&quot;https://api.github.com&quot;, path = path, auth, ...)
-  github_check(req)
-
-  req
+<p>You need to make sure these are all converted into regular R errors. You can figure out if there’s a problem with <code>http_error()</code>, which checks the HTTP status code. Status codes in the 400 range usually mean that you’ve done something wrong. Status codes in the 500 range typically mean that something has gone wrong on the server side.</p>
+<p>Often the API will information about the error in the body of the response: you should use this where available. If the API returns special errors for common problems, you might want to provide more detail in the error. For example, if you run out of requests and are <a href="https://developer.github.com/v3/#rate-limiting">rate limited</a> you might want to tell the user how long to wait until they can make the next request (or even automatically wait that long!).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">github_api &lt;-<span class="st"> </span>function(path) {
+  url &lt;-<span class="st"> </span><span class="kw">modify_url</span>(<span class="st">&quot;https://api.github.com&quot;</span>, <span class="dt">path =</span> path)
+  
+  resp &lt;-<span class="st"> </span><span class="kw">GET</span>(url)
+  if (<span class="kw">http_type</span>(resp) !=<span class="st"> &quot;application/json&quot;</span>) {
+    <span class="kw">stop</span>(<span class="st">&quot;API did not return json&quot;</span>, <span class="dt">call. =</span> <span class="ot">FALSE</span>)
+  }
+  
+  parsed &lt;-<span class="st"> </span>jsonlite::<span class="kw">fromJSON</span>(<span class="kw">content</span>(resp, <span class="st">&quot;text&quot;</span>), <span class="dt">simplifyVector =</span> <span class="ot">FALSE</span>)
+  
+  if (<span class="kw">http_error</span>(resp)) {
+    <span class="kw">stop</span>(
+      <span class="kw">sprintf</span>(
+        <span class="st">&quot;GitHub API request failed [%s]</span><span class="ch">\n</span><span class="st">%s</span><span class="ch">\n</span><span class="st">&lt;%s&gt;&quot;</span>, 
+        <span class="kw">status_code</span>(resp),
+        parsed$message,
+        parsed$documentation_url
+      ),
+      <span class="dt">call. =</span> <span class="ot">FALSE</span>
+    )
+  }
+  
+  <span class="kw">structure</span>(
+    <span class="kw">list</span>(
+      <span class="dt">content =</span> parsed,
+      <span class="dt">path =</span> path,
+      <span class="dt">response =</span> resp
+    ),
+    <span class="dt">class =</span> <span class="st">&quot;github_api&quot;</span>
+  )
 }
+<span class="kw">github_api</span>(<span class="st">&quot;/user/hadley&quot;</span>)
+<span class="co">#&gt; Error: GitHub API request failed [404]</span>
+<span class="co">#&gt; Not Found</span>
+<span class="co">#&gt; &lt;https://developer.github.com/v3&gt;</span></code></pre></div>
+<blockquote>
+<p>Some poorly written APIs will return different types of response based on whether or not the request succeeded or failed. If your API does this you’ll need to make your request function check the <code>status_code()</code> before parsing the response.</p>
+</blockquote>
+<p>For many APIs, the common approach is to retry API calls that return something in the 500 range. However, when doing this, it’s <strong>extremely</strong> important to make sure to do this with some form of exponential backoff: if something’s wrong on the server-side, hammering the server with retries may make things worse, and may lead to you exhausting quota (or hitting other sorts of rate limits). A common policy is to retry up to 5 times, starting at 1s, and each time doubling and adding a small amount of jitter (plus or minus up to, say, 5% of the current wait time).</p>
+</div>
+<div id="set-a-user-agent" class="section level3">
+<h3>Set a user agent</h3>
+<p>While we’re in this function, there’s one important header that you should set for every API wrapper: the user agent. The user agent is a string used to identify the client. This is most useful for the API owner as it allows them to see who is using the API. It’s also useful for you if you have a contact on the inside as it often makes it easier for them to pull your requests from their logs and see what’s going wrong. If you’re hitting a commercial API, this also makes it easier for internal R advocates to see how many people are using their API via R and hopefully assign more resources.</p>
+<p>A good default for an R API package wrapper is to make it the URL to your GitHub repo:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">ua &lt;-<span class="st"> </span><span class="kw">user_agent</span>(<span class="st">&quot;http://github.com/hadley/httr&quot;</span>)
+ua
+<span class="co">#&gt; &lt;request&gt;</span>
+<span class="co">#&gt; Options:</span>
+<span class="co">#&gt; * useragent: http://github.com/hadley/httr</span>
 
-github_POST &lt;- function(path, body, ..., pat = github_pat()) {
-  auth &lt;- github_auth(pat)
+github_api &lt;-<span class="st"> </span>function(path) {
+  url &lt;-<span class="st"> </span><span class="kw">modify_url</span>(<span class="st">&quot;https://api.github.com&quot;</span>, <span class="dt">path =</span> path)
+  
+  resp &lt;-<span class="st"> </span><span class="kw">GET</span>(url, ua)
+  if (<span class="kw">http_type</span>(resp) !=<span class="st"> &quot;application/json&quot;</span>) {
+    <span class="kw">stop</span>(<span class="st">&quot;API did not return json&quot;</span>, <span class="dt">call. =</span> <span class="ot">FALSE</span>)
+  }
+  
+  parsed &lt;-<span class="st"> </span>jsonlite::<span class="kw">fromJSON</span>(<span class="kw">content</span>(resp, <span class="st">&quot;text&quot;</span>), <span class="dt">simplifyVector =</span> <span class="ot">FALSE</span>)
+  
+  if (<span class="kw">status_code</span>(resp) !=<span class="st"> </span><span class="dv">200</span>) {
+    <span class="kw">stop</span>(
+      <span class="kw">sprintf</span>(
+        <span class="st">&quot;GitHub API request failed [%s]</span><span class="ch">\n</span><span class="st">%s</span><span class="ch">\n</span><span class="st">&lt;%s&gt;&quot;</span>, 
+        <span class="kw">status_code</span>(resp),
+        parsed$message,
+        parsed$documentation_url
+      ),
+      <span class="dt">call. =</span> <span class="ot">FALSE</span>
+    )
+  }
+  
+  <span class="kw">structure</span>(
+    <span class="kw">list</span>(
+      <span class="dt">content =</span> parsed,
+      <span class="dt">path =</span> path,
+      <span class="dt">response =</span> resp
+    ),
+    <span class="dt">class =</span> <span class="st">&quot;github_api&quot;</span>
+  )
+}</code></pre></div>
+</div>
+<div id="passing-parameters" class="section level3">
+<h3>Passing parameters</h3>
+<p>Most APIs work by executing an HTTP method on a specified URL with some additional parameters. These parameters can be specified in a number of ways, including in the URL path, in URL query arguments, in HTTP headers, and in the request body itself. These parameters can be controlled using httr functions:</p>
+<ol style="list-style-type: decimal">
+<li>URL path: <code>modify_url()</code></li>
+<li>Query arguments: The <code>query</code> argument to <code>GET()</code>, <code>POST()</code>, etc.</li>
+<li>HTTP headers: <code>add_headers()</code></li>
+<li>Request body: The <code>body</code> argument to <code>GET()</code>, <code>POST()</code>, etc.</li>
+</ol>
+<p><a href="https://en.wikipedia.org/wiki/Representational_state_transfer">RESTful APIs</a> also use the HTTP verb to communicate arguments (e.g,., <code>GET</code> retrieves a file, <code>POST</code> adds a file, <code>DELETE</code> removes a file, etc.). We can use the helpful <a href="http://httpbin.org">httpbin service</a> to show how to send arguments in each of these ways.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># modify_url</span>
+<span class="kw">POST</span>(<span class="kw">modify_url</span>(<span class="st">&quot;https://httpbin.org&quot;</span>, <span class="dt">path =</span> <span class="st">&quot;/post&quot;</span>))
 
-  stopifnot(is.list(body))
-  body_json &lt;- jsonlite::toJSON(body)
+<span class="co"># query arguments</span>
+<span class="kw">POST</span>(<span class="st">&quot;http://httpbin.org/post&quot;</span>, <span class="dt">query =</span> <span class="kw">list</span>(<span class="dt">foo =</span> <span class="st">&quot;bar&quot;</span>))
 
-  req &lt;- POST(&quot;https://api.github.com&quot;, path = path, body = body_json,
-    auth, post, ...)
-  github_check(req)
+<span class="co"># headers</span>
+<span class="kw">POST</span>(<span class="st">&quot;http://httpbin.org/post&quot;</span>, <span class="kw">add_headers</span>(<span class="dt">foo =</span> <span class="st">&quot;bar&quot;</span>))
 
-  req
+<span class="co"># body</span>
+## as form
+<span class="kw">POST</span>(<span class="st">&quot;http://httpbin.org/post&quot;</span>, <span class="dt">body =</span> <span class="kw">list</span>(<span class="dt">foo =</span> <span class="st">&quot;bar&quot;</span>), <span class="dt">encode =</span> <span class="st">&quot;form&quot;</span>)
+## as json
+<span class="kw">POST</span>(<span class="st">&quot;http://httpbin.org/post&quot;</span>, <span class="dt">body =</span> <span class="kw">list</span>(<span class="dt">foo =</span> <span class="st">&quot;bar&quot;</span>), <span class="dt">encode =</span> <span class="st">&quot;json&quot;</span>)</code></pre></div>
+<p>Many APIs will use just one of these forms of argument passing, but others will use multiple of them in combination. Best practice is to insulate the user from how and where the various arguments are used by the API and instead simply expose relevant arguments via R function arguments, some of which might be used in the URL, in the headers, in the body, etc.</p>
+<p>If a parameter has a small fixed set of possible values that are allowed by the API, you can use list them in the default arguments and then use <code>match.arg()</code> to ensure that the caller only supplies one of those values. (This also allows the user to supply the short unique prefixes.)</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">f &lt;-<span class="st"> </span>function(<span class="dt">x =</span> <span class="kw">c</span>(<span class="st">&quot;apple&quot;</span>, <span class="st">&quot;banana&quot;</span>, <span class="st">&quot;orange&quot;</span>)) {
+  <span class="kw">match.arg</span>(x)
 }
-</code></pre>
-
-<p>These need some additional infrastructure to authenticate, check the responses and give useful error messages and parse responses:</p>
-
-<pre><code class="r">github_auth &lt;- function(pat = github_pat()) {
-  authenticate(pat, &quot;x-oauth-basic&quot;, &quot;basic&quot;)
-}
-
-github_check &lt;- function(req) {
-  if (req$status_code &lt; 400) return(invisible())
-
-  message &lt;- github_parse(req)$message
-  stop(&quot;HTTP failure: &quot;, req$status_code, &quot;\n&quot;, message, call. = FALSE)
-}
-
-github_parse &lt;- function(req) {
-  text &lt;- content(req, as = &quot;text&quot;)
-  if (identical(text, &quot;&quot;)) stop(&quot;No output to parse&quot;, call. = FALSE)
-  jsonlite::fromJSON(text, simplifyVector = FALSE)
-}
-
-github_pat &lt;- function() {
-  Sys.getenv(&#39;GITHUB_PAT&#39;)
-}
-
-has_pat &lt;- function() !identical(github_pat(), &quot;&quot;)
-</code></pre>
-
-<p><code>github_pat()</code> is just a shim, to get my personal access token from an environment variable. Later, you&#39;ll see a better, if lengthier, way of writing it in the authentication section.</p>
-
-<p>Once you have these pieces in place, it&#39;s simple to implement API functions. For example, we could implement a <code>rate_limit()</code> function that tells you how many calls against the github API are available to you.</p>
-
-<pre><code class="r">rate_limit &lt;- function() {
-  req &lt;- github_GET(&quot;rate_limit&quot;)
-  github_parse(req)
-}
-
-if (has_pat()) {
-  str(rate_limit())
-}
-#&gt; List of 2
-#&gt;  $ resources:List of 2
-#&gt;   ..$ core  :List of 3
-#&gt;   .. ..$ limit    : int 5000
-#&gt;   .. ..$ remaining: int 4998
-#&gt;   .. ..$ reset    : int 1453912875
-#&gt;   ..$ search:List of 3
-#&gt;   .. ..$ limit    : int 30
-#&gt;   .. ..$ remaining: int 30
-#&gt;   .. ..$ reset    : int 1453909664
-#&gt;  $ rate     :List of 3
-#&gt;   ..$ limit    : int 5000
-#&gt;   ..$ remaining: int 4998
-#&gt;   ..$ reset    : int 1453912875
-</code></pre>
-
-<p>After getting the first version getting working, you&#39;ll often want to polish the output to be more user friendly. For this example, we can parse the unix timestamps into more useful date types.</p>
-
-<pre><code class="r">rate_limit &lt;- function() {
-  req &lt;- github_GET(&quot;rate_limit&quot;)
-  core &lt;- github_parse(req)$resources$core
-
-  reset &lt;- as.POSIXct(core$reset, origin = &quot;1970-01-01&quot;)
-  cat(core$remaining, &quot; / &quot;, core$limit,
-    &quot; (Reset &quot;, strftime(reset, &quot;%H:%M:%S&quot;), &quot;)\n&quot;, sep = &quot;&quot;)
-}
-
-if (has_pat()) {
-  rate_limit()
-}
-#&gt; 4998 / 5000 (Reset 08:41:15)
-</code></pre>
-
-<p>Depending on the complexity of the API, you might want to keep separate the functions that return a request object and the functions that parse it into a useful R object.</p>
-
-<h2>Parsing output and posting input</h2>
-
-<p>Most APIs communicate either with json or xml. To work with json, I recommend the <code>jsonlite</code> package. To work with xml, use the <code>xml</code> package.</p>
-
-<p>httr provides some default parsers with <code>content(..., as = &quot;auto&quot;)</code> but I don&#39;t recommend using them inside a package. Instead get the content as text with <code>content(..., as = &quot;text&quot;)</code> and parse it yourself. The API might return invalid data, but this should be rare, so you can just rely on the parser to provide a useful error message.</p>
-
-<pre><code class="r">github_parse &lt;- function(req) {
-  text &lt;- content(req, as = &quot;text&quot;)
-  if (identical(text, &quot;&quot;)) stop(&quot;&quot;)
-  jsonlite::fromJSON(text, simplifyVector = FALSE)
-}
-</code></pre>
-
-<p>Many APIs use <a href="http://en.wikipedia.org/wiki/Content_negotiation">content negotiation</a> to determine whats sort of data to send back. If the API you&#39;re wrapping does this, then you might find <code>accept_json()</code> and <code>accept_xml()</code> to be useful.</p>
-
-<h2>Responding to errors</h2>
-
-<p>First, check the HTTP status code. Status codes in the 400 range usually mean that you&#39;ve done something wrong. Status codes in the 500 range typically mean that something has gone wrong on the server side. This however, might be that you sent the server something badly formed.</p>
-
-<p>When you get an error, often the body of the request will contain some useful information, so you should parse it and pull out the error. This will vary based on the API. For github, we can parse it as follows:</p>
-
-<pre><code class="r">github_parse &lt;- function(req) {
-  text &lt;- content(req, as = &quot;text&quot;)
-  if (identical(text, &quot;&quot;)) stop(&quot;No output to parse&quot;, call. = FALSE)
-  jsonlite::fromJSON(text, simplifyVector = FALSE)
-}
-</code></pre>
-
-<p>If the API returns special errors for common problems, you might want to provide more detail in the error. For example, if you run out of requests and are <a href="https://developer.github.com/v3/#rate-limiting">rate limited</a> you might want to tell the user how long to wait until they can make the next request (or even automatically wait that long!).</p>
-
+<span class="kw">f</span>(<span class="st">&quot;a&quot;</span>)
+<span class="co">#&gt; [1] &quot;apple&quot;</span></code></pre></div>
+<p>It is good practice to explicitly set default values for arguments that are not required to <code>NULL</code>. If there is a default value, it should be the first one listed in the vector of allowed arguments.</p>
+</div>
+</div>
+<div id="authentication" class="section level2">
 <h2>Authentication</h2>
-
-<p>The most common forms of authentication are OAuth and http basic auth:</p>
-
-<ul>
-<li><p>OAuth 1.0. Not terribly common any more. See <code>oauth1.0_token()</code> for 
-details.</p></li>
-<li><p>OAuth 2.0. Very common in modern web apps. It involves a round trip between
-the client and server to establish if the API client has the authority to
-access the data. See <code>oauth2.0_token()</code>. It&#39;s ok to publish api key and 
-&ldquo;secret&rdquo; - these are not actually important for security of user data.</p></li>
-<li><p>HTTP basic auth with username and password. This is the least secure
-since it requires the most information.</p>
-
-<pre><code class="r">authenticate(&quot;username&quot;, &quot;password&quot;)
-#&gt; &lt;request&gt;
-#&gt; Options:
-#&gt; * httpauth: 1
-#&gt; * userpwd: username:password
-</code></pre></li>
-<li><p>HTTP basic auth with API key. An alternative provided by increasing number
-of APIs - instead of using a username and password intimately associated
-with the users account, you instead use a randomly generated API key that
-can be independently deactivated. Often the password is left blank or set
-to a prespecified value.</p>
-
-<pre><code class="r">authenticate(&quot;ddfa3d40d5855d6ba76b7003fd4&quot;, &quot;&quot;)
-#&gt; &lt;request&gt;
-#&gt; Options:
-#&gt; * httpauth: 1
-#&gt; * userpwd: ddfa3d40d5855d6ba76b7003fd4:
-</code></pre></li>
-</ul>
-
-<p>You also need some way to preserve user credentials so that they don&#39;t need to be re-entered multiple times. If you use OAuth, httr will take care of this for. For other use cases, I recommend using environment variables. The following function retrieves your PAT from an environmental variable called <code>GITHUB_PAT</code>, telling you how to set it if not. The devtools package needs to access your github personal access token to install packages from private repos.</p>
-
-<pre><code class="r">github_pat &lt;- function(force = FALSE) {
-  env &lt;- Sys.getenv(&#39;GITHUB_PAT&#39;)
-  if (!identical(env, &quot;&quot;) &amp;&amp; !force) return(env)
-
-  if (!interactive()) {
-    stop(&quot;Please set env var GITHUB_PAT to your github personal access token&quot;,
-      call. = FALSE)
+<p>Many APIs can be called without any authentication (just as if you called them in a web browser). However, others require authentication to perform particular requests or to avoid rate limits and other limitations. The most common forms of authentication are OAuth and HTTP basic authentication:</p>
+<ol style="list-style-type: decimal">
+<li><p><em>“Basic” authentication</em>: This requires a username and password (or sometimes just a username). This is passed as part of the HTTP request. In httr, you can do: <code>GET(&quot;http://httpbin.org&quot;, authenticate(&quot;username&quot;, &quot;password&quot;))</code></p></li>
+<li><p><em>Basic authentication with an API key</em>: An alternative provided by many APIs is an API “key” or “token” which is passed as part of the request. It is better than a username/password combination because it can be regenerated independent of the username and password.</p>
+<p>This API key can be specified in a number of different ways: in a URL query argument, in an HTTP header such as the <code>Authorization</code> header, or in an argument inside the request body.</p></li>
+<li><p><em>OAuth</em>: OAuth is a protocol for generating a user- or session-specific authentication token to use in subsequent requests. (An early standard, OAuth 1.0, is not terribly common any more. See <code>oauth1.0_token()</code> for details.) The current OAuth 2.0 standard is very common in modern web apps. It involves a round trip between the client and server to establish if the API client has the authority to access the data. See <code>oauth2.0_token()</code>. It’s ok to publish the app ID and app “secret” - these are not actually important for security of user data.</p></li>
+</ol>
+<blockquote>
+<p>Some APIs describe their authentication processes inaccurately, so care needs to be taken to understand the true authentication mechanism regardless of the label used in the API docs.</p>
+</blockquote>
+<p>It is possible to specify the key(s) or token(s) required for basic or OAuth authentication in a number of different ways (see Appendix for a detailed discussion). You may also need some way to preserve user credentials between function calls so that end users do not need to specify them each time. A good start is to use an environment variable. Here is an example of how to write a function that checks for the presence of a GitHub personal access token and errors otherwise:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">github_pat &lt;-<span class="st"> </span>function() {
+  pat &lt;-<span class="st"> </span><span class="kw">Sys.getenv</span>(<span class="st">'GITHUB_PAT'</span>)
+  if (<span class="kw">identical</span>(pat, <span class="st">&quot;&quot;</span>)) {
+    <span class="kw">stop</span>(<span class="st">&quot;Please set env var GITHUB_PAT to your github personal access token&quot;</span>,
+      <span class="dt">call. =</span> <span class="ot">FALSE</span>)
   }
-
-  message(&quot;Couldn&#39;t find env var GITHUB_PAT. See ?github_pat for more details.&quot;)
-  message(&quot;Please enter your PAT and press enter:&quot;)
-  pat &lt;- readline(&quot;: &quot;)
-
-  if (identical(pat, &quot;&quot;)) {
-    stop(&quot;Github personal access token entry failed&quot;, call. = FALSE)
-  }
-
-  message(&quot;Updating GITHUB_PAT env var to PAT&quot;)
-  Sys.setenv(GITHUB_PAT = pat)
 
   pat
-}
-</code></pre>
-
-<p>Encourage your users to store their important information once (see below), rather than typing it into the console - it&#39;s easy to accidentally publish your <code>.Rhistory</code> and you don&#39;t want it to contain private data.</p>
-
-<h3>Vignettes</h3>
-
-<p>Including authentication requiring code in your vignettes is challenging, because you don&#39;t want to bundle your own credentials with the package! However, you can take advantage of the fact that the vignette is built locally, and only checked by CRAN with this idea from Jenny Bryan:</p>
-
-<p>In an setup chunk, do:</p>
-
-<pre><code class="r">NOT_CRAN &lt;- identical(tolower(Sys.getenv(&quot;NOT_CRAN&quot;)), &quot;true&quot;)
-knitr::opts_chunk$set(purl = NOT_CRAN)
-</code></pre>
-
-<p>And then use <code>eval = NOT_CRAN</code> as needed as a chunk option.</p>
-
-<h2>Appendix: API key best practices</h2>
-
-<p>If your package supports an authentication workflow based on an API key or token, encourage users to store it in an environment variable. We illustrate this using the <a href="https://github.com/cscheid/rgithub"><code>github</code> R package</a>, which wraps the Github v3 API. Tailor this template to your API + package and include in <code>README.md</code> or a vignette.</p>
-
-<ol>
-<li><p>Create a personal access token in the 
-<a href="https://github.com/settings/tokens">Personal access tokens area</a> of your
-GitHub personal settings. Copy token to the clipboard.</p></li>
-<li><p>Identify your home directory. Not sure? Enter <code>normalizePath(&quot;~/&quot;)</code> in 
-the R console.</p></li>
-<li><p>Create a new text file. If in RStudio, do <em>File &gt; New File &gt; Text file.</em></p></li>
-<li><p>Create a line like this:</p>
-
-<pre><code class="bash">GITHUB_PAT=blahblahblahblahblahblah
-</code></pre>
-
-<p>where the name <code>GITHUB_PAT</code> reminds you which API this is for and 
-<code>blahblahblahblahblahblah</code> is your personal access token, pasted from the clipboard.</p></li>
-<li><p>Make sure the last line in the file is empty (if it isn&#39;t R will 
-<strong>silently</strong> fail to load the file. If you&#39;re using an editor that shows 
-line numbers, there should be two lines, where the second one is empty.</p></li>
-<li><p>Save in your home directory with the filename <code>.Renviron</code>. If questioned, 
-YES you do want to use a filename that begins with a dot <code>.</code>.</p>
-
-<p>Note that by default <a href="http://linux.about.com/cs/linux101/g/dot_file.htm">dotfiles</a> 
-are usually hidden. But within RStudio, the file browser will make 
-<code>.Renviron</code> visible and therefore easy to edit in the future.</p></li>
-<li><p>Restart R. <code>.Renviron</code> is processed only 
-<a href="http://stat.ethz.ch/R-manual/R-patched/library/base/html/Startup.html">at the start of an R session</a>.</p></li>
-<li><p>Use <code>Sys.getenv()</code> to access your token. For example, here&#39;s how to use 
-your <code>GITHUB_PAT</code> with the <code>github</code> package:</p>
-
-<pre><code class="R">library(github)
-ctx &lt;- create.github.context(access_token = Sys.getenv(&quot;GITHUB_PAT&quot;))
-# ... proceed to use other package functions to open issues, etc.
-</code></pre></li>
+}</code></pre></div>
+</div>
+<div id="pagination-handling-multi-page-responses" class="section level2">
+<h2>Pagination (handling multi-page responses)</h2>
+<p>One particularly frustrating aspect of many APIs is dealing with paginated responses. This is common in APIs that offer search functionality and have the potential to return a very large number of responses. Responses might be paginated because there is a large number of response elements or because elements are updated frequently. Often they will be sorted by an explicit or implicit argument specified in the request.</p>
+<p>When a response is paginated, the API response will typically respond with a header or value specified in the body that contains one of the following:</p>
+<ol style="list-style-type: decimal">
+<li>The total number of pages of responses</li>
+<li>The total number of response elements (with multiple elements per page)</li>
+<li>An indicator for whether any further elements or pages are available.</li>
+<li>A URL containing the next page</li>
 </ol>
+<p>These values can then be used to make further requests. This will either involve specifying a specific page of responses or specifying a “next page token” that returns the next page of results. How to deal with pagination is a difficult question and a client could implement any of the following:</p>
+<ol style="list-style-type: decimal">
+<li>Return one page only by default with an option to return additional specific pages</li>
+<li>Return a specified page (deafulting to 1) and require the end user to handle pagination</li>
+<li>Return all pages by writing an internal process of checking for further pages and combining the results</li>
+</ol>
+<p>The choice of which to use depends on your needs and goals and the rate limits of the API.</p>
+<div id="rate-limiting" class="section level3">
+<h3>Rate limiting</h3>
+<p>Many APIs are rate limited, which means that you can only send a certain number of requests per hour. Often if your request is rate limited, the error message will tell you how long you should wait before performing another request. You might want to expose this to the user, or even include a wall to <code>Sys.sleep()</code> that waits long enough.</p>
+<p>For example, we could implement a <code>rate_limit()</code> function that tells you how many calls against the github API are available to you.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rate_limit &lt;-<span class="st"> </span>function() {
+  <span class="kw">github_api</span>(<span class="st">&quot;/rate_limit&quot;</span>)
+}
+<span class="kw">rate_limit</span>()
+<span class="co">#&gt; &lt;GitHub /rate_limit&gt;</span>
+<span class="co">#&gt; List of 2</span>
+<span class="co">#&gt;  $ resources:List of 2</span>
+<span class="co">#&gt;   ..$ core  :List of 3</span>
+<span class="co">#&gt;   .. ..$ limit    : int 60</span>
+<span class="co">#&gt;   .. ..$ remaining: int 38</span>
+<span class="co">#&gt;   .. ..$ reset    : int 1465943683</span>
+<span class="co">#&gt;   ..$ search:List of 3</span>
+<span class="co">#&gt;   .. ..$ limit    : int 10</span>
+<span class="co">#&gt;   .. ..$ remaining: int 10</span>
+<span class="co">#&gt;   .. ..$ reset    : int 1465942890</span>
+<span class="co">#&gt;  $ rate     :List of 3</span>
+<span class="co">#&gt;   ..$ limit    : int 60</span>
+<span class="co">#&gt;   ..$ remaining: int 38</span>
+<span class="co">#&gt;   ..$ reset    : int 1465943683</span></code></pre></div>
+<p>After getting the first version getting working, you’ll often want to polish the output to be more user friendly. For this example, we can parse the unix timestamps into more useful date types.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rate_limit &lt;-<span class="st"> </span>function() {
+  req &lt;-<span class="st"> </span><span class="kw">github_api</span>(<span class="st">&quot;/rate_limit&quot;</span>)
+  core &lt;-<span class="st"> </span>req$content$resources$core
 
+  reset &lt;-<span class="st"> </span><span class="kw">as.POSIXct</span>(core$reset, <span class="dt">origin =</span> <span class="st">&quot;1970-01-01&quot;</span>)
+  <span class="kw">cat</span>(core$remaining, <span class="st">&quot; / &quot;</span>, core$limit,
+    <span class="st">&quot; (Resets at &quot;</span>, <span class="kw">strftime</span>(reset, <span class="st">&quot;%H:%M:%S&quot;</span>), <span class="st">&quot;)</span><span class="ch">\n</span><span class="st">&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>)
+}
+
+<span class="kw">rate_limit</span>()
+<span class="co">#&gt; 38 / 60 (Resets at 17:34:43)</span></code></pre></div>
+</div>
+</div>
+<div id="packaging-youe-code" class="section level2">
+<h2>Packaging youe code</h2>
+<div id="documentation" class="section level3">
+<h3>Documentation</h3>
+<p>Like any R package, an API client needs clear and complete documentation of all functions. Examples are particularly useful but may need to be wrapped in <code>\donttest{}</code> to avoid challenges of authentication, rate limiting, lack of network access, or occasional API server down time.</p>
+<p>One other challenge unique to web API packages is the need to have documentation that clarifies any distinctions between the R implementation and the API generally (e.g., in the “details” section). It can be useful to add reference links to the API documentation to clarify the mapping between R functions and API endpoints.</p>
+</div>
+<div id="vignettes" class="section level3">
+<h3>Vignettes</h3>
+<p>Vignettes pose additional challenges when an API requires authentication, because you don’t want to bundle your own credentials with the package! However, you can take advantage of the fact that the vignette is built locally, and only checked by CRAN with this idea from Jenny Bryan:</p>
+<p>In an setup chunk, do:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">NOT_CRAN &lt;-<span class="st"> </span><span class="kw">identical</span>(<span class="kw">tolower</span>(<span class="kw">Sys.getenv</span>(<span class="st">&quot;NOT_CRAN&quot;</span>)), <span class="st">&quot;true&quot;</span>)
+knitr::opts_chunk$<span class="kw">set</span>(<span class="dt">purl =</span> NOT_CRAN)</code></pre></div>
+<p>And then use <code>eval = NOT_CRAN</code> as needed as a chunk option.</p>
+</div>
+<div id="testing" class="section level3">
+<h3>Testing</h3>
+<p>The same issues and solutions can also be applied to test suites for API clients that require authenticated credentials. For these packages, you may want to have a test suite that is only run locally but not on CRAN. Another solution is to use a continuous integration service such as Travis-CI or Appveyor, which allows the inclusion of encrypted environment variables or encrypted token files. This enables continuous testing in a relatively secure way.</p>
+</div>
+</div>
+<div id="appendix-storing-api-authentication-keystokens" class="section level2">
+<h2>Appendix: Storing API Authentication Keys/Tokens</h2>
+<p>If your package supports an authentication workflow based on an API key or token, encourage users to store it in an environment variable. We illustrate this using the <a href="https://github.com/cscheid/rgithub"><code>github</code> R package</a>, which wraps the Github v3 API. Tailor this template to your API + package and include in <code>README.md</code> or a vignette.</p>
+<ol style="list-style-type: decimal">
+<li>Create a personal access token in the <a href="https://github.com/settings/tokens">Personal access tokens area</a> of your GitHub personal settings. Copy token to the clipboard.</li>
+<li>Identify your home directory. Not sure? Enter <code>normalizePath(&quot;~/&quot;)</code> in the R console.</li>
+<li>Create a new text file. If in RStudio, do <em>File &gt; New File &gt; Text file.</em></li>
+<li>Create a line like this:</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ot">GITHUB_PAT=</span>blahblahblahblahblahblah</code></pre></div>
+<p>where the name <code>GITHUB_PAT</code> reminds you which API this is for and <code>blahblahblahblahblahblah</code> is your personal access token, pasted from the clipboard.</p>
+<ol style="list-style-type: decimal">
+<li><p>Make sure the last line in the file is empty (if it isn’t R will <strong>silently</strong> fail to load the file. If you’re using an editor that shows line numbers, there should be two lines, where the second one is empty.</p></li>
+<li><p>Save in your home directory with the filename <code>.Renviron</code>. If questioned,<br />
+YES you do want to use a filename that begins with a dot <code>.</code>.</p>
+<p>Note that by default <a href="http://linux.about.com/cs/linux101/g/dot_file.htm">dotfiles</a> are usually hidden. But within RStudio, the file browser will make <code>.Renviron</code> visible and therefore easy to edit in the future.</p></li>
+<li><p>Restart R. <code>.Renviron</code> is processed only <a href="http://stat.ethz.ch/R-manual/R-patched/library/base/html/Startup.html">at the start of an R session</a>.</p></li>
+<li><p>Use <code>Sys.getenv()</code> to access your token. For example, here’s how to use your <code>GITHUB_PAT</code> with the <code>github</code> package:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(github)
+ctx &lt;-<span class="st"> </span><span class="kw">create.github.context</span>(<span class="dt">access_token =</span> <span class="kw">Sys.getenv</span>(<span class="st">&quot;GITHUB_PAT&quot;</span>))
+<span class="co"># ... proceed to use other package functions to open issues, etc.</span></code></pre></div></li>
+</ol>
 <p>FAQ: Why define this environment variable via <code>.Renviron</code> instead of in <code>.bash_profile</code> or <code>.bashrc</code>?</p>
+<p>Because there are many combinations of OS and ways of running R where the <code>.Renviron</code> approach “just works” and the bash stuff does not. When R is a child process of, say, Emacs or RStudio, you can’t always count on environment variables being passed to R. Put them in an R-specific start-up file and save yourself some grief.</p>
+</div>
 
-<p>Because there are many combinations of OS and ways of running R where the <code>.Renviron</code> approach &ldquo;just works&rdquo; and the bash stuff does not. When R is a child process of, say, Emacs or RStudio, you can&#39;t always count on environment variables being passed to R. Put them in an R-specific start-up file and save yourself some grief.</p>
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
 
 </body>
-
 </html>

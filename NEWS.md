@@ -1,3 +1,58 @@
+# httr 1.2.0
+
+## New features
+
+* `oauth_signature()` no longer prepends 'oauth\_'  to additional parameters.
+  (@jimhester, #373)
+
+* All `print()` methods now invisibly return `x` (#355).
+
+* `DELETE()` gains a body parameter (#326).
+
+* New `encode = "raw"` allows you to do your own encoding for requests with
+  bodies.
+
+* New `http_type()` returns the content/mime type of a request, sans parameters.
+
+## Bug fixes and minor improvements
+
+* No longer uses use custom requests for standard `POST` requests (#356, 
+  #357). This has the side-effect of properly following redirects after 
+  `POST`, fixing some login issues (eg hadley/rvest#133).
+  
+* Long deprecated `multipart` argument to `POST()`, `PUT()` and `PATCH()`
+  has been removed.
+
+* The cross-session OAuth cache is now created with permission 0600, and should
+  give a better error if it can't be created (#365).
+
+* New `RETRY()` function allows you to retry a request multiple times until
+  it succeeds (#353).
+
+* The default user agent string is now computed once and cached. This 
+  is a small performance improvement, but important for local connections
+  (#322, @richfitz).
+
+* `oauth_callback()` gains trailing slash for facebook compatibility (#324).
+
+* `progress()` gains `con` argument to control where progress bar is rendered
+  (#359).
+
+* When `use_basic_auth` option is used to obtain a token, token refreshes 
+  will now use basic authentication too.
+
+* Suppress unhelpful "No encoding supplied: defaulting to UTF-8." when 
+  printing a response (#327).
+
+* All auto parser functions now have consistent arguments. This fixes problem
+  where `...` is pass on to another function (#330).
+
+* `parse_media()` can once again parse multiple parameters (#362, #366).
+
+* Correctly cast `config` in `POST()`.
+
+* Fix in readfunction to close connection when done.
+
 # httr 1.1.0
 
 ## New features

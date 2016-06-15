@@ -5,8 +5,7 @@
 \title{POST file to a server.}
 \usage{
 POST(url = NULL, config = list(), ..., body = NULL,
-  encode = c("multipart", "form", "json"), multipart = TRUE,
-  handle = NULL)
+  encode = c("multipart", "form", "json", "raw"), handle = NULL)
 }
 \arguments{
 \item{url}{the url of the page to retrieve}
@@ -22,7 +21,9 @@ with \code{\link{config}}.}
 
 \item{body}{One of the following:
 \itemize{
-  \item \code{FALSE}: No body
+  \item \code{FALSE}: No body. This is typically not used with \code{POST},
+    \code{PUT}, or \code{PATCH}, but can be useful if you need to send a
+    bodyless request (like \code{GET}) with \code{VERB()}.
   \item \code{NULL}: An empty body
   \item \code{""}: A length 0 body
   \item \code{upload_file("path/")}: The contents of a file.  The mime
@@ -43,11 +44,8 @@ with \code{\link{config}}.}
   and escaped, use \code{I()} to prevent double-escaping. For "json",
   parameters are automatically "unboxed" (i.e. length 1 vectors are
   converted to scalars). To preserve a length 1 vector as a vector,
-  wrap in \code{I()}.}
-
-\item{multipart}{Deprecated. \code{TRUE} = \code{encode = "multipart"},
-\code{FALSE} = {encode = "form"}.
-Files can not be uploaded when \code{FALSE}.}
+  wrap in \code{I()}. For "raw", either a character or raw vector. You'll
+  need to make sure to set the \code{\link{content_type}()} yourself.}
 
 \item{handle}{The handle to use with this request. If not
 supplied, will be retrieved and reused from the \code{\link{handle_pool}}

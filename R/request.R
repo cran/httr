@@ -95,11 +95,19 @@ print.request <- function(x, ...) {
     cat("Auth token: ", class(x$auth_token)[[1]], "\n", sep = "")
   }
 
+  invisible(x)
 }
 
 request_prepare <- function(req) {
   req <- request_combine(request_default(), req)
-  req$options$customrequest <- req$method
+
+  # Use specific options for GET and POST; otherwise, perform a custom request.
+  # The PUT/UPLOAD options don't appear to work, instead hanging forever.
+  switch(req$method,
+    GET =  req$options$httpget <- TRUE,
+    POST = req$options$post <- TRUE,
+    req$options$customrequest <- req$method
+  )
 
   # Sign request, if needed
   token <- req$auth_token

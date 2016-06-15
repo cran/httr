@@ -54,7 +54,7 @@ print.response <- function(x, ..., max.lines = 10, width = getOption("width")) {
 
   # Content is text, so print up to `max.lines` lines, truncating each line to
   # at most `width` characters wide
-  text <- content(x, "text")
+  suppressMessages(text <- content(x, "text"))
 
   breaks <- gregexpr("\n", text, fixed = TRUE)[[1]]
   last_line <- breaks[min(length(breaks), max.lines)]
@@ -65,6 +65,8 @@ print.response <- function(x, ..., max.lines = 10, width = getOption("width")) {
 
   cat(lines, sep = "\n")
   if (max.lines < length(breaks)) cat("...\n")
+
+  invisible(x)
 }
 
 is_text <- function(type) {

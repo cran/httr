@@ -9,10 +9,10 @@
 #' \code{content} currently knows about the following mime types:
 #'
 #' \itemize{
-#'  \item \code{text/html}: \code{\link[XML]{htmlTreeParse}}
-#'  \item \code{text/xml}: \code{\link[XML]{xmlTreeParse}}
-#'  \item \code{text/csv}: \code{\link{read.csv}}
-#'  \item \code{text/tab-separated-values}: \code{\link{read.delim}}
+#'  \item \code{text/html}: \code{\link[xml2]{read_html}}
+#'  \item \code{text/xml}: \code{\link[xml2]{read_xml}}
+#'  \item \code{text/csv}: \code{\link[readr]{read_csv}}
+#'  \item \code{text/tab-separated-values}: \code{\link[readr]{read_tsv}}
 #'  \item \code{application/json}: \code{\link[jsonlite]{fromJSON}}
 #'  \item \code{application/x-www-form-urlencoded}: \code{parse_query}
 #'  \item \code{image/jpeg}: \code{\link[jpeg]{readJPEG}}
