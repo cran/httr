@@ -12,7 +12,7 @@
 
 <meta name="author" content="Hadley Wickham" />
 
-<meta name="date" content="2016-06-14" />
+<meta name="date" content="2016-07-03" />
 
 <title>Best practices for writing an API package</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Best practices for writing an API package</h1>
 <h4 class="author"><em>Hadley Wickham</em></h4>
-<h4 class="date"><em>2016-06-14</em></h4>
+<h4 class="date"><em>2016-07-03</em></h4>
 
 
 
@@ -142,7 +142,7 @@ github_api &lt;-<span class="st"> </span>function(path) {
 resp &lt;-<span class="st"> </span><span class="kw">github_api</span>(<span class="st">&quot;/repos/hadley/httr&quot;</span>)
 resp
 <span class="co">#&gt; Response [https://api.github.com/repos/hadley/httr]</span>
-<span class="co">#&gt;   Date: 2016-06-14 22:20</span>
+<span class="co">#&gt;   Date: 2016-07-03 17:01</span>
 <span class="co">#&gt;   Status: 200</span>
 <span class="co">#&gt;   Content-Type: application/json; charset=utf-8</span>
 <span class="co">#&gt;   Size: 4.73 kB</span>
@@ -164,24 +164,24 @@ resp
 <p>Note that while most APIs will return only one or the other, some, like the colour lovers API, allow you to choose which one with a url parameter:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">GET</span>(<span class="st">&quot;http://www.colourlovers.com/api/color/6B4106?format=xml&quot;</span>)
 <span class="co">#&gt; Response [http://www.colourlovers.com/api/color/6B4106?format=xml]</span>
-<span class="co">#&gt;   Date: 2016-06-14 22:20</span>
+<span class="co">#&gt;   Date: 2016-07-03 17:01</span>
 <span class="co">#&gt;   Status: 200</span>
 <span class="co">#&gt;   Content-Type: text/xml; charset=utf-8</span>
 <span class="co">#&gt;   Size: 970 B</span>
 <span class="co">#&gt; &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;yes&quot;?&gt;</span>
-<span class="co">#&gt; &lt;colors numResults=&quot;1&quot; totalResults=&quot;9525684&quot;&gt;</span>
+<span class="co">#&gt; &lt;colors numResults=&quot;1&quot; totalResults=&quot;9565103&quot;&gt;</span>
 <span class="co">#&gt;  &lt;color&gt;</span>
 <span class="co">#&gt;      &lt;id&gt;903893&lt;/id&gt;</span>
 <span class="co">#&gt;      &lt;title&gt;&lt;![CDATA[wet dirt]]&gt;&lt;/title&gt;</span>
 <span class="co">#&gt;      &lt;userName&gt;&lt;![CDATA[jessicabrown]]&gt;&lt;/userName&gt;</span>
-<span class="co">#&gt;      &lt;numViews&gt;431&lt;/numViews&gt;</span>
+<span class="co">#&gt;      &lt;numViews&gt;434&lt;/numViews&gt;</span>
 <span class="co">#&gt;      &lt;numVotes&gt;1&lt;/numVotes&gt;</span>
 <span class="co">#&gt;      &lt;numComments&gt;0&lt;/numComments&gt;</span>
 <span class="co">#&gt;      &lt;numHearts&gt;0&lt;/numHearts&gt;</span>
 <span class="co">#&gt; ...</span>
 <span class="kw">GET</span>(<span class="st">&quot;http://www.colourlovers.com/api/color/6B4106?format=json&quot;</span>)
 <span class="co">#&gt; Response [http://www.colourlovers.com/api/color/6B4106?format=json]</span>
-<span class="co">#&gt;   Date: 2016-06-14 22:20</span>
+<span class="co">#&gt;   Date: 2016-07-03 17:01</span>
 <span class="co">#&gt;   Status: 200</span>
 <span class="co">#&gt;   Content-Type: application/json; charset=utf-8</span>
 <span class="co">#&gt;   Size: 569 B</span></code></pre></div>
@@ -268,18 +268,18 @@ print.github_api &lt;-<span class="st"> </span>function(x, ...) {
 <span class="co">#&gt;  $ type               : chr &quot;User&quot;</span>
 <span class="co">#&gt;  $ site_admin         : logi FALSE</span>
 <span class="co">#&gt;  $ name               : chr &quot;Hadley Wickham&quot;</span>
-<span class="co">#&gt;  $ company            : chr &quot;RStudio&quot;</span>
-<span class="co">#&gt;  $ blog               : chr &quot;http://had.co.nz&quot;</span>
+<span class="co">#&gt;  $ company            : chr &quot;@rstudio &quot;</span>
+<span class="co">#&gt;  $ blog               : chr &quot;http://hadley.nz&quot;</span>
 <span class="co">#&gt;  $ location           : chr &quot;Houston, TX&quot;</span>
 <span class="co">#&gt;  $ email              : chr &quot;h.wickham@gmail.com&quot;</span>
 <span class="co">#&gt;  $ hireable           : NULL</span>
 <span class="co">#&gt;  $ bio                : NULL</span>
-<span class="co">#&gt;  $ public_repos       : int 193</span>
+<span class="co">#&gt;  $ public_repos       : int 194</span>
 <span class="co">#&gt;  $ public_gists       : int 148</span>
-<span class="co">#&gt;  $ followers          : int 6438</span>
+<span class="co">#&gt;  $ followers          : int 6577</span>
 <span class="co">#&gt;  $ following          : int 7</span>
 <span class="co">#&gt;  $ created_at         : chr &quot;2008-04-01T14:47:36Z&quot;</span>
-<span class="co">#&gt;  $ updated_at         : chr &quot;2016-06-03T20:45:26Z&quot;</span></code></pre></div>
+<span class="co">#&gt;  $ updated_at         : chr &quot;2016-07-01T20:50:53Z&quot;</span></code></pre></div>
 <p>The API might return invalid data, but this should be rare, so you can just rely on the parser to provide a useful error message.</p>
 </div>
 <div id="turn-api-errors-into-r-errors" class="section level3">
@@ -461,16 +461,16 @@ github_api &lt;-<span class="st"> </span>function(path) {
 <span class="co">#&gt;  $ resources:List of 2</span>
 <span class="co">#&gt;   ..$ core  :List of 3</span>
 <span class="co">#&gt;   .. ..$ limit    : int 60</span>
-<span class="co">#&gt;   .. ..$ remaining: int 38</span>
-<span class="co">#&gt;   .. ..$ reset    : int 1465943683</span>
+<span class="co">#&gt;   .. ..$ remaining: int 50</span>
+<span class="co">#&gt;   .. ..$ reset    : int 1467567028</span>
 <span class="co">#&gt;   ..$ search:List of 3</span>
 <span class="co">#&gt;   .. ..$ limit    : int 10</span>
 <span class="co">#&gt;   .. ..$ remaining: int 10</span>
-<span class="co">#&gt;   .. ..$ reset    : int 1465942890</span>
+<span class="co">#&gt;   .. ..$ reset    : int 1467565342</span>
 <span class="co">#&gt;  $ rate     :List of 3</span>
 <span class="co">#&gt;   ..$ limit    : int 60</span>
-<span class="co">#&gt;   ..$ remaining: int 38</span>
-<span class="co">#&gt;   ..$ reset    : int 1465943683</span></code></pre></div>
+<span class="co">#&gt;   ..$ remaining: int 50</span>
+<span class="co">#&gt;   ..$ reset    : int 1467567028</span></code></pre></div>
 <p>After getting the first version getting working, you’ll often want to polish the output to be more user friendly. For this example, we can parse the unix timestamps into more useful date types.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rate_limit &lt;-<span class="st"> </span>function() {
   req &lt;-<span class="st"> </span><span class="kw">github_api</span>(<span class="st">&quot;/rate_limit&quot;</span>)
@@ -482,7 +482,7 @@ github_api &lt;-<span class="st"> </span>function(path) {
 }
 
 <span class="kw">rate_limit</span>()
-<span class="co">#&gt; 38 / 60 (Resets at 17:34:43)</span></code></pre></div>
+<span class="co">#&gt; 50 / 60 (Resets at 10:30:28)</span></code></pre></div>
 </div>
 </div>
 <div id="packaging-youe-code" class="section level2">

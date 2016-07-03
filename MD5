@@ -1,7 +1,7 @@
-3acd8360dcb8338516d808dfd05989c9 *DESCRIPTION
+0469ba848f54ac99f0702dc78cb66547 *DESCRIPTION
 d8d2f9bd4836cd6c839888295d3b1da5 *LICENSE
 0e42ce7b977f0463ce599dedd8108932 *NAMESPACE
-f3341a0caee9721216ff9d3103721633 *NEWS.md
+abb7cd67ea6cd855fd7badac905021be *NEWS.md
 bd92750bfa50b28c02c7b90e049e186a *R/authenticate.r
 b48786effe2ad5fb819a41cb34ddcc2f *R/body.R
 aaba53b8b8faf228de81282eb510a22c *R/cache.R
@@ -29,7 +29,7 @@ b879ebac436858946e832273628c272a *R/httr.r
 d600fbff459e40297d94a685c026c047 *R/media-guess.r
 db328762fdcb49c26031f84a8f657936 *R/media-parse.r
 5e37edd05896191c1312420a2ff5c311 *R/oauth-app.r
-f95dda0bfa240510d214f48a84bf7e28 *R/oauth-cache.R
+80c4e74d44d8f269bf9591c401af7df6 *R/oauth-cache.R
 60ab655a5be1be5f0f4814adfd543e08 *R/oauth-endpoint.r
 9b91edccda60dd6f6e19ba9fe707e4af *R/oauth-error.r
 ed21a90d8f42cea7077bfbbdfb20b09e *R/oauth-exchanger.r
@@ -76,10 +76,10 @@ c2544c2fe736898cb88e98d5617cf814 *demo/oauth2-reddit.R
 56b0c883a1b838991459f7eecc14bbc5 *demo/service-account.R
 87d51740a72639b47b511b1e65483341 *inst/doc/api-packages.R
 f6864e8c7578d7f38b36afd4cc526ba6 *inst/doc/api-packages.Rmd
-fb38cf913a6c04b07bc6e548e7e8454b *inst/doc/api-packages.html
+5e030c82fad4dcd6db4af986bb2a1026 *inst/doc/api-packages.html
 18601f685970936f29efcc7180d9833b *inst/doc/quickstart.R
 0b42e0a3138e6decc52e833e2be51b36 *inst/doc/quickstart.Rmd
-ba0d1f3337d6f13021f29cb5bf8849d3 *inst/doc/quickstart.html
+0e70146a9176e6e0130a6e0fdc342640 *inst/doc/quickstart.html
 4ce63cb50b0e51b00c0b7d55fff8ed03 *man/BROWSE.Rd
 5bc314a058d7989f19d508af8956bec9 *man/DELETE.Rd
 504166acbdb669867cc25a41d094ec62 *man/GET.Rd

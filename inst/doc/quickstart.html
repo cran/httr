@@ -226,7 +226,7 @@ r &lt;- GET(&quot;http://httpbin.org/get&quot;)
 
 <pre><code class="r">r
 #&gt; Response [http://httpbin.org/get]
-#&gt;   Date: 2016-06-14 22:20
+#&gt;   Date: 2016-07-03 17:01
 #&gt;   Status: 200
 #&gt;   Content-Type: application/json
 #&gt;   Size: 299 B
@@ -236,9 +236,9 @@ r &lt;- GET(&quot;http://httpbin.org/get&quot;)
 #&gt;     &quot;Accept&quot;: &quot;application/json, text/xml, application/xml, */*&quot;, 
 #&gt;     &quot;Accept-Encoding&quot;: &quot;gzip, deflate&quot;, 
 #&gt;     &quot;Host&quot;: &quot;httpbin.org&quot;, 
-#&gt;     &quot;User-Agent&quot;: &quot;libcurl/7.43.0 r-curl/0.9.7 httr/1.2.0&quot;
+#&gt;     &quot;User-Agent&quot;: &quot;libcurl/7.43.0 r-curl/0.9.7 httr/1.2.1&quot;
 #&gt;   }, 
-#&gt;   &quot;origin&quot;: &quot;98.201.152.99&quot;, 
+#&gt;   &quot;origin&quot;: &quot;68.65.174.224&quot;, 
 #&gt;   &quot;url&quot;: &quot;http://httpbin.org/get&quot;
 #&gt; ...
 </code></pre>
@@ -252,7 +252,7 @@ headers(r)
 #&gt; [1] &quot;nginx&quot;
 #&gt; 
 #&gt; $date
-#&gt; [1] &quot;Tue, 14 Jun 2016 22:20:31 GMT&quot;
+#&gt; [1] &quot;Sun, 03 Jul 2016 17:01:22 GMT&quot;
 #&gt; 
 #&gt; $`content-type`
 #&gt; [1] &quot;application/json&quot;
@@ -278,8 +278,8 @@ str(content(r))
 #&gt;   ..$ Accept         : chr &quot;application/json, text/xml, application/xml, */*&quot;
 #&gt;   ..$ Accept-Encoding: chr &quot;gzip, deflate&quot;
 #&gt;   ..$ Host           : chr &quot;httpbin.org&quot;
-#&gt;   ..$ User-Agent     : chr &quot;libcurl/7.43.0 r-curl/0.9.7 httr/1.2.0&quot;
-#&gt;  $ origin : chr &quot;98.201.152.99&quot;
+#&gt;   ..$ User-Agent     : chr &quot;libcurl/7.43.0 r-curl/0.9.7 httr/1.2.1&quot;
+#&gt;  $ origin : chr &quot;68.65.174.224&quot;
 #&gt;  $ url    : chr &quot;http://httpbin.org/get&quot;
 </code></pre>
 
@@ -332,7 +332,7 @@ stop_for_status(r)
 <pre><code class="r">r &lt;- GET(&quot;http://httpbin.org/get&quot;)
 content(r, &quot;text&quot;)
 #&gt; No encoding supplied: defaulting to UTF-8.
-#&gt; [1] &quot;{\n  \&quot;args\&quot;: {}, \n  \&quot;headers\&quot;: {\n    \&quot;Accept\&quot;: \&quot;application/json, text/xml, application/xml, */*\&quot;, \n    \&quot;Accept-Encoding\&quot;: \&quot;gzip, deflate\&quot;, \n    \&quot;Host\&quot;: \&quot;httpbin.org\&quot;, \n    \&quot;User-Agent\&quot;: \&quot;libcurl/7.43.0 r-curl/0.9.7 httr/1.2.0\&quot;\n  }, \n  \&quot;origin\&quot;: \&quot;98.201.152.99\&quot;, \n  \&quot;url\&quot;: \&quot;http://httpbin.org/get\&quot;\n}\n&quot;
+#&gt; [1] &quot;{\n  \&quot;args\&quot;: {}, \n  \&quot;headers\&quot;: {\n    \&quot;Accept\&quot;: \&quot;application/json, text/xml, application/xml, */*\&quot;, \n    \&quot;Accept-Encoding\&quot;: \&quot;gzip, deflate\&quot;, \n    \&quot;Host\&quot;: \&quot;httpbin.org\&quot;, \n    \&quot;User-Agent\&quot;: \&quot;libcurl/7.43.0 r-curl/0.9.7 httr/1.2.1\&quot;\n  }, \n  \&quot;origin\&quot;: \&quot;68.65.174.224\&quot;, \n  \&quot;url\&quot;: \&quot;http://httpbin.org/get\&quot;\n}\n&quot;
 </code></pre>
 
 <p>httr will automatically decode content from the server using the encoding 
@@ -357,9 +357,9 @@ raw vector:</p>
 #&gt; [139] 20 0a 20 20 20 20 22 48 6f 73 74 22 3a 20 22 68 74 74 70 62 69 6e 2e
 #&gt; [162] 6f 72 67 22 2c 20 0a 20 20 20 20 22 55 73 65 72 2d 41 67 65 6e 74 22
 #&gt; [185] 3a 20 22 6c 69 62 63 75 72 6c 2f 37 2e 34 33 2e 30 20 72 2d 63 75 72
-#&gt; [208] 6c 2f 30 2e 39 2e 37 20 68 74 74 72 2f 31 2e 32 2e 30 22 0a 20 20 7d
-#&gt; [231] 2c 20 0a 20 20 22 6f 72 69 67 69 6e 22 3a 20 22 39 38 2e 32 30 31 2e
-#&gt; [254] 31 35 32 2e 39 39 22 2c 20 0a 20 20 22 75 72 6c 22 3a 20 22 68 74 74
+#&gt; [208] 6c 2f 30 2e 39 2e 37 20 68 74 74 72 2f 31 2e 32 2e 31 22 0a 20 20 7d
+#&gt; [231] 2c 20 0a 20 20 22 6f 72 69 67 69 6e 22 3a 20 22 36 38 2e 36 35 2e 31
+#&gt; [254] 37 34 2e 32 32 34 22 2c 20 0a 20 20 22 75 72 6c 22 3a 20 22 68 74 74
 #&gt; [277] 70 3a 2f 2f 68 74 74 70 62 69 6e 2e 6f 72 67 2f 67 65 74 22 0a 7d 0a
 </code></pre>
 
@@ -379,8 +379,8 @@ str(content(r, &quot;parsed&quot;))
 #&gt;   ..$ Accept         : chr &quot;application/json, text/xml, application/xml, */*&quot;
 #&gt;   ..$ Accept-Encoding: chr &quot;gzip, deflate&quot;
 #&gt;   ..$ Host           : chr &quot;httpbin.org&quot;
-#&gt;   ..$ User-Agent     : chr &quot;libcurl/7.43.0 r-curl/0.9.7 httr/1.2.0&quot;
-#&gt;  $ origin : chr &quot;98.201.152.99&quot;
+#&gt;   ..$ User-Agent     : chr &quot;libcurl/7.43.0 r-curl/0.9.7 httr/1.2.1&quot;
+#&gt;  $ origin : chr &quot;68.65.174.224&quot;
 #&gt;  $ url    : chr &quot;http://httpbin.org/get&quot;
 </code></pre>
 
@@ -400,7 +400,7 @@ is as you expect. See the API wrappers vignette for more details.</p></li>
 #&gt; [1] &quot;nginx&quot;
 #&gt; 
 #&gt; $date
-#&gt; [1] &quot;Tue, 14 Jun 2016 22:20:31 GMT&quot;
+#&gt; [1] &quot;Sun, 03 Jul 2016 17:01:23 GMT&quot;
 #&gt; 
 #&gt; $`content-type`
 #&gt; [1] &quot;application/json&quot;
@@ -424,9 +424,9 @@ is as you expect. See the API wrappers vignette for more details.</p></li>
 <p>This is basically a named list, but because http headers are case insensitive, indexing this object ignores case:</p>
 
 <pre><code class="r">headers(r)$date
-#&gt; [1] &quot;Tue, 14 Jun 2016 22:20:31 GMT&quot;
+#&gt; [1] &quot;Sun, 03 Jul 2016 17:01:23 GMT&quot;
 headers(r)$DATE
-#&gt; [1] &quot;Tue, 14 Jun 2016 22:20:31 GMT&quot;
+#&gt; [1] &quot;Sun, 03 Jul 2016 17:01:23 GMT&quot;
 </code></pre>
 
 <h3>Cookies</h3>
@@ -491,7 +491,7 @@ str(content(r)$headers)
 #&gt;  $ Cookie         : chr &quot;a=1; b=1&quot;
 #&gt;  $ Host           : chr &quot;httpbin.org&quot;
 #&gt;  $ Name           : chr &quot;Hadley&quot;
-#&gt;  $ User-Agent     : chr &quot;libcurl/7.43.0 r-curl/0.9.7 httr/1.2.0&quot;
+#&gt;  $ User-Agent     : chr &quot;libcurl/7.43.0 r-curl/0.9.7 httr/1.2.1&quot;
 </code></pre>
 
 <p>(Note that <code>content(r)$header</code> retrieves the headers that httpbin received. <code>headers(r)</code> gives the headers that it sent back in its response.)</p>
@@ -569,7 +569,7 @@ POST(url, body = list(x = upload_file(&quot;mypath.txt&quot;)))
 #&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     
 #&gt; 
 #&gt; other attached packages:
-#&gt; [1] httr_1.2.0
+#&gt; [1] httr_1.2.1
 #&gt; 
 #&gt; loaded via a namespace (and not attached):
 #&gt;  [1] R6_2.1.2           magrittr_1.5       formatR_1.4       

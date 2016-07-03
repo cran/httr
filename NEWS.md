@@ -1,3 +1,8 @@
+# httr 1.2.1
+
+* Fix bug with new cache creation code: need to check that 
+  cache isn't an empty file.
+
 # httr 1.2.0
 
 ## New features
