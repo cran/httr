@@ -4,17 +4,15 @@
 
 <head>
 
-<meta charset="utf-8">
+<meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<meta name="author" content="Hadley Wickham" />
 
-<meta name="date" content="2016-07-03" />
 
-<title>Best practices for writing an API package</title>
+<title>Best practices for API packages</title>
 
 
 
@@ -68,9 +66,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 
-<h1 class="title toc-ignore">Best practices for writing an API package</h1>
-<h4 class="author"><em>Hadley Wickham</em></h4>
-<h4 class="date"><em>2016-07-03</em></h4>
+<h1 class="title toc-ignore">Best practices for API packages</h1>
 
 
 
@@ -134,68 +130,68 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h3>Send a simple request</h3>
 <p>First, find a simple API endpoint that doesn’t require authentication: this lets you get the basics working before tackling the complexities of authentication. For this example, we’ll use the list of httr issues which requires sending a GET request to <code>repos/hadley/httr</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(httr)
-github_api &lt;-<span class="st"> </span>function(path) {
+github_api &lt;-<span class="st"> </span><span class="cf">function</span>(path) {
   url &lt;-<span class="st"> </span><span class="kw">modify_url</span>(<span class="st">&quot;https://api.github.com&quot;</span>, <span class="dt">path =</span> path)
   <span class="kw">GET</span>(url)
 }
 
 resp &lt;-<span class="st"> </span><span class="kw">github_api</span>(<span class="st">&quot;/repos/hadley/httr&quot;</span>)
 resp
-<span class="co">#&gt; Response [https://api.github.com/repos/hadley/httr]</span>
-<span class="co">#&gt;   Date: 2016-07-03 17:01</span>
+<span class="co">#&gt; Response [https://api.github.com/repositories/2756403]</span>
+<span class="co">#&gt;   Date: 2017-08-15 13:16</span>
 <span class="co">#&gt;   Status: 200</span>
 <span class="co">#&gt;   Content-Type: application/json; charset=utf-8</span>
-<span class="co">#&gt;   Size: 4.73 kB</span>
+<span class="co">#&gt;   Size: 5.71 kB</span>
 <span class="co">#&gt; {</span>
 <span class="co">#&gt;   &quot;id&quot;: 2756403,</span>
 <span class="co">#&gt;   &quot;name&quot;: &quot;httr&quot;,</span>
-<span class="co">#&gt;   &quot;full_name&quot;: &quot;hadley/httr&quot;,</span>
+<span class="co">#&gt;   &quot;full_name&quot;: &quot;r-lib/httr&quot;,</span>
 <span class="co">#&gt;   &quot;owner&quot;: {</span>
-<span class="co">#&gt;     &quot;login&quot;: &quot;hadley&quot;,</span>
-<span class="co">#&gt;     &quot;id&quot;: 4196,</span>
-<span class="co">#&gt;     &quot;avatar_url&quot;: &quot;https://avatars.githubusercontent.com/u/4196?v=3&quot;,</span>
+<span class="co">#&gt;     &quot;login&quot;: &quot;r-lib&quot;,</span>
+<span class="co">#&gt;     &quot;id&quot;: 22618716,</span>
+<span class="co">#&gt;     &quot;avatar_url&quot;: &quot;https://avatars0.githubusercontent.com/u/22618716?v=4&quot;,</span>
 <span class="co">#&gt;     &quot;gravatar_id&quot;: &quot;&quot;,</span>
-<span class="co">#&gt;     &quot;url&quot;: &quot;https://api.github.com/users/hadley&quot;,</span>
+<span class="co">#&gt;     &quot;url&quot;: &quot;https://api.github.com/users/r-lib&quot;,</span>
 <span class="co">#&gt; ...</span></code></pre></div>
 </div>
 <div id="parse-the-response" class="section level3">
 <h3>Parse the response</h3>
-<p>Next, you need to take the response returned by the API and turn it into a useful object. Any API will return an HTTP response that consists of headers and a body. While the response can come in a multiple a forms (see above), two of the most common structured formats are XML and JSON.</p>
+<p>Next, you need to take the response returned by the API and turn it into a useful object. Any API will return an HTTP response that consists of headers and a body. While the response can come in multiple forms (see above), two of the most common structured formats are XML and JSON.</p>
 <p>Note that while most APIs will return only one or the other, some, like the colour lovers API, allow you to choose which one with a url parameter:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">GET</span>(<span class="st">&quot;http://www.colourlovers.com/api/color/6B4106?format=xml&quot;</span>)
 <span class="co">#&gt; Response [http://www.colourlovers.com/api/color/6B4106?format=xml]</span>
-<span class="co">#&gt;   Date: 2016-07-03 17:01</span>
+<span class="co">#&gt;   Date: 2017-08-15 13:16</span>
 <span class="co">#&gt;   Status: 200</span>
 <span class="co">#&gt;   Content-Type: text/xml; charset=utf-8</span>
 <span class="co">#&gt;   Size: 970 B</span>
 <span class="co">#&gt; &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;yes&quot;?&gt;</span>
-<span class="co">#&gt; &lt;colors numResults=&quot;1&quot; totalResults=&quot;9565103&quot;&gt;</span>
+<span class="co">#&gt; &lt;colors numResults=&quot;1&quot; totalResults=&quot;9852884&quot;&gt;</span>
 <span class="co">#&gt;  &lt;color&gt;</span>
 <span class="co">#&gt;      &lt;id&gt;903893&lt;/id&gt;</span>
 <span class="co">#&gt;      &lt;title&gt;&lt;![CDATA[wet dirt]]&gt;&lt;/title&gt;</span>
 <span class="co">#&gt;      &lt;userName&gt;&lt;![CDATA[jessicabrown]]&gt;&lt;/userName&gt;</span>
-<span class="co">#&gt;      &lt;numViews&gt;434&lt;/numViews&gt;</span>
+<span class="co">#&gt;      &lt;numViews&gt;480&lt;/numViews&gt;</span>
 <span class="co">#&gt;      &lt;numVotes&gt;1&lt;/numVotes&gt;</span>
 <span class="co">#&gt;      &lt;numComments&gt;0&lt;/numComments&gt;</span>
 <span class="co">#&gt;      &lt;numHearts&gt;0&lt;/numHearts&gt;</span>
 <span class="co">#&gt; ...</span>
 <span class="kw">GET</span>(<span class="st">&quot;http://www.colourlovers.com/api/color/6B4106?format=json&quot;</span>)
 <span class="co">#&gt; Response [http://www.colourlovers.com/api/color/6B4106?format=json]</span>
-<span class="co">#&gt;   Date: 2016-07-03 17:01</span>
+<span class="co">#&gt;   Date: 2017-08-15 13:16</span>
 <span class="co">#&gt;   Status: 200</span>
 <span class="co">#&gt;   Content-Type: application/json; charset=utf-8</span>
 <span class="co">#&gt;   Size: 569 B</span></code></pre></div>
-<p>Others use <a href="http://en.wikipedia.org/wiki/Content_negotiation">content negotiation</a> to determine whats sort of data to send back. If the API you’re wrapping does this, then you’ll need to include one of <code>accept_json()</code> and <code>accept_xml()</code> in your request.</p>
+<p>Others use <a href="http://en.wikipedia.org/wiki/Content_negotiation">content negotiation</a> to determine what sort of data to send back. If the API you’re wrapping does this, then you’ll need to include one of <code>accept_json()</code> and <code>accept_xml()</code> in your request.</p>
 <p>If you have a choice, choose json: it’s usually much easier to work with than xml.</p>
 <p>Most APIs will return most or all useful information in the response body, which can be accessed using <code>content()</code>. To determine what type of information is returned, you can use <code>http_type()</code></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">http_type</span>(resp)
 <span class="co">#&gt; [1] &quot;application/json&quot;</span></code></pre></div>
 <p>I recommend checking that the type is as you expect in your helper function. This will ensure that you get a clear error message if the API changes:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">github_api &lt;-<span class="st"> </span>function(path) {
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">github_api &lt;-<span class="st"> </span><span class="cf">function</span>(path) {
   url &lt;-<span class="st"> </span><span class="kw">modify_url</span>(<span class="st">&quot;https://api.github.com&quot;</span>, <span class="dt">path =</span> path)
   
   resp &lt;-<span class="st"> </span><span class="kw">GET</span>(url)
-  if (<span class="kw">http_type</span>(resp) !=<span class="st"> &quot;application/json&quot;</span>) {
+  <span class="cf">if</span> (<span class="kw">http_type</span>(resp) <span class="op">!=</span><span class="st"> &quot;application/json&quot;</span>) {
     <span class="kw">stop</span>(<span class="st">&quot;API did not return json&quot;</span>, <span class="dt">call. =</span> <span class="ot">FALSE</span>)
   }
   
@@ -207,29 +203,29 @@ resp
 <li>To parse json, use <code>jsonlite</code> package.</li>
 <li>To parse xml, use the <code>xml2</code> package.</li>
 </ol>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">github_api &lt;-<span class="st"> </span>function(path) {
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">github_api &lt;-<span class="st"> </span><span class="cf">function</span>(path) {
   url &lt;-<span class="st"> </span><span class="kw">modify_url</span>(<span class="st">&quot;https://api.github.com&quot;</span>, <span class="dt">path =</span> path)
   
   resp &lt;-<span class="st"> </span><span class="kw">GET</span>(url)
-  if (<span class="kw">http_type</span>(resp) !=<span class="st"> &quot;application/json&quot;</span>) {
+  <span class="cf">if</span> (<span class="kw">http_type</span>(resp) <span class="op">!=</span><span class="st"> &quot;application/json&quot;</span>) {
     <span class="kw">stop</span>(<span class="st">&quot;API did not return json&quot;</span>, <span class="dt">call. =</span> <span class="ot">FALSE</span>)
   }
   
-  jsonlite::<span class="kw">fromJSON</span>(<span class="kw">content</span>(resp, <span class="st">&quot;text&quot;</span>), <span class="dt">simplifyVector =</span> <span class="ot">FALSE</span>)
+  jsonlite<span class="op">::</span><span class="kw">fromJSON</span>(<span class="kw">content</span>(resp, <span class="st">&quot;text&quot;</span>), <span class="dt">simplifyVector =</span> <span class="ot">FALSE</span>)
 }</code></pre></div>
 </div>
 <div id="return-a-helpful-object" class="section level3">
 <h3>Return a helpful object</h3>
 <p>Rather than simply returning the response as a list, I think it’s a good practice to make a simple S3 object. That way you can return the response and parsed object, and provide a nice print method. This will make debugging later on much much much more pleasant.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">github_api &lt;-<span class="st"> </span>function(path) {
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">github_api &lt;-<span class="st"> </span><span class="cf">function</span>(path) {
   url &lt;-<span class="st"> </span><span class="kw">modify_url</span>(<span class="st">&quot;https://api.github.com&quot;</span>, <span class="dt">path =</span> path)
   
   resp &lt;-<span class="st"> </span><span class="kw">GET</span>(url)
-  if (<span class="kw">http_type</span>(resp) !=<span class="st"> &quot;application/json&quot;</span>) {
+  <span class="cf">if</span> (<span class="kw">http_type</span>(resp) <span class="op">!=</span><span class="st"> &quot;application/json&quot;</span>) {
     <span class="kw">stop</span>(<span class="st">&quot;API did not return json&quot;</span>, <span class="dt">call. =</span> <span class="ot">FALSE</span>)
   }
   
-  parsed &lt;-<span class="st"> </span>jsonlite::<span class="kw">fromJSON</span>(<span class="kw">content</span>(resp, <span class="st">&quot;text&quot;</span>), <span class="dt">simplifyVector =</span> <span class="ot">FALSE</span>)
+  parsed &lt;-<span class="st"> </span>jsonlite<span class="op">::</span><span class="kw">fromJSON</span>(<span class="kw">content</span>(resp, <span class="st">&quot;text&quot;</span>), <span class="dt">simplifyVector =</span> <span class="ot">FALSE</span>)
   
   <span class="kw">structure</span>(
     <span class="kw">list</span>(
@@ -241,9 +237,9 @@ resp
   )
 }
 
-print.github_api &lt;-<span class="st"> </span>function(x, ...) {
-  <span class="kw">cat</span>(<span class="st">&quot;&lt;GitHub &quot;</span>, x$path, <span class="st">&quot;&gt;</span><span class="ch">\n</span><span class="st">&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>)
-  <span class="kw">str</span>(x$content)
+print.github_api &lt;-<span class="st"> </span><span class="cf">function</span>(x, ...) {
+  <span class="kw">cat</span>(<span class="st">&quot;&lt;GitHub &quot;</span>, x<span class="op">$</span>path, <span class="st">&quot;&gt;</span><span class="ch">\n</span><span class="st">&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>)
+  <span class="kw">str</span>(x<span class="op">$</span>content)
   <span class="kw">invisible</span>(x)
 }
 
@@ -252,7 +248,7 @@ print.github_api &lt;-<span class="st"> </span>function(x, ...) {
 <span class="co">#&gt; List of 30</span>
 <span class="co">#&gt;  $ login              : chr &quot;hadley&quot;</span>
 <span class="co">#&gt;  $ id                 : int 4196</span>
-<span class="co">#&gt;  $ avatar_url         : chr &quot;https://avatars.githubusercontent.com/u/4196?v=3&quot;</span>
+<span class="co">#&gt;  $ avatar_url         : chr &quot;https://avatars3.githubusercontent.com/u/4196?v=4&quot;</span>
 <span class="co">#&gt;  $ gravatar_id        : chr &quot;&quot;</span>
 <span class="co">#&gt;  $ url                : chr &quot;https://api.github.com/users/hadley&quot;</span>
 <span class="co">#&gt;  $ html_url           : chr &quot;https://github.com/hadley&quot;</span>
@@ -271,44 +267,44 @@ print.github_api &lt;-<span class="st"> </span>function(x, ...) {
 <span class="co">#&gt;  $ company            : chr &quot;@rstudio &quot;</span>
 <span class="co">#&gt;  $ blog               : chr &quot;http://hadley.nz&quot;</span>
 <span class="co">#&gt;  $ location           : chr &quot;Houston, TX&quot;</span>
-<span class="co">#&gt;  $ email              : chr &quot;h.wickham@gmail.com&quot;</span>
+<span class="co">#&gt;  $ email              : NULL</span>
 <span class="co">#&gt;  $ hireable           : NULL</span>
-<span class="co">#&gt;  $ bio                : NULL</span>
-<span class="co">#&gt;  $ public_repos       : int 194</span>
-<span class="co">#&gt;  $ public_gists       : int 148</span>
-<span class="co">#&gt;  $ followers          : int 6577</span>
+<span class="co">#&gt;  $ bio                : chr &quot;Chief Scientist at @RStudio&quot;</span>
+<span class="co">#&gt;  $ public_repos       : int 206</span>
+<span class="co">#&gt;  $ public_gists       : int 160</span>
+<span class="co">#&gt;  $ followers          : int 10483</span>
 <span class="co">#&gt;  $ following          : int 7</span>
 <span class="co">#&gt;  $ created_at         : chr &quot;2008-04-01T14:47:36Z&quot;</span>
-<span class="co">#&gt;  $ updated_at         : chr &quot;2016-07-01T20:50:53Z&quot;</span></code></pre></div>
+<span class="co">#&gt;  $ updated_at         : chr &quot;2017-08-14T19:03:52Z&quot;</span></code></pre></div>
 <p>The API might return invalid data, but this should be rare, so you can just rely on the parser to provide a useful error message.</p>
 </div>
 <div id="turn-api-errors-into-r-errors" class="section level3">
 <h3>Turn API errors into R errors</h3>
-<p>Next, you need to make sure that your API wrapper throws an error if the request failed. Using a web API introduces additional possible points of failure into R code aside from those occuring in R itself. These include:</p>
+<p>Next, you need to make sure that your API wrapper throws an error if the request failed. Using a web API introduces additional possible points of failure into R code aside from those occurring in R itself. These include:</p>
 <ul>
 <li>Client-side exceptions</li>
 <li>Network / communication exceptions</li>
 <li>Server-side exceptions</li>
 </ul>
 <p>You need to make sure these are all converted into regular R errors. You can figure out if there’s a problem with <code>http_error()</code>, which checks the HTTP status code. Status codes in the 400 range usually mean that you’ve done something wrong. Status codes in the 500 range typically mean that something has gone wrong on the server side.</p>
-<p>Often the API will information about the error in the body of the response: you should use this where available. If the API returns special errors for common problems, you might want to provide more detail in the error. For example, if you run out of requests and are <a href="https://developer.github.com/v3/#rate-limiting">rate limited</a> you might want to tell the user how long to wait until they can make the next request (or even automatically wait that long!).</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">github_api &lt;-<span class="st"> </span>function(path) {
+<p>Often the API will provide information about the error in the body of the response: you should use this where available. If the API returns special errors for common problems, you might want to provide more detail in the error. For example, if you run out of requests and are <a href="https://developer.github.com/v3/#rate-limiting">rate limited</a> you might want to tell the user how long to wait until they can make the next request (or even automatically wait that long!).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">github_api &lt;-<span class="st"> </span><span class="cf">function</span>(path) {
   url &lt;-<span class="st"> </span><span class="kw">modify_url</span>(<span class="st">&quot;https://api.github.com&quot;</span>, <span class="dt">path =</span> path)
   
   resp &lt;-<span class="st"> </span><span class="kw">GET</span>(url)
-  if (<span class="kw">http_type</span>(resp) !=<span class="st"> &quot;application/json&quot;</span>) {
+  <span class="cf">if</span> (<span class="kw">http_type</span>(resp) <span class="op">!=</span><span class="st"> &quot;application/json&quot;</span>) {
     <span class="kw">stop</span>(<span class="st">&quot;API did not return json&quot;</span>, <span class="dt">call. =</span> <span class="ot">FALSE</span>)
   }
   
-  parsed &lt;-<span class="st"> </span>jsonlite::<span class="kw">fromJSON</span>(<span class="kw">content</span>(resp, <span class="st">&quot;text&quot;</span>), <span class="dt">simplifyVector =</span> <span class="ot">FALSE</span>)
+  parsed &lt;-<span class="st"> </span>jsonlite<span class="op">::</span><span class="kw">fromJSON</span>(<span class="kw">content</span>(resp, <span class="st">&quot;text&quot;</span>), <span class="dt">simplifyVector =</span> <span class="ot">FALSE</span>)
   
-  if (<span class="kw">http_error</span>(resp)) {
+  <span class="cf">if</span> (<span class="kw">http_error</span>(resp)) {
     <span class="kw">stop</span>(
       <span class="kw">sprintf</span>(
         <span class="st">&quot;GitHub API request failed [%s]</span><span class="ch">\n</span><span class="st">%s</span><span class="ch">\n</span><span class="st">&lt;%s&gt;&quot;</span>, 
         <span class="kw">status_code</span>(resp),
-        parsed$message,
-        parsed$documentation_url
+        parsed<span class="op">$</span>message,
+        parsed<span class="op">$</span>documentation_url
       ),
       <span class="dt">call. =</span> <span class="ot">FALSE</span>
     )
@@ -342,23 +338,23 @@ ua
 <span class="co">#&gt; Options:</span>
 <span class="co">#&gt; * useragent: http://github.com/hadley/httr</span>
 
-github_api &lt;-<span class="st"> </span>function(path) {
+github_api &lt;-<span class="st"> </span><span class="cf">function</span>(path) {
   url &lt;-<span class="st"> </span><span class="kw">modify_url</span>(<span class="st">&quot;https://api.github.com&quot;</span>, <span class="dt">path =</span> path)
   
   resp &lt;-<span class="st"> </span><span class="kw">GET</span>(url, ua)
-  if (<span class="kw">http_type</span>(resp) !=<span class="st"> &quot;application/json&quot;</span>) {
+  <span class="cf">if</span> (<span class="kw">http_type</span>(resp) <span class="op">!=</span><span class="st"> &quot;application/json&quot;</span>) {
     <span class="kw">stop</span>(<span class="st">&quot;API did not return json&quot;</span>, <span class="dt">call. =</span> <span class="ot">FALSE</span>)
   }
   
-  parsed &lt;-<span class="st"> </span>jsonlite::<span class="kw">fromJSON</span>(<span class="kw">content</span>(resp, <span class="st">&quot;text&quot;</span>), <span class="dt">simplifyVector =</span> <span class="ot">FALSE</span>)
+  parsed &lt;-<span class="st"> </span>jsonlite<span class="op">::</span><span class="kw">fromJSON</span>(<span class="kw">content</span>(resp, <span class="st">&quot;text&quot;</span>), <span class="dt">simplifyVector =</span> <span class="ot">FALSE</span>)
   
-  if (<span class="kw">status_code</span>(resp) !=<span class="st"> </span><span class="dv">200</span>) {
+  <span class="cf">if</span> (<span class="kw">status_code</span>(resp) <span class="op">!=</span><span class="st"> </span><span class="dv">200</span>) {
     <span class="kw">stop</span>(
       <span class="kw">sprintf</span>(
         <span class="st">&quot;GitHub API request failed [%s]</span><span class="ch">\n</span><span class="st">%s</span><span class="ch">\n</span><span class="st">&lt;%s&gt;&quot;</span>, 
         <span class="kw">status_code</span>(resp),
-        parsed$message,
-        parsed$documentation_url
+        parsed<span class="op">$</span>message,
+        parsed<span class="op">$</span>documentation_url
       ),
       <span class="dt">call. =</span> <span class="ot">FALSE</span>
     )
@@ -383,7 +379,7 @@ github_api &lt;-<span class="st"> </span>function(path) {
 <li>HTTP headers: <code>add_headers()</code></li>
 <li>Request body: The <code>body</code> argument to <code>GET()</code>, <code>POST()</code>, etc.</li>
 </ol>
-<p><a href="https://en.wikipedia.org/wiki/Representational_state_transfer">RESTful APIs</a> also use the HTTP verb to communicate arguments (e.g,., <code>GET</code> retrieves a file, <code>POST</code> adds a file, <code>DELETE</code> removes a file, etc.). We can use the helpful <a href="http://httpbin.org">httpbin service</a> to show how to send arguments in each of these ways.</p>
+<p><a href="https://en.wikipedia.org/wiki/Representational_state_transfer">RESTful APIs</a> also use the HTTP verb to communicate arguments (e.g., <code>GET</code> retrieves a file, <code>POST</code> adds a file, <code>DELETE</code> removes a file, etc.). We can use the helpful <a href="http://httpbin.org">httpbin service</a> to show how to send arguments in each of these ways.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co"># modify_url</span>
 <span class="kw">POST</span>(<span class="kw">modify_url</span>(<span class="st">&quot;https://httpbin.org&quot;</span>, <span class="dt">path =</span> <span class="st">&quot;/post&quot;</span>))
 
@@ -400,7 +396,7 @@ github_api &lt;-<span class="st"> </span>function(path) {
 <span class="kw">POST</span>(<span class="st">&quot;http://httpbin.org/post&quot;</span>, <span class="dt">body =</span> <span class="kw">list</span>(<span class="dt">foo =</span> <span class="st">&quot;bar&quot;</span>), <span class="dt">encode =</span> <span class="st">&quot;json&quot;</span>)</code></pre></div>
 <p>Many APIs will use just one of these forms of argument passing, but others will use multiple of them in combination. Best practice is to insulate the user from how and where the various arguments are used by the API and instead simply expose relevant arguments via R function arguments, some of which might be used in the URL, in the headers, in the body, etc.</p>
 <p>If a parameter has a small fixed set of possible values that are allowed by the API, you can use list them in the default arguments and then use <code>match.arg()</code> to ensure that the caller only supplies one of those values. (This also allows the user to supply the short unique prefixes.)</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">f &lt;-<span class="st"> </span>function(<span class="dt">x =</span> <span class="kw">c</span>(<span class="st">&quot;apple&quot;</span>, <span class="st">&quot;banana&quot;</span>, <span class="st">&quot;orange&quot;</span>)) {
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">f &lt;-<span class="st"> </span><span class="cf">function</span>(<span class="dt">x =</span> <span class="kw">c</span>(<span class="st">&quot;apple&quot;</span>, <span class="st">&quot;banana&quot;</span>, <span class="st">&quot;orange&quot;</span>)) {
   <span class="kw">match.arg</span>(x)
 }
 <span class="kw">f</span>(<span class="st">&quot;a&quot;</span>)
@@ -421,9 +417,9 @@ github_api &lt;-<span class="st"> </span>function(path) {
 <p>Some APIs describe their authentication processes inaccurately, so care needs to be taken to understand the true authentication mechanism regardless of the label used in the API docs.</p>
 </blockquote>
 <p>It is possible to specify the key(s) or token(s) required for basic or OAuth authentication in a number of different ways (see Appendix for a detailed discussion). You may also need some way to preserve user credentials between function calls so that end users do not need to specify them each time. A good start is to use an environment variable. Here is an example of how to write a function that checks for the presence of a GitHub personal access token and errors otherwise:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">github_pat &lt;-<span class="st"> </span>function() {
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">github_pat &lt;-<span class="st"> </span><span class="cf">function</span>() {
   pat &lt;-<span class="st"> </span><span class="kw">Sys.getenv</span>(<span class="st">'GITHUB_PAT'</span>)
-  if (<span class="kw">identical</span>(pat, <span class="st">&quot;&quot;</span>)) {
+  <span class="cf">if</span> (<span class="kw">identical</span>(pat, <span class="st">&quot;&quot;</span>)) {
     <span class="kw">stop</span>(<span class="st">&quot;Please set env var GITHUB_PAT to your github personal access token&quot;</span>,
       <span class="dt">call. =</span> <span class="ot">FALSE</span>)
   }
@@ -444,7 +440,7 @@ github_api &lt;-<span class="st"> </span>function(path) {
 <p>These values can then be used to make further requests. This will either involve specifying a specific page of responses or specifying a “next page token” that returns the next page of results. How to deal with pagination is a difficult question and a client could implement any of the following:</p>
 <ol style="list-style-type: decimal">
 <li>Return one page only by default with an option to return additional specific pages</li>
-<li>Return a specified page (deafulting to 1) and require the end user to handle pagination</li>
+<li>Return a specified page (defaulting to 1) and require the end user to handle pagination</li>
 <li>Return all pages by writing an internal process of checking for further pages and combining the results</li>
 </ol>
 <p>The choice of which to use depends on your needs and goals and the rate limits of the API.</p>
@@ -452,83 +448,42 @@ github_api &lt;-<span class="st"> </span>function(path) {
 <h3>Rate limiting</h3>
 <p>Many APIs are rate limited, which means that you can only send a certain number of requests per hour. Often if your request is rate limited, the error message will tell you how long you should wait before performing another request. You might want to expose this to the user, or even include a wall to <code>Sys.sleep()</code> that waits long enough.</p>
 <p>For example, we could implement a <code>rate_limit()</code> function that tells you how many calls against the github API are available to you.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rate_limit &lt;-<span class="st"> </span>function() {
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rate_limit &lt;-<span class="st"> </span><span class="cf">function</span>() {
   <span class="kw">github_api</span>(<span class="st">&quot;/rate_limit&quot;</span>)
 }
 <span class="kw">rate_limit</span>()
 <span class="co">#&gt; &lt;GitHub /rate_limit&gt;</span>
 <span class="co">#&gt; List of 2</span>
-<span class="co">#&gt;  $ resources:List of 2</span>
-<span class="co">#&gt;   ..$ core  :List of 3</span>
+<span class="co">#&gt;  $ resources:List of 3</span>
+<span class="co">#&gt;   ..$ core   :List of 3</span>
 <span class="co">#&gt;   .. ..$ limit    : int 60</span>
-<span class="co">#&gt;   .. ..$ remaining: int 50</span>
-<span class="co">#&gt;   .. ..$ reset    : int 1467567028</span>
-<span class="co">#&gt;   ..$ search:List of 3</span>
+<span class="co">#&gt;   .. ..$ remaining: int 44</span>
+<span class="co">#&gt;   .. ..$ reset    : int 1502805867</span>
+<span class="co">#&gt;   ..$ search :List of 3</span>
 <span class="co">#&gt;   .. ..$ limit    : int 10</span>
 <span class="co">#&gt;   .. ..$ remaining: int 10</span>
-<span class="co">#&gt;   .. ..$ reset    : int 1467565342</span>
+<span class="co">#&gt;   .. ..$ reset    : int 1502803063</span>
+<span class="co">#&gt;   ..$ graphql:List of 3</span>
+<span class="co">#&gt;   .. ..$ limit    : int 0</span>
+<span class="co">#&gt;   .. ..$ remaining: int 0</span>
+<span class="co">#&gt;   .. ..$ reset    : int 1502806603</span>
 <span class="co">#&gt;  $ rate     :List of 3</span>
 <span class="co">#&gt;   ..$ limit    : int 60</span>
-<span class="co">#&gt;   ..$ remaining: int 50</span>
-<span class="co">#&gt;   ..$ reset    : int 1467567028</span></code></pre></div>
-<p>After getting the first version getting working, you’ll often want to polish the output to be more user friendly. For this example, we can parse the unix timestamps into more useful date types.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rate_limit &lt;-<span class="st"> </span>function() {
+<span class="co">#&gt;   ..$ remaining: int 44</span>
+<span class="co">#&gt;   ..$ reset    : int 1502805867</span></code></pre></div>
+<p>After getting the first version working, you’ll often want to polish the output to be more user friendly. For this example, we can parse the unix timestamps into more useful date types.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">rate_limit &lt;-<span class="st"> </span><span class="cf">function</span>() {
   req &lt;-<span class="st"> </span><span class="kw">github_api</span>(<span class="st">&quot;/rate_limit&quot;</span>)
-  core &lt;-<span class="st"> </span>req$content$resources$core
+  core &lt;-<span class="st"> </span>req<span class="op">$</span>content<span class="op">$</span>resources<span class="op">$</span>core
 
-  reset &lt;-<span class="st"> </span><span class="kw">as.POSIXct</span>(core$reset, <span class="dt">origin =</span> <span class="st">&quot;1970-01-01&quot;</span>)
-  <span class="kw">cat</span>(core$remaining, <span class="st">&quot; / &quot;</span>, core$limit,
+  reset &lt;-<span class="st"> </span><span class="kw">as.POSIXct</span>(core<span class="op">$</span>reset, <span class="dt">origin =</span> <span class="st">&quot;1970-01-01&quot;</span>)
+  <span class="kw">cat</span>(core<span class="op">$</span>remaining, <span class="st">&quot; / &quot;</span>, core<span class="op">$</span>limit,
     <span class="st">&quot; (Resets at &quot;</span>, <span class="kw">strftime</span>(reset, <span class="st">&quot;%H:%M:%S&quot;</span>), <span class="st">&quot;)</span><span class="ch">\n</span><span class="st">&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>)
 }
 
 <span class="kw">rate_limit</span>()
-<span class="co">#&gt; 50 / 60 (Resets at 10:30:28)</span></code></pre></div>
+<span class="co">#&gt; 44 / 60 (Resets at 09:04:27)</span></code></pre></div>
 </div>
-</div>
-<div id="packaging-youe-code" class="section level2">
-<h2>Packaging youe code</h2>
-<div id="documentation" class="section level3">
-<h3>Documentation</h3>
-<p>Like any R package, an API client needs clear and complete documentation of all functions. Examples are particularly useful but may need to be wrapped in <code>\donttest{}</code> to avoid challenges of authentication, rate limiting, lack of network access, or occasional API server down time.</p>
-<p>One other challenge unique to web API packages is the need to have documentation that clarifies any distinctions between the R implementation and the API generally (e.g., in the “details” section). It can be useful to add reference links to the API documentation to clarify the mapping between R functions and API endpoints.</p>
-</div>
-<div id="vignettes" class="section level3">
-<h3>Vignettes</h3>
-<p>Vignettes pose additional challenges when an API requires authentication, because you don’t want to bundle your own credentials with the package! However, you can take advantage of the fact that the vignette is built locally, and only checked by CRAN with this idea from Jenny Bryan:</p>
-<p>In an setup chunk, do:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">NOT_CRAN &lt;-<span class="st"> </span><span class="kw">identical</span>(<span class="kw">tolower</span>(<span class="kw">Sys.getenv</span>(<span class="st">&quot;NOT_CRAN&quot;</span>)), <span class="st">&quot;true&quot;</span>)
-knitr::opts_chunk$<span class="kw">set</span>(<span class="dt">purl =</span> NOT_CRAN)</code></pre></div>
-<p>And then use <code>eval = NOT_CRAN</code> as needed as a chunk option.</p>
-</div>
-<div id="testing" class="section level3">
-<h3>Testing</h3>
-<p>The same issues and solutions can also be applied to test suites for API clients that require authenticated credentials. For these packages, you may want to have a test suite that is only run locally but not on CRAN. Another solution is to use a continuous integration service such as Travis-CI or Appveyor, which allows the inclusion of encrypted environment variables or encrypted token files. This enables continuous testing in a relatively secure way.</p>
-</div>
-</div>
-<div id="appendix-storing-api-authentication-keystokens" class="section level2">
-<h2>Appendix: Storing API Authentication Keys/Tokens</h2>
-<p>If your package supports an authentication workflow based on an API key or token, encourage users to store it in an environment variable. We illustrate this using the <a href="https://github.com/cscheid/rgithub"><code>github</code> R package</a>, which wraps the Github v3 API. Tailor this template to your API + package and include in <code>README.md</code> or a vignette.</p>
-<ol style="list-style-type: decimal">
-<li>Create a personal access token in the <a href="https://github.com/settings/tokens">Personal access tokens area</a> of your GitHub personal settings. Copy token to the clipboard.</li>
-<li>Identify your home directory. Not sure? Enter <code>normalizePath(&quot;~/&quot;)</code> in the R console.</li>
-<li>Create a new text file. If in RStudio, do <em>File &gt; New File &gt; Text file.</em></li>
-<li>Create a line like this:</li>
-</ol>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ot">GITHUB_PAT=</span>blahblahblahblahblahblah</code></pre></div>
-<p>where the name <code>GITHUB_PAT</code> reminds you which API this is for and <code>blahblahblahblahblahblah</code> is your personal access token, pasted from the clipboard.</p>
-<ol style="list-style-type: decimal">
-<li><p>Make sure the last line in the file is empty (if it isn’t R will <strong>silently</strong> fail to load the file. If you’re using an editor that shows line numbers, there should be two lines, where the second one is empty.</p></li>
-<li><p>Save in your home directory with the filename <code>.Renviron</code>. If questioned,<br />
-YES you do want to use a filename that begins with a dot <code>.</code>.</p>
-<p>Note that by default <a href="http://linux.about.com/cs/linux101/g/dot_file.htm">dotfiles</a> are usually hidden. But within RStudio, the file browser will make <code>.Renviron</code> visible and therefore easy to edit in the future.</p></li>
-<li><p>Restart R. <code>.Renviron</code> is processed only <a href="http://stat.ethz.ch/R-manual/R-patched/library/base/html/Startup.html">at the start of an R session</a>.</p></li>
-<li><p>Use <code>Sys.getenv()</code> to access your token. For example, here’s how to use your <code>GITHUB_PAT</code> with the <code>github</code> package:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(github)
-ctx &lt;-<span class="st"> </span><span class="kw">create.github.context</span>(<span class="dt">access_token =</span> <span class="kw">Sys.getenv</span>(<span class="st">&quot;GITHUB_PAT&quot;</span>))
-<span class="co"># ... proceed to use other package functions to open issues, etc.</span></code></pre></div></li>
-</ol>
-<p>FAQ: Why define this environment variable via <code>.Renviron</code> instead of in <code>.bash_profile</code> or <code>.bashrc</code>?</p>
-<p>Because there are many combinations of OS and ways of running R where the <code>.Renviron</code> approach “just works” and the bash stuff does not. When R is a child process of, say, Emacs or RStudio, you can’t always count on environment variables being passed to R. Put them in an R-specific start-up file and save yourself some grief.</p>
 </div>
 
 
@@ -538,7 +493,7 @@ ctx &lt;-<span class="st"> </span><span class="kw">create.github.context</span>(
   (function () {
     var script = document.createElement("script");
     script.type = "text/javascript";
-    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
     document.getElementsByTagName("head")[0].appendChild(script);
   })();
 </script>

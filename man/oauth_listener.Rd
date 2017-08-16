@@ -9,7 +9,7 @@ oauth_listener(request_url, is_interactive = interactive())
 \arguments{
 \item{request_url}{the url to send the browser to}
 
-\item{is_interactive}{Is an interactive environment available?}
+\item{is_interactive}{DEPRECATED}
 
 \item{host}{ip address for the listener}
 
@@ -26,4 +26,3 @@ and \code{\link{oauth2.0_token}} for examples of both techniques.
 This function should not normally be called directly by the user.
 }
 \keyword{internal}
-

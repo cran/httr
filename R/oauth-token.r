@@ -142,18 +142,29 @@ oauth1.0_token <- function(endpoint, app, permission = NULL,
                            as_header = TRUE,
                            private_key = NULL,
                            cache = getOption("httr_oauth_cache")) {
-  params <- list(permission = permission, as_header = as_header)
+  params <- list(
+    permission = permission,
+    as_header = as_header
+  )
 
-  Token1.0$new(app = app, endpoint = endpoint, params = params,
-    private_key = private_key, cache_path = cache)
+  Token1.0$new(
+    app = app,
+    endpoint = endpoint,
+    params = params,
+    private_key = private_key,
+    cache_path = cache
+  )
 }
 
 #' @export
 #' @rdname Token-class
 Token1.0 <- R6::R6Class("Token1.0", inherit = Token, list(
   init_credentials = function(force = FALSE) {
-    self$credentials <- init_oauth1.0(self$endpoint, self$app,
-      permission = self$params$permission, private_key = self$private_key)
+    self$credentials <- init_oauth1.0(
+      self$endpoint, self$app,
+      permission = self$params$permission,
+      private_key = self$private_key
+    )
   },
   can_refresh = function() {
     FALSE
@@ -189,21 +200,40 @@ Token1.0 <- R6::R6Class("Token1.0", inherit = Token, list(
 #'   itself to the bearer header of subsequent requests. If \code{FALSE},
 #'   configures the token to add itself as a url parameter of subsequent
 #'   requests.
+#' @param credentials Advanced use only: allows you to completely customise
+#'   token generation.
 #' @inheritParams oauth1.0_token
 #' @return A \code{Token2.0} reference class (RC) object.
 #' @family OAuth
 #' @export
 oauth2.0_token <- function(endpoint, app, scope = NULL, user_params = NULL,
-                           type = NULL, use_oob = getOption("httr_oob_default"),
+                           type = NULL,
+                           use_oob = getOption("httr_oob_default"),
                            as_header = TRUE,
                            use_basic_auth = FALSE,
-                           cache = getOption("httr_oauth_cache")) {
-  params <- list(scope = scope, user_params = user_params, type = type,
-      use_oob = use_oob, as_header = as_header,
-      use_basic_auth = use_basic_auth)
+                           cache = getOption("httr_oauth_cache"),
+                           config_init = list(),
+                           client_credentials = FALSE,
+                           credentials = NULL
+                          ) {
+  params <- list(
+    scope = scope,
+    user_params = user_params,
+    type = type,
+    use_oob = use_oob,
+    as_header = as_header,
+    use_basic_auth = use_basic_auth,
+    config_init = config_init,
+    client_credentials = client_credentials
+  )
 
-  Token2.0$new(app = app, endpoint = endpoint, params = params,
-    cache_path = cache)
+  Token2.0$new(
+    app = app,
+    endpoint = endpoint,
+    params = params,
+    credentials = credentials,
+    cache_path = FALSE
+  )
 }
 
 #' @export
@@ -213,7 +243,9 @@ Token2.0 <- R6::R6Class("Token2.0", inherit = Token, list(
     self$credentials <- init_oauth2.0(self$endpoint, self$app,
       scope = self$params$scope, user_params = self$params$user_params,
       type = self$params$type, use_oob = self$params$use_oob,
-      use_basic_auth = self$params$use_basic_auth)
+      use_basic_auth = self$params$use_basic_auth,
+      config_init = self$params$config_init,
+      client_credentials = self$params$client_credentials)
   },
   can_refresh = function() {
     !is.null(self$credentials$refresh_token)
@@ -257,6 +289,7 @@ Token2.0 <- R6::R6Class("Token2.0", inherit = Token, list(
 #' that information is embedded in the account itself.
 #'
 #' @inheritParams oauth2.0_token
+#' @inheritParams jwt_signature
 #' @param secrets Secrets loaded from JSON file, downloaded from console.
 #' @family OAuth
 #' @export
@@ -268,18 +301,18 @@ Token2.0 <- R6::R6Class("Token2.0", inherit = Token, list(
 #'
 #' token <- oauth_service_token(endpoint, secrets, scope)
 #' }
-oauth_service_token <- function(endpoint, secrets, scope = NULL) {
+oauth_service_token <- function(endpoint, secrets, scope = NULL, sub = NULL) {
   if (!is.oauth_endpoint(endpoint))
     stop("`endpoint` must be an OAuth endpoint", call. = FALSE)
   if (!is.list(secrets))
     stop("`secrets` must be a list.", call. = FALSE)
-  if (!is.null(scope) && !(is.character(scope) && length(scope) == 1))
-    stop("`scope` must be a length 1 character vector.", call. = FALSE)
+
+  scope <- check_scope(scope)
 
   TokenServiceAccount$new(
     endpoint = endpoint,
     secrets = secrets,
-    params = list(scope = scope)
+    params = list(scope = scope, sub = sub)
   )
 }
 
@@ -298,7 +331,11 @@ TokenServiceAccount <- R6::R6Class("TokenServiceAccount", inherit = Token2.0, li
     TRUE
   },
   refresh = function() {
-    self$credentials <- init_oauth_service_account(self$secrets, self$params$scope)
+    self$credentials <- init_oauth_service_account(
+      self$secrets,
+      scope = self$params$scope,
+      sub = self$params$sub
+    )
     self
   },
   sign = function(method, url) {

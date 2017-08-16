@@ -6,7 +6,8 @@
 \usage{
 RETRY(verb, url = NULL, config = list(), ..., body = NULL,
   encode = c("multipart", "form", "json", "raw"), times = 3,
-  pause_base = 1, pause_cap = 60, handle = NULL, quiet = FALSE)
+  pause_base = 1, pause_cap = 60, pause_min = 1, handle = NULL,
+  quiet = FALSE, terminate_on = NULL)
 }
 \arguments{
 \item{verb}{Name of verb to use.}
@@ -57,6 +58,10 @@ full jitter - this means that each request will randomly wait between 0
 and \code{pause_base * 2 ^ attempt} seconds, up to a maximum of
 \code{pause_cap} seconds.}
 
+\item{pause_min}{Minimum time to wait in the backoff; generally
+only necessary if you need pauses less than one second (which may
+not be kind to the server, use with caution!).}
+
 \item{handle}{The handle to use with this request. If not
 supplied, will be retrieved and reused from the \code{\link{handle_pool}}
 based on the scheme, hostname and port of the url. By default \pkg{httr}
@@ -67,6 +72,10 @@ details.}
 
 \item{quiet}{If \code{FALSE}, will print a message displaying how long
 until the next request.}
+
+\item{terminate_on}{Optional vector of numeric HTTP status codes that if found
+on the response will terminate the retry process. If \code{NULL}, will keep
+retrying while \code{\link{http_error}()} is \code{TRUE} for the response.}
 }
 \value{
 The last response. Note that if the request doesn't succeed after
@@ -74,16 +83,26 @@ The last response. Note that if the request doesn't succeed after
   to use \code{\link{stop_for_status}()}.
 }
 \description{
-Safely retry a request until it succeeds (returns an HTTP status code
-below 400). It is designed to be kind to the server: after each failure
+Safely retry a request until it succeeds, as defined by the \code{terminate_on}
+parameter, which by default means a response for which \code{\link{http_error}()}
+is \code{FALSE}. Will also retry on error conditions raised by the underlying curl code,
+but if the last retry still raises one, \code{RETRY} will raise it again with
+\code{\link{stop}()}.
+It is designed to be kind to the server: after each failure
 randomly waits up to twice as long. (Technically it uses exponential
 backoff with jitter, using the approach outlined in
 \url{https://www.awsarchitectureblog.com/2015/03/backoff.html}.)
+If the server returns status code 429 and specifies a \code{retry-after} value, that
+value will be used instead, unless it's smaller than \code{pause_min}.
 }
 \examples{
 # Succeeds straight away
 RETRY("GET", "http://httpbin.org/status/200")
 # Never succeeds
 RETRY("GET", "http://httpbin.org/status/500")
+\donttest{
+# Invalid hostname generates curl error condition and is retried but eventually
+# raises an error condition.
+RETRY("GET", "http://invalidhostname/")
 }
-
+}
