@@ -1,3 +1,7 @@
+# httr 1.3.1
+
+* Re-enable on-disk caching (accidentally disabled in #457) (#475)
+
 # httr 1.3.0
 
 ## API changes
@@ -79,12 +83,8 @@
   requests with `encoding = "multipart". This makes it possible to specify the 
   mime-type of individual components (#430).
 
-* `modify_url()` recognised more forms of empty queries. This eliminates a 
-  source of spurious trailing `?` and `?=` (@jennybc, #452)
-  
-* More forms of empty query are recognized as such. Eliminates a source of 
-  spurious trailing `?` and `?=` in URLs produced by `modify_url()`. 
-  (@jennybc, #452)
+* `modify_url()` recognises more forms of empty queries. This eliminates a 
+  source of spurious trailing `?` and `?=` (@jennybc, #452).
   
 * The `length()` method of the internal `path` class is no longer exported 
   (#395).

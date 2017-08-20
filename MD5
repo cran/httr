@@ -1,7 +1,7 @@
-7b4b4b8995ae3eb6bf1be24d6c245134 *DESCRIPTION
+445bf01dcc1195fbf413103ea21ccc1d *DESCRIPTION
 d8d2f9bd4836cd6c839888295d3b1da5 *LICENSE
 915536a660af0085ac4ed932f0a67523 *NAMESPACE
-5f15c86f3fa31c19ddf82e56217606d9 *NEWS.md
+79006a573e8a1efc2a842a2af2beab4c *NEWS.md
 bd92750bfa50b28c02c7b90e049e186a *R/authenticate.r
 1121b77dabec9aeb328d6689bdfba3b3 *R/body.R
 aaba53b8b8faf228de81282eb510a22c *R/cache.R
@@ -40,7 +40,7 @@ df27f33ced475182152b14b20b1da96d *R/oauth-listener.r
 58a1a1aa79b1ee27ab0d3e40f6a86951 *R/oauth-server-side.R
 2558616c7d45d6b91e379f55396d7282 *R/oauth-signature.r
 92de85f0fff3463c39d5d3d27d46cb80 *R/oauth-token-utils.R
-f8f0d1df3008689ad0cf81b5a6f2227c *R/oauth-token.r
+91c48ecca7f8b1258e12d641d27de112 *R/oauth-token.r
 1d0d1e75f01b318c8aa109f7a6c1914b *R/progress.R
 d8556502db0dea0410fe50da9a96c32c *R/proxy.r
 3501125f07bc876a39ea39e16d19e17d *R/request.R
@@ -69,7 +69,7 @@ fc66ca80db42b950853d0b036128141b *demo/connection-sharing.r
 3a82d7f7f92a6ce4c4b15e1f171074b8 *demo/oauth1-yahoo.r
 f46460f846bd679d70b740777eae5c78 *demo/oauth2-azure.r
 ff9d9ca1c28c9f69e47fc4fe10837761 *demo/oauth2-facebook.r
-5a974f25c29ef1da20486a8ccd701c71 *demo/oauth2-github.r
+8178fe363473dbe607e476bedb7472fe *demo/oauth2-github.r
 8911d6fd881354e1208eaf810e48a01d *demo/oauth2-google.r
 a8d44f62b83806847fab08e598c51f46 *demo/oauth2-linkedin.r
 3983858eb314575fdbeb5e42a5209e70 *demo/oauth2-reddit.R
@@ -77,10 +77,10 @@ d99932e43e85f3d3666ed54b75d5fdb9 *demo/oauth2-yelp.R
 56b0c883a1b838991459f7eecc14bbc5 *demo/service-account.R
 76d3c415e63c23cd74d89dc6448f5d40 *inst/doc/api-packages.R
 ae1c07481fc6d84990b99a04b6e24a8c *inst/doc/api-packages.Rmd
-79e9a24422464f22444b38975398f19b *inst/doc/api-packages.html
+be8db65a050943812497c6bc313345d4 *inst/doc/api-packages.html
 18601f685970936f29efcc7180d9833b *inst/doc/quickstart.R
 fc892815cee67ed566f68e0751d244a3 *inst/doc/quickstart.Rmd
-ce31a7fb0314503cfd1aa68bc5fc4d02 *inst/doc/quickstart.html
+3b427dbd8a32af3035ae483435715e8c *inst/doc/quickstart.html
 41c9a71eb50601e92976731000ee67c3 *inst/doc/secrets.R
 cdba13e9901895ea94f0dad3e902471c *inst/doc/secrets.Rmd
 c6cbb1c1f34e0c745d3da4faca326cd8 *inst/doc/secrets.html
