@@ -36,7 +36,9 @@ should_cache <- function(path = ".httr-oauth") {
   if (!interactive()) return(FALSE)
 
   cat("Use a local file ('", path, "'), to cache OAuth access credentials ",
-    "between R sessions?\n", sep = "")
+    "between R sessions?\n",
+    sep = ""
+  )
   utils::menu(c("Yes", "No")) == 1
 }
 
@@ -70,7 +72,7 @@ add_line <- function(path, line, quiet = FALSE) {
   if (!quiet) message("Adding ", line, " to ", path)
 
   lines <- c(lines, line)
-  writeLines(lines, path)
+  try(writeLines(lines, path))
   TRUE
 }
 

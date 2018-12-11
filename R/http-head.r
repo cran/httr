@@ -16,7 +16,7 @@
 #' change in Content-Length, Content-MD5, ETag or Last-Modified), then the
 #' cache MUST treat the cache entry as stale.
 #'
-#' @inheritParams GET
+#' @inherit GET params return
 #' @family http methods
 #' @export
 #' @examples
@@ -24,6 +24,6 @@
 #' headers(HEAD("http://google.com"))
 HEAD <- function(url = NULL, config = list(), ..., handle = NULL) {
   hu <- handle_url(handle, url, ...)
-  req <- request_build("HEAD", hu$url, config, ..., config(nobody = TRUE))
+  req <- request_build("HEAD", hu$url, config, ...)
   request_perform(req, hu$handle$handle)
 }

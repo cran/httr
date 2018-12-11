@@ -21,17 +21,20 @@ if not needed}
 \code{authorize} and \code{access} urls.}
 }
 \description{
-See \code{\link{oauth_endpoints}} for a list of popular OAuth endpoints
+See \code{\link[=oauth_endpoints]{oauth_endpoints()}} for a list of popular OAuth endpoints
 baked into httr.
 }
 \examples{
 linkedin <- oauth_endpoint("requestToken", "authorize", "accessToken",
-  base_url = "https://api.linkedin.com/uas/oauth")
+  base_url = "https://api.linkedin.com/uas/oauth"
+)
 github <- oauth_endpoint(NULL, "authorize", "access_token",
-  base_url = "https://github.com/login/oauth")
+  base_url = "https://github.com/login/oauth"
+)
 facebook <- oauth_endpoint(
   authorize = "https://www.facebook.com/dialog/oauth",
-  access = "https://graph.facebook.com/oauth/access_token")
+  access = "https://graph.facebook.com/oauth/access_token"
+)
 
 oauth_endpoints
 }
@@ -40,3 +43,4 @@ Other OAuth: \code{\link{oauth1.0_token}},
   \code{\link{oauth2.0_token}}, \code{\link{oauth_app}},
   \code{\link{oauth_service_token}}
 }
+\concept{OAuth}

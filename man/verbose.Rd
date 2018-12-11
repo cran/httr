@@ -4,7 +4,8 @@
 \alias{verbose}
 \title{Give verbose output.}
 \usage{
-verbose(data_out = TRUE, data_in = FALSE, info = FALSE, ssl = FALSE)
+verbose(data_out = TRUE, data_in = FALSE, info = FALSE,
+  ssl = FALSE)
 }
 \arguments{
 \item{data_out}{Show data sent to the server.}
@@ -25,17 +26,14 @@ information between the client and server.
 
 \code{verbose()} uses the following prefixes to distinguish between
 different components of the http messages:
-
 \itemize{
-  \item \code{*} informative curl messages
-
-  \item \code{->} headers sent (out)
-  \item \code{>>} data sent (out)
-  \item \code{*>} ssl data sent (out)
-
-  \item \code{<-} headers received (in)
-  \item \code{<<} data received (in)
-  \item \code{<*} ssl data received (in)
+\item \code{*} informative curl messages
+\item \code{->} headers sent (out)
+\item \code{>>} data sent (out)
+\item \code{*>} ssl data sent (out)
+\item \code{<-} headers received (in)
+\item \code{<<} data received (in)
+\item \code{<*} ssl data received (in)
 }
 }
 
@@ -62,11 +60,12 @@ POST_verbose("")
 POST_verbose("xyz")
 }
 \seealso{
-\code{\link{with_verbose}()} makes it easier to use verbose mode
- even when the requests are buried inside another function call.
+\code{\link[=with_verbose]{with_verbose()}} makes it easier to use verbose mode
+even when the requests are buried inside another function call.
 
 Other config: \code{\link{add_headers}},
   \code{\link{authenticate}}, \code{\link{config}},
   \code{\link{set_cookies}}, \code{\link{timeout}},
   \code{\link{use_proxy}}, \code{\link{user_agent}}
 }
+\concept{config}

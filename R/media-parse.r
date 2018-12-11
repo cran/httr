@@ -1,22 +1,19 @@
 #' Parse a media type.
 #'
 #' Parsed according to RFC 2616, as at
-#' \url{http://pretty-rfc.herokuapp.com/RFC2616#media.types}.
+#' <http://pretty-rfc.herokuapp.com/RFC2616#media.types>.
 #'
 #' A simplified minimal EBNF is:
 #'
-#' \itemize{
-#'  \item media-type     = type "/" subtype *( ";" parameter )
-#'  \item type           = token
-#'  \item subtype        = token
-#'  \item parameter      = attribute "=" value
-#'  \item attribute      = token
-#'  \item value          = token | quoted-string
-#'  \item token          = 1*<any CHAR except CTLs or ()<>@@,;:\"/[]?={}
-#'  \item quoted-string  = " *(any text except ", unless escaped with \) "
-#' }
-#'
+#' * media-type     = `type "/" subtype *( ";" parameter )`
+#' * type           = `token`
+#' * subtype        = `token`
+#' * parameter      = `attribute "=" value`
+#' * attribute      = `token`
+#' * value          = `token | quoted-string`
+#' * token          = `1*<any CHAR except CTLs or ()<>@@,;:\"/[]?=\{\}`
 #' @export
+#' @param x String to parse
 #' @keywords internal
 #' @examples
 #' parse_media("text/plain")
@@ -24,7 +21,8 @@
 #' parse_media("text/plain; charset=\"utf-8\"")
 #' parse_media("text/plain; randomparam=\";=;=\"")
 parse_media <- function(x) {
-  stopifnot(!is.null(x))
+  stopifnot(is.character(x), length(x) == 1)
+
   # Use scan to deal with quoted strings. It loses the quotes, but it's
   # ok because the attribute can't be a quoted string so there's no ambiguity
   # about who the = belongs to.
