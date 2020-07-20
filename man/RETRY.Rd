@@ -4,10 +4,22 @@
 \alias{RETRY}
 \title{Retry a request until it succeeds.}
 \usage{
-RETRY(verb, url = NULL, config = list(), ..., body = NULL,
-  encode = c("multipart", "form", "json", "raw"), times = 3,
-  pause_base = 1, pause_cap = 60, pause_min = 1, handle = NULL,
-  quiet = FALSE, terminate_on = NULL, terminate_on_success = TRUE)
+RETRY(
+  verb,
+  url = NULL,
+  config = list(),
+  ...,
+  body = NULL,
+  encode = c("multipart", "form", "json", "raw"),
+  times = 3,
+  pause_base = 1,
+  pause_cap = 60,
+  pause_min = 1,
+  handle = NULL,
+  quiet = FALSE,
+  terminate_on = NULL,
+  terminate_on_success = TRUE
+)
 }
 \arguments{
 \item{verb}{Name of verb to use.}
@@ -104,7 +116,7 @@ value will be used instead, unless it's smaller than \code{pause_min}.
 RETRY("GET", "http://httpbin.org/status/200")
 # Never succeeds
 RETRY("GET", "http://httpbin.org/status/500")
-\donttest{
+\dontrun{
 # Invalid hostname generates curl error condition and is retried but eventually
 # raises an error condition.
 RETRY("GET", "http://invalidhostname/")

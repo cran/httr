@@ -46,10 +46,10 @@ does its best to guess which output is most appropriate.
 \details{
 \code{content} currently knows about the following mime types:
 \itemize{
-\item \code{text/html}: \code{\link[xml2:read_html]{xml2::read_html()}}
+\item \code{text/html}: \code{\link[xml2:read_xml]{xml2::read_html()}}
 \item \code{text/xml}: \code{\link[xml2:read_xml]{xml2::read_xml()}}
-\item \code{text/csv}: \code{\link[readr:read_csv]{readr::read_csv()}}
-\item \code{text/tab-separated-values}: \code{\link[readr:read_tsv]{readr::read_tsv()}}
+\item \code{text/csv}: \code{\link[readr:read_delim]{readr::read_csv()}}
+\item \code{text/tab-separated-values}: \code{\link[readr:read_delim]{readr::read_tsv()}}
 \item \code{application/json}: \code{\link[jsonlite:fromJSON]{jsonlite::fromJSON()}}
 \item \code{application/x-www-form-urlencoded}: \code{parse_query}
 \item \code{image/jpeg}: \code{\link[jpeg:readJPEG]{jpeg::readJPEG()}}
@@ -72,7 +72,7 @@ you will protect yourself against changes to httr.
 \examples{
 r <- POST("http://httpbin.org/post", body = list(a = 1, b = 2))
 content(r) # automatically parses JSON
-cat(content(r, "text"), "\\n") # text content
+cat(content(r, "text"), "\n") # text content
 content(r, "raw") # raw bytes from server
 
 rlogo <- content(GET("http://cran.r-project.org/Rlogo.jpg"))
@@ -80,8 +80,10 @@ plot(0:1, 0:1, type = "n")
 rasterImage(rlogo, 0, 0, 1, 1)
 }
 \seealso{
-Other response methods: \code{\link{http_error}},
-  \code{\link{http_status}}, \code{\link{response}},
-  \code{\link{stop_for_status}}
+Other response methods: 
+\code{\link{http_error}()},
+\code{\link{http_status}()},
+\code{\link{response}()},
+\code{\link{stop_for_status}()}
 }
 \concept{response methods}

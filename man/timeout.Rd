@@ -13,6 +13,10 @@ Can not be less than 1 ms.}
 \description{
 Set maximum request time.
 }
+\details{
+This timeout is passed on to \code{\link[curl:handle]{curl::handle_setopt()}}.
+See there and \code{\link[curl:curl_options]{curl::curl_options()}} for more details.
+}
 \examples{
 \dontrun{
 GET("http://httpbin.org/delay/3", timeout(1))
@@ -20,9 +24,13 @@ GET("http://httpbin.org/delay/1", timeout(2))
 }
 }
 \seealso{
-Other config: \code{\link{add_headers}},
-  \code{\link{authenticate}}, \code{\link{config}},
-  \code{\link{set_cookies}}, \code{\link{use_proxy}},
-  \code{\link{user_agent}}, \code{\link{verbose}}
+Other config: 
+\code{\link{add_headers}()},
+\code{\link{authenticate}()},
+\code{\link{config}()},
+\code{\link{set_cookies}()},
+\code{\link{use_proxy}()},
+\code{\link{user_agent}()},
+\code{\link{verbose}()}
 }
 \concept{config}

@@ -1,36 +1,64 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
 
 
 <title>Best practices for API packages</title>
 
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
+// v0.0.1
+// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
+
+document.addEventListener('DOMContentLoaded', function() {
+  const codeList = document.getElementsByClassName("sourceCode");
+  for (var i = 0; i < codeList.length; i++) {
+    var linkList = codeList[i].getElementsByTagName('a');
+    for (var j = 0; j < linkList.length; j++) {
+      if (linkList[j].innerHTML === "") {
+        linkList[j].setAttribute('aria-hidden', 'true');
+      }
+    }
+  }
+});
+</script>
 
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css" data-origin="pandoc">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -50,7 +78,7 @@ pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-le
 div.sourceCode
   {   }
 @media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 code span.al { color: #ff0000; font-weight: bold; } /* Alert */
 code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
@@ -96,7 +124,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
       if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -117,9 +145,6 @@ padding-right: 2em;
 font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 font-size: 14px;
 line-height: 1.35;
-}
-#header {
-text-align: center;
 }
 #TOC {
 clear: both;
@@ -288,7 +313,8 @@ code > span.st { color: #d14; }
 code > span.co { color: #888888; font-style: italic; } 
 code > span.ot { color: #007020; } 
 code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
 
 
@@ -373,10 +399,10 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <span id="cb3-7"><a href="#cb3-7"></a>resp &lt;-<span class="st"> </span><span class="kw">github_api</span>(<span class="st">&quot;/repos/hadley/httr&quot;</span>)</span>
 <span id="cb3-8"><a href="#cb3-8"></a>resp</span>
 <span id="cb3-9"><a href="#cb3-9"></a><span class="co">#&gt; Response [https://api.github.com/repositories/2756403]</span></span>
-<span id="cb3-10"><a href="#cb3-10"></a><span class="co">#&gt;   Date: 2019-07-30 13:44</span></span>
+<span id="cb3-10"><a href="#cb3-10"></a><span class="co">#&gt;   Date: 2020-07-20 14:19</span></span>
 <span id="cb3-11"><a href="#cb3-11"></a><span class="co">#&gt;   Status: 200</span></span>
 <span id="cb3-12"><a href="#cb3-12"></a><span class="co">#&gt;   Content-Type: application/json; charset=utf-8</span></span>
-<span id="cb3-13"><a href="#cb3-13"></a><span class="co">#&gt;   Size: 6.04 kB</span></span>
+<span id="cb3-13"><a href="#cb3-13"></a><span class="co">#&gt;   Size: 6.07 kB</span></span>
 <span id="cb3-14"><a href="#cb3-14"></a><span class="co">#&gt; {</span></span>
 <span id="cb3-15"><a href="#cb3-15"></a><span class="co">#&gt;   &quot;id&quot;: 2756403,</span></span>
 <span id="cb3-16"><a href="#cb3-16"></a><span class="co">#&gt;   &quot;node_id&quot;: &quot;MDEwOlJlcG9zaXRvcnkyNzU2NDAz&quot;,</span></span>
@@ -395,24 +421,24 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <p>Note that while most APIs will return only one or the other, some, like the colour lovers API, allow you to choose which one with a url parameter:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a><span class="kw">GET</span>(<span class="st">&quot;http://www.colourlovers.com/api/color/6B4106?format=xml&quot;</span>)</span>
 <span id="cb4-2"><a href="#cb4-2"></a><span class="co">#&gt; Response [http://www.colourlovers.com/api/color/6B4106?format=xml]</span></span>
-<span id="cb4-3"><a href="#cb4-3"></a><span class="co">#&gt;   Date: 2019-07-30 13:44</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a><span class="co">#&gt;   Date: 2020-07-20 14:19</span></span>
 <span id="cb4-4"><a href="#cb4-4"></a><span class="co">#&gt;   Status: 200</span></span>
 <span id="cb4-5"><a href="#cb4-5"></a><span class="co">#&gt;   Content-Type: text/xml; charset=utf-8</span></span>
 <span id="cb4-6"><a href="#cb4-6"></a><span class="co">#&gt;   Size: 1.8 kB</span></span>
 <span id="cb4-7"><a href="#cb4-7"></a><span class="co">#&gt; &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;yes&quot;?&gt;</span></span>
-<span id="cb4-8"><a href="#cb4-8"></a><span class="co">#&gt; &lt;colors numResults=&quot;1&quot; totalResults=&quot;10010720&quot;&gt;</span></span>
+<span id="cb4-8"><a href="#cb4-8"></a><span class="co">#&gt; &lt;colors numResults=&quot;1&quot; totalResults=&quot;10075145&quot;&gt;</span></span>
 <span id="cb4-9"><a href="#cb4-9"></a><span class="co">#&gt;  &lt;color&gt;</span></span>
 <span id="cb4-10"><a href="#cb4-10"></a><span class="co">#&gt;      &lt;id&gt;903893&lt;/id&gt;</span></span>
 <span id="cb4-11"><a href="#cb4-11"></a><span class="co">#&gt;      &lt;title&gt;&lt;![CDATA[wet dirt]]&gt;&lt;/title&gt;</span></span>
 <span id="cb4-12"><a href="#cb4-12"></a><span class="co">#&gt;      &lt;userName&gt;&lt;![CDATA[jessicabrown]]&gt;&lt;/userName&gt;</span></span>
-<span id="cb4-13"><a href="#cb4-13"></a><span class="co">#&gt;      &lt;numViews&gt;565&lt;/numViews&gt;</span></span>
+<span id="cb4-13"><a href="#cb4-13"></a><span class="co">#&gt;      &lt;numViews&gt;597&lt;/numViews&gt;</span></span>
 <span id="cb4-14"><a href="#cb4-14"></a><span class="co">#&gt;      &lt;numVotes&gt;1&lt;/numVotes&gt;</span></span>
 <span id="cb4-15"><a href="#cb4-15"></a><span class="co">#&gt;      &lt;numComments&gt;0&lt;/numComments&gt;</span></span>
 <span id="cb4-16"><a href="#cb4-16"></a><span class="co">#&gt;      &lt;numHearts&gt;0&lt;/numHearts&gt;</span></span>
 <span id="cb4-17"><a href="#cb4-17"></a><span class="co">#&gt; ...</span></span>
 <span id="cb4-18"><a href="#cb4-18"></a><span class="kw">GET</span>(<span class="st">&quot;http://www.colourlovers.com/api/color/6B4106?format=json&quot;</span>)</span>
 <span id="cb4-19"><a href="#cb4-19"></a><span class="co">#&gt; Response [http://www.colourlovers.com/api/color/6B4106?format=json]</span></span>
-<span id="cb4-20"><a href="#cb4-20"></a><span class="co">#&gt;   Date: 2019-07-30 13:44</span></span>
+<span id="cb4-20"><a href="#cb4-20"></a><span class="co">#&gt;   Date: 2020-07-20 14:19</span></span>
 <span id="cb4-21"><a href="#cb4-21"></a><span class="co">#&gt;   Status: 200</span></span>
 <span id="cb4-22"><a href="#cb4-22"></a><span class="co">#&gt;   Content-Type: application/json; charset=utf-8</span></span>
 <span id="cb4-23"><a href="#cb4-23"></a><span class="co">#&gt;   Size: 1.43 kB</span></span></code></pre></div>
@@ -480,7 +506,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <span id="cb8-26"><a href="#cb8-26"></a></span>
 <span id="cb8-27"><a href="#cb8-27"></a><span class="kw">github_api</span>(<span class="st">&quot;/users/hadley&quot;</span>)</span>
 <span id="cb8-28"><a href="#cb8-28"></a><span class="co">#&gt; &lt;GitHub /users/hadley&gt;</span></span>
-<span id="cb8-29"><a href="#cb8-29"></a><span class="co">#&gt; List of 31</span></span>
+<span id="cb8-29"><a href="#cb8-29"></a><span class="co">#&gt; List of 32</span></span>
 <span id="cb8-30"><a href="#cb8-30"></a><span class="co">#&gt;  $ login              : chr &quot;hadley&quot;</span></span>
 <span id="cb8-31"><a href="#cb8-31"></a><span class="co">#&gt;  $ id                 : int 4196</span></span>
 <span id="cb8-32"><a href="#cb8-32"></a><span class="co">#&gt;  $ node_id            : chr &quot;MDQ6VXNlcjQxOTY=&quot;</span></span>
@@ -505,13 +531,14 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <span id="cb8-51"><a href="#cb8-51"></a><span class="co">#&gt;  $ location           : chr &quot;Houston, TX&quot;</span></span>
 <span id="cb8-52"><a href="#cb8-52"></a><span class="co">#&gt;  $ email              : NULL</span></span>
 <span id="cb8-53"><a href="#cb8-53"></a><span class="co">#&gt;  $ hireable           : NULL</span></span>
-<span id="cb8-54"><a href="#cb8-54"></a><span class="co">#&gt;  $ bio                : chr &quot;Chief Scientist at @RStudio&quot;</span></span>
-<span id="cb8-55"><a href="#cb8-55"></a><span class="co">#&gt;  $ public_repos       : int 219</span></span>
-<span id="cb8-56"><a href="#cb8-56"></a><span class="co">#&gt;  $ public_gists       : int 169</span></span>
-<span id="cb8-57"><a href="#cb8-57"></a><span class="co">#&gt;  $ followers          : int 16388</span></span>
-<span id="cb8-58"><a href="#cb8-58"></a><span class="co">#&gt;  $ following          : int 6</span></span>
-<span id="cb8-59"><a href="#cb8-59"></a><span class="co">#&gt;  $ created_at         : chr &quot;2008-04-01T14:47:36Z&quot;</span></span>
-<span id="cb8-60"><a href="#cb8-60"></a><span class="co">#&gt;  $ updated_at         : chr &quot;2019-07-30T12:00:45Z&quot;</span></span></code></pre></div>
+<span id="cb8-54"><a href="#cb8-54"></a><span class="co">#&gt;  $ bio                : chr &quot;Chief Scientist at @rstudio&quot;</span></span>
+<span id="cb8-55"><a href="#cb8-55"></a><span class="co">#&gt;  $ twitter_username   : chr &quot;hadleywickham&quot;</span></span>
+<span id="cb8-56"><a href="#cb8-56"></a><span class="co">#&gt;  $ public_repos       : int 272</span></span>
+<span id="cb8-57"><a href="#cb8-57"></a><span class="co">#&gt;  $ public_gists       : int 175</span></span>
+<span id="cb8-58"><a href="#cb8-58"></a><span class="co">#&gt;  $ followers          : int 19041</span></span>
+<span id="cb8-59"><a href="#cb8-59"></a><span class="co">#&gt;  $ following          : int 6</span></span>
+<span id="cb8-60"><a href="#cb8-60"></a><span class="co">#&gt;  $ created_at         : chr &quot;2008-04-01T14:47:36Z&quot;</span></span>
+<span id="cb8-61"><a href="#cb8-61"></a><span class="co">#&gt;  $ updated_at         : chr &quot;2020-07-20T12:31:14Z&quot;</span></span></code></pre></div>
 <p>The API might return invalid data, but this should be rare, so you can just rely on the parser to provide a useful error message.</p>
 </div>
 <div id="turn-api-errors-into-r-errors" class="section level3">
@@ -693,24 +720,24 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <span id="cb14-7"><a href="#cb14-7"></a><span class="co">#&gt;  $ resources:List of 4</span></span>
 <span id="cb14-8"><a href="#cb14-8"></a><span class="co">#&gt;   ..$ core                :List of 3</span></span>
 <span id="cb14-9"><a href="#cb14-9"></a><span class="co">#&gt;   .. ..$ limit    : int 60</span></span>
-<span id="cb14-10"><a href="#cb14-10"></a><span class="co">#&gt;   .. ..$ remaining: int 40</span></span>
-<span id="cb14-11"><a href="#cb14-11"></a><span class="co">#&gt;   .. ..$ reset    : int 1564497208</span></span>
-<span id="cb14-12"><a href="#cb14-12"></a><span class="co">#&gt;   ..$ search              :List of 3</span></span>
-<span id="cb14-13"><a href="#cb14-13"></a><span class="co">#&gt;   .. ..$ limit    : int 10</span></span>
-<span id="cb14-14"><a href="#cb14-14"></a><span class="co">#&gt;   .. ..$ remaining: int 10</span></span>
-<span id="cb14-15"><a href="#cb14-15"></a><span class="co">#&gt;   .. ..$ reset    : int 1564494311</span></span>
-<span id="cb14-16"><a href="#cb14-16"></a><span class="co">#&gt;   ..$ graphql             :List of 3</span></span>
-<span id="cb14-17"><a href="#cb14-17"></a><span class="co">#&gt;   .. ..$ limit    : int 0</span></span>
-<span id="cb14-18"><a href="#cb14-18"></a><span class="co">#&gt;   .. ..$ remaining: int 0</span></span>
-<span id="cb14-19"><a href="#cb14-19"></a><span class="co">#&gt;   .. ..$ reset    : int 1564497851</span></span>
-<span id="cb14-20"><a href="#cb14-20"></a><span class="co">#&gt;   ..$ integration_manifest:List of 3</span></span>
-<span id="cb14-21"><a href="#cb14-21"></a><span class="co">#&gt;   .. ..$ limit    : int 5000</span></span>
-<span id="cb14-22"><a href="#cb14-22"></a><span class="co">#&gt;   .. ..$ remaining: int 5000</span></span>
-<span id="cb14-23"><a href="#cb14-23"></a><span class="co">#&gt;   .. ..$ reset    : int 1564497851</span></span>
+<span id="cb14-10"><a href="#cb14-10"></a><span class="co">#&gt;   .. ..$ remaining: int 23</span></span>
+<span id="cb14-11"><a href="#cb14-11"></a><span class="co">#&gt;   .. ..$ reset    : int 1595257851</span></span>
+<span id="cb14-12"><a href="#cb14-12"></a><span class="co">#&gt;   ..$ graphql             :List of 3</span></span>
+<span id="cb14-13"><a href="#cb14-13"></a><span class="co">#&gt;   .. ..$ limit    : int 0</span></span>
+<span id="cb14-14"><a href="#cb14-14"></a><span class="co">#&gt;   .. ..$ remaining: int 0</span></span>
+<span id="cb14-15"><a href="#cb14-15"></a><span class="co">#&gt;   .. ..$ reset    : int 1595258346</span></span>
+<span id="cb14-16"><a href="#cb14-16"></a><span class="co">#&gt;   ..$ integration_manifest:List of 3</span></span>
+<span id="cb14-17"><a href="#cb14-17"></a><span class="co">#&gt;   .. ..$ limit    : int 5000</span></span>
+<span id="cb14-18"><a href="#cb14-18"></a><span class="co">#&gt;   .. ..$ remaining: int 5000</span></span>
+<span id="cb14-19"><a href="#cb14-19"></a><span class="co">#&gt;   .. ..$ reset    : int 1595258346</span></span>
+<span id="cb14-20"><a href="#cb14-20"></a><span class="co">#&gt;   ..$ search              :List of 3</span></span>
+<span id="cb14-21"><a href="#cb14-21"></a><span class="co">#&gt;   .. ..$ limit    : int 10</span></span>
+<span id="cb14-22"><a href="#cb14-22"></a><span class="co">#&gt;   .. ..$ remaining: int 10</span></span>
+<span id="cb14-23"><a href="#cb14-23"></a><span class="co">#&gt;   .. ..$ reset    : int 1595254806</span></span>
 <span id="cb14-24"><a href="#cb14-24"></a><span class="co">#&gt;  $ rate     :List of 3</span></span>
 <span id="cb14-25"><a href="#cb14-25"></a><span class="co">#&gt;   ..$ limit    : int 60</span></span>
-<span id="cb14-26"><a href="#cb14-26"></a><span class="co">#&gt;   ..$ remaining: int 40</span></span>
-<span id="cb14-27"><a href="#cb14-27"></a><span class="co">#&gt;   ..$ reset    : int 1564497208</span></span></code></pre></div>
+<span id="cb14-26"><a href="#cb14-26"></a><span class="co">#&gt;   ..$ remaining: int 23</span></span>
+<span id="cb14-27"><a href="#cb14-27"></a><span class="co">#&gt;   ..$ reset    : int 1595257851</span></span></code></pre></div>
 <p>After getting the first version working, you’ll often want to polish the output to be more user friendly. For this example, we can parse the unix timestamps into more useful date types.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>rate_limit &lt;-<span class="st"> </span><span class="cf">function</span>() {</span>
 <span id="cb15-2"><a href="#cb15-2"></a>  req &lt;-<span class="st"> </span><span class="kw">github_api</span>(<span class="st">&quot;/rate_limit&quot;</span>)</span>
@@ -722,10 +749,13 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <span id="cb15-8"><a href="#cb15-8"></a>}</span>
 <span id="cb15-9"><a href="#cb15-9"></a></span>
 <span id="cb15-10"><a href="#cb15-10"></a><span class="kw">rate_limit</span>()</span>
-<span id="cb15-11"><a href="#cb15-11"></a><span class="co">#&gt; 40 / 60 (Resets at 09:33:28)</span></span></code></pre></div>
+<span id="cb15-11"><a href="#cb15-11"></a><span class="co">#&gt; 23 / 60 (Resets at 10:10:51)</span></span></code></pre></div>
 </div>
 </div>
 
+
+
+<!-- code folding -->
 
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
