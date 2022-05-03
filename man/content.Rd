@@ -17,14 +17,14 @@ which one is most appropriate, based on the content-type.}
 
 \item{type}{MIME type (aka internet media type) used to override
 the content type returned by the server. See
-\url{http://en.wikipedia.org/wiki/Internet_media_type} for a list of
+\url{https://en.wikipedia.org/wiki/Internet_media_type} for a list of
 common types.}
 
 \item{encoding}{For text, overrides the charset or the Latin1 (ISO-8859-1)
 default, if you know that the server is returning the incorrect encoding
 as the charset in the content-type. Use for text and parsed outputs.}
 
-\item{...}{Other parameters parsed on to the parsing functions, if
+\item{...}{Other parameters passed on to the parsing functions, if
 \code{as = "parsed"}}
 }
 \value{

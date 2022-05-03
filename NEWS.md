@@ -1,3 +1,7 @@
+# httr 1.4.3
+
+* Fix failing test.
+
 # httr 1.4.2
 
 * Fix failing test.
@@ -371,7 +375,7 @@ Updates to demos:
   a stream of raw vectors (#143).
 
 * Suport for Google OAuth2 
-  [service accounts](https://developers.google.com/accounts/docs/OAuth2ServiceAccount).
+  [service accounts](https://developers.google.com/identity/protocols/oauth2/service-account).
   (#119, thanks to help from @siddharthab).
 
 * `VERB()` allows to you use custom http verbs (#169).
