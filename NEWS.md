@@ -1,3 +1,7 @@
+# httr 1.4.4
+
+* Fix intermittent failing test.
+
 # httr 1.4.3
 
 * Fix failing test.

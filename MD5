@@ -1,7 +1,7 @@
-1d55f42c43d1811a41b4ff57d967b7e6 *DESCRIPTION
+5d745c612c12cc5794b56410c049036a *DESCRIPTION
 d8d2f9bd4836cd6c839888295d3b1da5 *LICENSE
 b2112c66260fe60ed628f0d32b588465 *NAMESPACE
-ee4aa3e46fac0188d0119d06d9ce485d *NEWS.md
+b833e7a3893205b92d143bef0ac66ab3 *NEWS.md
 095d06eb37728e22cfa7330cb9a73273 *R/authenticate.r
 e344120746e0dd97fe1c103f2d9b66ab *R/body.R
 1577a7ff38f57c57a377b5c595afaf31 *R/cache.R
@@ -79,10 +79,10 @@ dae3272f618a947f5a3ad00ba40c3b27 *demo/oauth2-yelp.R
 56b0c883a1b838991459f7eecc14bbc5 *demo/service-account.R
 6c0e90d4b8fee53683edd7a4cf8abb72 *inst/doc/api-packages.R
 eea51e8cffcef117121d2ae87a8c774f *inst/doc/api-packages.Rmd
-6c2a6141f6d702138249baf1e32837eb *inst/doc/api-packages.html
+5eaf09047c2248c9081964bb921fd6b1 *inst/doc/api-packages.html
 f754fd85ea859fde1e0bf32d63fda094 *inst/doc/quickstart.R
 939859fb41d01545c279aeca8fa3acdb *inst/doc/quickstart.Rmd
-b5fc3ef6836555d4fa0850e5e15f183f *inst/doc/quickstart.html
+a0a82804ab538f9c7a2844dd9a172662 *inst/doc/quickstart.html
 4c7174ba26a45d67f752e90d219dccde *inst/doc/secrets.R
 f1092542c2c547bc7301add4423ea3cf *inst/doc/secrets.Rmd
 09229324f21ee9533a071afae4b832ce *inst/doc/secrets.html
@@ -169,7 +169,7 @@ aa1471215f9852500a963cd11b8dfdec *tests/testthat/test-http-error.R
 979fa044d5edf4060d88dad3129394d1 *tests/testthat/test-oauth.R
 3c599f3ebfdccb3206bf73013a3804dd *tests/testthat/test-oauth_signature.R
 bf515db445fb665849227fe5ff91aaba *tests/testthat/test-parse_media.R
-c10f95446818400e7da8f78b2311a464 *tests/testthat/test-request.r
+a52a82d205480fec72974d37cfb9f93b *tests/testthat/test-request.r
 c528f51e6d9e6fef4364b6d73eebe1a9 *tests/testthat/test-response.r
 a51d3759e597a5ba8fb9e408d6423ce4 *tests/testthat/test-retry.R
 f645a25ca4d13891743ea5e4104bad91 *tests/testthat/test-ssl.R

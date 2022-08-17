@@ -363,7 +363,7 @@ the http status, the file (content) type, the size, and if it’s a text
 file, the first few lines of output.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>r</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Response [http://httpbin.org/get]</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   Date: 2022-05-03 20:41</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   Date: 2022-08-16 11:25</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   Status: 200</span></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   Content-Type: application/json</span></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   Size: 367 B</span></span>
@@ -373,8 +373,8 @@ file, the first few lines of output.</p>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     &quot;Accept&quot;: &quot;application/json, text/xml, application/xml, */*&quot;, </span></span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     &quot;Accept-Encoding&quot;: &quot;deflate, gzip&quot;, </span></span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     &quot;Host&quot;: &quot;httpbin.org&quot;, </span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     &quot;User-Agent&quot;: &quot;libcurl/7.79.1 r-curl/4.3.2 httr/1.4.3&quot;, </span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     &quot;X-Amzn-Trace-Id&quot;: &quot;Root=1-6271936c-5d62ff576ebd9cc7378fbee6&quot;</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     &quot;User-Agent&quot;: &quot;libcurl/7.79.1 r-curl/4.3.2 httr/1.4.4&quot;, </span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;     &quot;X-Amzn-Trace-Id&quot;: &quot;Root=1-62fb7eb6-163455cc68d088e4550656c0&quot;</span></span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   }, </span></span>
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   &quot;origin&quot;: &quot;73.115.118.38&quot;, </span></span>
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ...</span></span></code></pre></div>
@@ -384,7 +384,7 @@ methods, or dig directly into the object:</p>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 200</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">headers</span>(r)</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $date</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Tue, 03 May 2022 20:41:16 GMT&quot;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Tue, 16 Aug 2022 11:25:42 GMT&quot;</span></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $`content-type`</span></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;application/json&quot;</span></span>
@@ -413,8 +413,8 @@ methods, or dig directly into the object:</p>
 <span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ..$ Accept         : chr &quot;application/json, text/xml, application/xml, */*&quot;</span></span>
 <span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ..$ Accept-Encoding: chr &quot;deflate, gzip&quot;</span></span>
 <span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ..$ Host           : chr &quot;httpbin.org&quot;</span></span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ..$ User-Agent     : chr &quot;libcurl/7.79.1 r-curl/4.3.2 httr/1.4.3&quot;</span></span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ..$ X-Amzn-Trace-Id: chr &quot;Root=1-6271936c-5d62ff576ebd9cc7378fbee6&quot;</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ..$ User-Agent     : chr &quot;libcurl/7.79.1 r-curl/4.3.2 httr/1.4.4&quot;</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ..$ X-Amzn-Trace-Id: chr &quot;Root=1-62fb7eb6-163455cc68d088e4550656c0&quot;</span></span>
 <span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ origin : chr &quot;73.115.118.38&quot;</span></span>
 <span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ url    : chr &quot;http://httpbin.org/get&quot;</span></span></code></pre></div>
 <p>I’ll use <code>httpbin.org</code> throughout this introduction. It
@@ -481,7 +481,7 @@ vector:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">GET</span>(<span class="st">&quot;http://httpbin.org/get&quot;</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">content</span>(r, <span class="st">&quot;text&quot;</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;{\n  \&quot;args\&quot;: {}, \n  \&quot;headers\&quot;: {\n    \&quot;Accept\&quot;: \&quot;application/json, text/xml, application/xml, */*\&quot;, \n    \&quot;Accept-Encoding\&quot;: \&quot;deflate, gzip\&quot;, \n    \&quot;Host\&quot;: \&quot;httpbin.org\&quot;, \n    \&quot;User-Agent\&quot;: \&quot;libcurl/7.79.1 r-curl/4.3.2 httr/1.4.3\&quot;, \n    \&quot;X-Amzn-Trace-Id\&quot;: \&quot;Root=1-6271936c-156c15820ea5227d3e608e7d\&quot;\n  }, \n  \&quot;origin\&quot;: \&quot;73.115.118.38\&quot;, \n  \&quot;url\&quot;: \&quot;http://httpbin.org/get\&quot;\n}\n&quot;</span></span></code></pre></div>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;{\n  \&quot;args\&quot;: {}, \n  \&quot;headers\&quot;: {\n    \&quot;Accept\&quot;: \&quot;application/json, text/xml, application/xml, */*\&quot;, \n    \&quot;Accept-Encoding\&quot;: \&quot;deflate, gzip\&quot;, \n    \&quot;Host\&quot;: \&quot;httpbin.org\&quot;, \n    \&quot;User-Agent\&quot;: \&quot;libcurl/7.79.1 r-curl/4.3.2 httr/1.4.4\&quot;, \n    \&quot;X-Amzn-Trace-Id\&quot;: \&quot;Root=1-62fb7eb6-5f6eb65b3c4835ae318bcf0f\&quot;\n  }, \n  \&quot;origin\&quot;: \&quot;73.115.118.38\&quot;, \n  \&quot;url\&quot;: \&quot;http://httpbin.org/get\&quot;\n}\n&quot;</span></span></code></pre></div>
 <p>httr will automatically decode content from the server using the
 encoding supplied in the <code>content-type</code> HTTP header.
 Unfortunately you can’t always trust what the server tells you, so you
@@ -501,10 +501,10 @@ a raw vector:</p>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [126] 66 6c 61 74 65 2c 20 67 7a 69 70 22 2c 20 0a 20 20 20 20 22 48 6f 73 74 22</span></span>
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [151] 3a 20 22 68 74 74 70 62 69 6e 2e 6f 72 67 22 2c 20 0a 20 20 20 20 22 55 73</span></span>
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [176] 65 72 2d 41 67 65 6e 74 22 3a 20 22 6c 69 62 63 75 72 6c 2f 37 2e 37 39 2e</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [201] 31 20 72 2d 63 75 72 6c 2f 34 2e 33 2e 32 20 68 74 74 72 2f 31 2e 34 2e 33</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [201] 31 20 72 2d 63 75 72 6c 2f 34 2e 33 2e 32 20 68 74 74 72 2f 31 2e 34 2e 34</span></span>
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [226] 22 2c 20 0a 20 20 20 20 22 58 2d 41 6d 7a 6e 2d 54 72 61 63 65 2d 49 64 22</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [251] 3a 20 22 52 6f 6f 74 3d 31 2d 36 32 37 31 39 33 36 63 2d 31 35 36 63 31 35</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [276] 38 32 30 65 61 35 32 32 37 64 33 65 36 30 38 65 37 64 22 0a 20 20 7d 2c 20</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [251] 3a 20 22 52 6f 6f 74 3d 31 2d 36 32 66 62 37 65 62 36 2d 35 66 36 65 62 36</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [276] 35 62 33 63 34 38 33 35 61 65 33 31 38 62 63 66 30 66 22 0a 20 20 7d 2c 20</span></span>
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [301] 0a 20 20 22 6f 72 69 67 69 6e 22 3a 20 22 37 33 2e 31 31 35 2e 31 31 38 2e</span></span>
 <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [326] 33 38 22 2c 20 0a 20 20 22 75 72 6c 22 3a 20 22 68 74 74 70 3a 2f 2f 68 74</span></span>
 <span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [351] 74 70 62 69 6e 2e 6f 72 67 2f 67 65 74 22 0a 7d 0a</span></span></code></pre></div>
@@ -522,8 +522,8 @@ types:</p>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ..$ Accept         : chr &quot;application/json, text/xml, application/xml, */*&quot;</span></span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ..$ Accept-Encoding: chr &quot;deflate, gzip&quot;</span></span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ..$ Host           : chr &quot;httpbin.org&quot;</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ..$ User-Agent     : chr &quot;libcurl/7.79.1 r-curl/4.3.2 httr/1.4.3&quot;</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ..$ X-Amzn-Trace-Id: chr &quot;Root=1-6271936c-156c15820ea5227d3e608e7d&quot;</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ..$ User-Agent     : chr &quot;libcurl/7.79.1 r-curl/4.3.2 httr/1.4.4&quot;</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;   ..$ X-Amzn-Trace-Id: chr &quot;Root=1-62fb7eb6-5f6eb65b3c4835ae318bcf0f&quot;</span></span>
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ origin : chr &quot;73.115.118.38&quot;</span></span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ url    : chr &quot;http://httpbin.org/get&quot;</span></span></code></pre></div>
 <p>See <code>?content</code> for a complete list.</p>
@@ -538,7 +538,7 @@ details.</p></li>
 <p>Access response headers with <code>headers()</code>:</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">headers</span>(r)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $date</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Tue, 03 May 2022 20:41:16 GMT&quot;</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Tue, 16 Aug 2022 11:25:42 GMT&quot;</span></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $`content-type`</span></span>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;application/json&quot;</span></span>
@@ -563,9 +563,9 @@ details.</p></li>
 <p>This is basically a named list, but because http headers are case
 insensitive, indexing this object ignores case:</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">headers</span>(r)<span class="sc">$</span>date</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Tue, 03 May 2022 20:41:16 GMT&quot;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Tue, 16 Aug 2022 11:25:42 GMT&quot;</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">headers</span>(r)<span class="sc">$</span>DATE</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Tue, 03 May 2022 20:41:16 GMT&quot;</span></span></code></pre></div>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;Tue, 16 Aug 2022 11:25:42 GMT&quot;</span></span></code></pre></div>
 </div>
 <div id="cookies" class="section level3">
 <h3>Cookies</h3>
@@ -631,8 +631,8 @@ list, and both keys and values are escaped automatically.</p>
 <span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ Cookie         : chr &quot;b=1; a=1&quot;</span></span>
 <span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ Host           : chr &quot;httpbin.org&quot;</span></span>
 <span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ Name           : chr &quot;Hadley&quot;</span></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ User-Agent     : chr &quot;libcurl/7.79.1 r-curl/4.3.2 httr/1.4.3&quot;</span></span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ X-Amzn-Trace-Id: chr &quot;Root=1-6271936d-6287e1ef0175380f7ac5233f&quot;</span></span></code></pre></div>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ User-Agent     : chr &quot;libcurl/7.79.1 r-curl/4.3.2 httr/1.4.4&quot;</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  $ X-Amzn-Trace-Id: chr &quot;Root=1-62fb7eb7-34d2e7402836fa2a774d2f2c&quot;</span></span></code></pre></div>
 <p>(Note that <code>content(r)$header</code> retrieves the headers that
 httpbin received. <code>headers(r)</code> gives the headers that it sent
 back in its response.)</p>
@@ -713,16 +713,16 @@ vectors.</p>
 <span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span></span>
 <span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; other attached packages:</span></span>
-<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] httr_1.4.3</span></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] httr_1.4.4</span></span>
 <span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
 <span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [1] digest_0.6.29      R6_2.5.1           lifecycle_1.0.1    jsonlite_1.8.0    </span></span>
-<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [5] magrittr_2.0.3     evaluate_0.15      stringi_1.7.6      cachem_1.0.6      </span></span>
-<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [9] rlang_1.0.2.9000   cli_3.3.0          curl_4.3.2         rstudioapi_0.13   </span></span>
-<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [13] jquerylib_0.1.4    bslib_0.3.1.9000   vctrs_0.4.1        rmarkdown_2.13    </span></span>
-<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [17] tools_4.1.2        stringr_1.4.0.9000 glue_1.6.2         xfun_0.30         </span></span>
-<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [21] yaml_2.3.5         fastmap_1.1.0      compiler_4.1.2     htmltools_0.5.2   </span></span>
-<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [25] knitr_1.38         sass_0.4.1</span></span></code></pre></div>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [5] magrittr_2.0.3     evaluate_0.15      stringi_1.7.8      cachem_1.0.6      </span></span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  [9] rlang_1.0.4        cli_3.3.0.9000     curl_4.3.2         rstudioapi_0.13   </span></span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [13] jquerylib_0.1.4    bslib_0.4.0        vctrs_0.4.1.9000   rmarkdown_2.14    </span></span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [17] tools_4.1.2        stringr_1.4.0.9000 glue_1.6.2         xfun_0.31         </span></span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [21] yaml_2.3.5         fastmap_1.1.0      compiler_4.1.2     htmltools_0.5.3   </span></span>
+<span id="cb23-26"><a href="#cb23-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [25] knitr_1.39         sass_0.4.2</span></span></code></pre></div>
 </div>
 </div>
 </div>
