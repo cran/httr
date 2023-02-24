@@ -1,3 +1,9 @@
+# httr 1.4.5
+
+* An internal helper that checks for an interactive session in the OOB flow now
+  honors the `"rlang_interactive"` global option, in case it's necessary to
+  declare the session to be interactive (enough) for OOB (@jennybc, #734).
+
 # httr 1.4.4
 
 * Fix intermittent failing test.
@@ -156,7 +162,7 @@ Updates to demos:
       based on `user_agent` (@muschellij2, #363).
       
     * `client_credentials`, allows you to use the OAauth2 *Client Credential 
-      Grant*. See [RFC 6749](https://tools.ietf.org/html/rfc6749#section-4)
+      Grant*. See [RFC 6749](https://www.rfc-editor.org/rfc/rfc6749#section-4)
       for details. (@cderv, #384)
 
     * A `credentials` argument that allows you to customise the auth flow. 
